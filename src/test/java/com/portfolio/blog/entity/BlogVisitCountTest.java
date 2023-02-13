@@ -22,7 +22,7 @@ class BlogVisitCountTest {
     EntityManager em;
 
     @Test
-    public  void BlogVisitCount(){
+    public void BlogVisitCount(){
         BlogVisitCount blogVisitCount = new BlogVisitCount();
         blogVisitCountRepository.save(blogVisitCount);
     }

@@ -2,6 +2,9 @@ package com.portfolio.blog.entity;
 
 import com.portfolio.blog.dto.MemberDTO;
 import com.portfolio.blog.repository.BlogMemberVisitCountRepository;
+import com.portfolio.blog.repository.MemberRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class BlogMemberVisitCountTest {
     @Autowired
     BlogMemberVisitCountRepository blogMemberVisitCountRepository;
-
+    @Autowired
+    MemberRepository memberRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
     @PersistenceContext
@@ -31,5 +35,16 @@ class BlogMemberVisitCountTest {
         memberDTO.setNickName("니찌맀다");
         memberDTO.setPassword("1234");
         return Member.createMember(memberDTO, passwordEncoder);
+    }
+
+    @Test
+    @DisplayName("다녀간 유저 카운트")
+    public  void MemberCnt(){
+        Member member = createMember();
+        memberRepository.save(member);
+
+        BlogMemberVisitCount blogMemberVisitCount = new BlogMemberVisitCount();
+        blogMemberVisitCount.setMember(member);
+        blogMemberVisitCountRepository.save(blogMemberVisitCount);
     }
 }

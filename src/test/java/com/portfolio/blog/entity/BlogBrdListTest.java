@@ -2,6 +2,7 @@ package com.portfolio.blog.entity;
 
 import com.portfolio.blog.dto.MemberDTO;
 import com.portfolio.blog.repository.BlogBrdListRepository;
+import com.portfolio.blog.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ class BlogBrdListTest {
     BlogBrdListRepository blogBrdListRepository;
 
     @Autowired
+    MemberRepository memberRepository;
+
+    @Autowired
     PasswordEncoder passwordEncoder;
 
     @PersistenceContext
@@ -39,13 +43,13 @@ class BlogBrdListTest {
     }
 
     @Test
-    @DisplayName("개안 블로그")
-    public void findCartAndMemberTest() {
+    @DisplayName("개안 블로그안에 게시물")
+    public void blogBrdListTest() {
         Member member = createMember();
-        blogBrdListRepository.save();
+        memberRepository.save(member);
 
-        BlogList blogList = new BlogList();
-        blogList.setMember(member);
-        blogListRepository.save(blogList);
+        BlogBrdList blogBrdListList = new BlogBrdList();
+        blogBrdListList.setMember(member);
+        blogBrdListRepository.save(blogBrdListList);
     }
 }
