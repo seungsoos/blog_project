@@ -1,5 +1,8 @@
-package com.portfolio.blog.memberdto;
+package com.portfolio.blog.dto;
 
+import lombok.Data;
+
+@Data
 public class BlogMemberVisitCountDTO {
     private  Long mnum;
 

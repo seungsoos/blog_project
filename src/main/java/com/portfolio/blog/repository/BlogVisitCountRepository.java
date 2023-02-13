@@ -4,4 +4,6 @@ import com.portfolio.blog.entity.BlogVisitCount;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BlogVisitCountRepository extends JpaRepository<BlogVisitCount, Long> {
+
+    int  CountByVisitDate(String VisitDate);
 }

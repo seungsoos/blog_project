@@ -17,7 +17,6 @@ public class BlogInfo {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long inum;
 
-
     // 한명의 유저는 하나의 블로그 양식을 가질 수 있다.
     @JoinColumn(name="Member_id")
     @OneToOne

@@ -1,6 +1,9 @@
-package com.portfolio.blog.memberdto;
+package com.portfolio.blog.dto;
 
-public class BlogListDTO {
+import lombok.Data;
+
+@Data
+public class BlogListDTO { // 유저 한명장 하나의 블로그를 가짐
     private  Long bnum;
 
     private String userId;

@@ -1,15 +1,10 @@
 package com.portfolio.blog.entity;
 
-import com.portfolio.blog.memberdto.MemberDTO;
+import com.portfolio.blog.dto.MemberDTO;
 import lombok.*;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.autoconfigure.quartz.QuartzDataSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 
