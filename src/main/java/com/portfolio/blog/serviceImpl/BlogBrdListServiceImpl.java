@@ -1,6 +1,7 @@
 package com.portfolio.blog.serviceImpl;
 
 import com.portfolio.blog.entity.BlogBrdList;
+import com.portfolio.blog.repository.BlogBrdListRepository;
 import com.portfolio.blog.service.BlogBrdListService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,10 +13,9 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class BlogBrdListServiceImpl implements BlogBrdListService {
-
-    private  final  BlogBrdListService blogBrdListService;
+    private  final BlogBrdListRepository blogBrdListRepository;
     @Override
     public List<BlogBrdList> findByMember(String id) {
-        return blogBrdListService.findByMember(id);
+        return blogBrdListRepository.findByMember(id);
     }
 }

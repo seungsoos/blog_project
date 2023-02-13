@@ -1,5 +1,6 @@
 package com.portfolio.blog.serviceImpl;
 
+import com.portfolio.blog.repository.BlogVisitCountRepository;
 import com.portfolio.blog.service.BlogVisitCountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,10 +11,10 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 @Transactional
 public class BlogMemberVisitCountServiceImpl implements BlogVisitCountService {
-    private  final  BlogVisitCountService blogVisitCountService;
+    private  final BlogVisitCountRepository blogVisitCountRepository;
 
     @Override
     public int CountByVisitDate(String VisitDate) {
-        return blogVisitCountService.CountByVisitDate(VisitDate);
+        return blogVisitCountRepository.findCountByVisitDate(VisitDate);
     }
 }

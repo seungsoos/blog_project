@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BlogVisitCountRepository extends JpaRepository<BlogVisitCount, Long> {
 
-    int  CountByVisitDate(String VisitDate);
+    int  findCountByVisitDate(String VisitDate);
 }
