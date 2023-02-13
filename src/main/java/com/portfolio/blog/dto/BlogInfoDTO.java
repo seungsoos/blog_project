@@ -1,6 +1,10 @@
 package com.portfolio.blog.dto;
 
+import com.portfolio.blog.constant.Authority;
 import lombok.Data;
+
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Data
 public class BlogInfoDTO {
@@ -18,6 +22,7 @@ public class BlogInfoDTO {
 
     private char mainImg;
 
-    private  char viewChk;
+    @Enumerated(EnumType.STRING)
+    private Authority viewChk;
 
 }

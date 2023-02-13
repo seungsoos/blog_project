@@ -37,7 +37,7 @@ public class MemberService implements UserDetailsService {
         if (member.isPresent()){
             return User.builder()
                 .username(member.get().getId())
-                .password(member.get().getNickName())
+                .password(member.get().getPassword())
                 .roles(member.get().getName())
                 .build();
         }

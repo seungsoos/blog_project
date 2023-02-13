@@ -1,5 +1,6 @@
 package com.portfolio.blog.entity;
 
+import com.portfolio.blog.constant.Authority;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,15 +22,15 @@ public class BlogInfo {
     @JoinColumn(name="Member_id")
     @OneToOne
     private  Member member;
-
-    private char blogLogo;
+    @Enumerated(EnumType.STRING)
+    private Authority blogLogo;
 
     private String  my_profile;
 
     private  String BgColor;
 
     private String boxBgColor;
-
-    private  char viewChk; // 개인 프로필 공개 여부
+    @Enumerated(EnumType.STRING)
+    private  Authority viewChk; // 개인 프로필 공개 여부
 
 }

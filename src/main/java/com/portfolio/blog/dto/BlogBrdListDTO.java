@@ -1,6 +1,10 @@
 package com.portfolio.blog.dto;
 
+import com.portfolio.blog.constant.Authority;
 import lombok.Data;
+
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Data
 public class BlogBrdListDTO {
@@ -11,9 +15,11 @@ public class BlogBrdListDTO {
 
     private  String brdTitle;
 
-    private  char brdRead;
+    @Enumerated(EnumType.STRING)
+    private Authority brdRead;
 
-    private  char brdWrite;
+    @Enumerated(EnumType.STRING)
+    private  Authority brdWrite;
 
     private  String brdWDate;
 
