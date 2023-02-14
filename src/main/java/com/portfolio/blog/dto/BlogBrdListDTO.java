@@ -14,10 +14,9 @@ import javax.persistence.Enumerated;
 public class BlogBrdListDTO {
     private  Long  cnum;
 
-
     private  String id;
 
-    private  String brdTitle;
+    private  String brdTitle; //블로그 타이틀
 
     @Enumerated(EnumType.STRING)
     private Authority brdRead; // 읽기 권한

@@ -10,13 +10,13 @@ public class ImgFileDTO {
 
     private String logoImg;
 
-    private  String logoImgPath;
+    private  String logoImgPath; // 로고 이미지
 
-    private  String mainImg;
+    private  String mainImg; //메인 이미지
 
-    private  String mainImgPath;
+    private  String mainImgPath; // 메인이미지 주소
 
-    private  String mainImgExt;
+    private  String mainImgExt; // 메인이미지 확장자
 
-    private  String logImgExt;
+    private  String logImgExt; // 로고 이미지 확장자
 }

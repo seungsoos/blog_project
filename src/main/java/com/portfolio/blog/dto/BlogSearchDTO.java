@@ -8,9 +8,8 @@ import lombok.ToString;
 @ToString
 public class BlogSearchDTO {
 
-    private  String searchDateType;
-    private  String searchBy;
-    private Authority authority;
-
+    private  String searchDateType; // 블로그 최근게시글
+    private  String searchBy; // 블로그 조건
+    private Authority authority; // 공개범위
     private  String searchQuery = "";
 }
