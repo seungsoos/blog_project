@@ -1,9 +1,11 @@
 package com.portfolio.blog.entity;
 
+import com.portfolio.blog.constant.Authority;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 
@@ -11,7 +13,7 @@ import javax.persistence.*;
 @Table(name="blog_list")
 @Data
 @ToString
-public class BlogList {
+public class BlogList extends  BaseTimeEntity{
     @Id
     @Column(name="b_num")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,6 +27,9 @@ public class BlogList {
     private String blogName;
 
     private  String blogDetail;
+
+    @Enumerated(EnumType.STRING)
+    private Authority blogAuthority ; // 블로그 권한
 
 
 }

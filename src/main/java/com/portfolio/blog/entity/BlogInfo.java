@@ -27,9 +27,10 @@ public class BlogInfo {
 
     private String  my_profile;
 
-    private  String BgColor;
+    private  String titleColor; // 제목 컬러
 
-    private String boxBgColor;
+    private  String sideColor; // 사이드 컬러
+    private String boxBgColor; // 본문 컬러
     @Enumerated(EnumType.STRING)
     private  Authority viewChk; // 개인 프로필 공개 여부
 

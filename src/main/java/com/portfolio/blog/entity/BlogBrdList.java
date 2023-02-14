@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table(name="blog_brd_list")
 @Data
 @ToString
-public class BlogBrdList { // 블로그안에서 게시물 리스트
+public class BlogBrdList extends  BaseTimeEntity{ // 블로그안에서 게시물 리스트
     @Id
     @Column(name="c_num")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,7 +28,4 @@ public class BlogBrdList { // 블로그안에서 게시물 리스트
     @Enumerated(EnumType.STRING)
     private  Authority brdWrite; // 게시글 댓글 쓰기 권한
 
-    @CreatedDate
-    @Column(updatable = false) // 엔티티가 생성되어 저장될 때 시간을 자동으로 저장
-    private  String brdWDate; // 게시글 생성 날짜
 }

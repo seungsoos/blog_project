@@ -12,7 +12,7 @@ import javax.persistence.*;
     @Table(name="member")
     @Data
     @ToString
-    public class Member{
+    public class Member extends BaseTimeEntity{
 
         @Id
         @Column(name="member_id")
