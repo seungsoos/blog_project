@@ -52,16 +52,16 @@ public class BlogController {
     @PostMapping(value = "/join")
     public String newMember(@Valid MemberDTO memberDTO, BindingResult bindingResult, Model model){
         if(bindingResult.hasErrors()){
-            return "blog/joinForm";
+            return "login/joinForm";
         }
         try {
             Member member = Member.createMember(memberDTO, passwordEncoder);
             memberService.saveMember(member);
         } catch (IllegalStateException e){
             model.addAttribute("errorMessage", e.getMessage());
-            return "blog/joinForm";
+            return "login/joinForm";
         }
-        return "blog/login";
+        return "login/loginForm";
     }
 
     @GetMapping("/logout")
