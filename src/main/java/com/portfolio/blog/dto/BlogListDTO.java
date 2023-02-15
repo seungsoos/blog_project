@@ -9,7 +9,7 @@ import javax.persistence.Enumerated;
 
 @Data
 @ToString
-public class BlogListDTO { // 유저 한명장 하나의 블로그를 가짐
+public class BlogListDTO { // 유저 한명당 하나의 블로그를 가짐
     private  Long bnum;
 
     private String userId;
