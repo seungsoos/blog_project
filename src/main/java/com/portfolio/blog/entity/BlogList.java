@@ -9,7 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name="blog_list")
 @Table(name="blog_list")
 @Data
 @ToString

@@ -2,9 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout01}">
-<head>
-    <th:block layout:fragment="css">
-        <style>
+
+    <style layout:fragment="css">
       ul, li{
         margin: 0;
         padding: 0;
@@ -36,10 +35,9 @@
         color: white;
       }
     </style>
-    </th:block>
-</head>
-<div layout:fragment="content">
 
+
+<div layout:fragment="content" class="container">
     <div class="div-class text-center m-auto">
         <img class="mb-4 mt-5" th:src="@{/assets/img/blogMain.png}" alt="" width="100" height="100">
         <h2>포트폴리오_블로그</h2>
@@ -70,5 +68,13 @@
         </form>
     </div>
 </div>
+    <script layout:fragment="script">
 
+        $(document).ready(function(){
+            var errorMessage = [[${loginErrorMsg}]];
+            if(errorMessage != null){
+                alert(errorMessage);
+            }
+        });
+    </script>
 </html>

@@ -4,8 +4,7 @@
       layout:decorate="~{layouts/layout01}">
 
 
-<th:block layout:fragment="css">
-    <style>
+<style layout:fragment="css">
         .container{
             padding: 0;
             width: 500px;
@@ -40,8 +39,8 @@
 	      width : 100px;
 	      height : 40px;
         }
-    </style>
-</th:block>
+</style>
+
 <div layout:fragment="content">
 
     <div class="container text-center mt-5">
@@ -130,10 +129,9 @@
             </form>
         </div>
     </div>
-
-    <th:block layout:fragment="script">
-        <script>
-            	function notAgree(obj) {
+</div>
+    <script layout:fragment="script">
+    function notAgree(obj) {
 		obj.action = "/blog/login";
 		obj.method = "get";
 		obj.submit();
@@ -236,7 +234,5 @@
 	    }
 	 }
         </script>
-    </th:block>
-</div>
 
 </html>
