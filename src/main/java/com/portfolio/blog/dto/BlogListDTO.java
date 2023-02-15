@@ -12,9 +12,7 @@ import javax.persistence.Enumerated;
 public class BlogListDTO { // 유저 한명장 하나의 블로그를 가짐
     private  Long bnum;
 
-    private String userId;
-
-    private  String nickName; // 닉네임
+    private String id;
 
     private String blogName; // 블로그 이름
 

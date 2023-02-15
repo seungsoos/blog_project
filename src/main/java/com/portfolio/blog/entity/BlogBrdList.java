@@ -24,8 +24,10 @@ public class BlogBrdList extends  BaseTimeEntity{ // 블로그안에서 게시�
 
     private  String brdTitle; // 게시글 분류 이름
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Authority brdRead; // 게시글 내용 읽기 권한
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private  Authority brdWrite; // 게시글 댓글 쓰기 권한
 
 }

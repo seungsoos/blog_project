@@ -17,10 +17,11 @@ import javax.persistence.*;
         @Id
         @Column(name="member_id")
         private String id;
+        @Column(nullable = false)
         private String name;
-
+        @Column(nullable = false)
         private String nickName;
-
+        @Column(nullable = false)
         private String password;
 
         public static Member createMember(MemberDTO memberDTO, PasswordEncoder passwordEncoder){

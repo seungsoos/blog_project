@@ -18,16 +18,16 @@ public class BlogImgFile extends BaseTimeEntity{ // 블로그 양식 설정시 �
     @JoinColumn(name="Member_id")
     @OneToOne
     private  Member member;
-
+    @Column(nullable = false)
     private String logoImg;
-
+    @Column(nullable = false)
     private  String logoImgPath;
-
+    @Column(nullable = false)
     private  String mainImg;
-
+    @Column(nullable = false)
     private  String mainImgPath;
-
+    @Column(nullable = false)
     private  String mainImgExt;
-
+    @Column(nullable = false)
     private  String logImgExt;
 }
