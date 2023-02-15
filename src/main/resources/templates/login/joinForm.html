@@ -3,35 +3,16 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout01}">
 
-
-<head>
-
-<th:block layout:fragment="css">
-    <style>
+<style layout:fragment="css">
         .fieldError {
             color: #bd2130;
         }
     </style>
-</th:block>
 
-
-<th:block layout:fragment="script">
-
-    <script th:inline="javascript">
-        $(document).ready(function(){
-            var errorMessage = [[${errorMessage}]];
-            if(errorMessage != null){
-                alert(errorMessage);
-            }
-        });
-    </script>
-
-</th:block>
-</head>
 
 <div layout:fragment="content">
 
-    <form action="/blog/join" role="form" method="post" class="mt-5"  th:object="${MemberDTO}">
+    <form action="join" role="form" method="post" class="mt-5"  th:object="${MemberDTO}">
         <h2>회원가입</h2>
         <div class="form-group mt-5">
             <label th:for="id">아이디</label>
@@ -58,7 +39,6 @@
         </div>
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     </form>
-
 </div>
 
 </html>

@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    username: myDB
+    url: jdbc:mysql://127.0.0.1:3306/blog?characterEncoding=utf8
+    driverClassName: com.mysql.cj.jdbc.Driver
+    password: '1234'
+  thymeleaf:
+    cache: 'false'
+  devtools:
+    livereload:
+      enabled: 'true'
+  jpa:
+    database: mysql   # ?? ?? ??
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect # ?? ?? ??
+
+    properties:
+      hibernate:
+        format_sql: 'true'
+        show_sql: 'true'
+    hibernate:
+      ddl-auto: create
+logging:
+  level:
+    org:
+      springframework: info
+    com:
+      portfolio:
+        blog: debug
+server:
+  port: '9090'
+
+  spring:
+    devtools:
+      livereload:
+        enabled: true
+    freemarker:
+      cache: false
+    thymeleaf:
+      cache: false

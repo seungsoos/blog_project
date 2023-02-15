@@ -6,7 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name="blog_visit_count")
 @Table(name="blog_visit_count")
 @Data
 @ToString

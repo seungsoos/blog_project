@@ -5,7 +5,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name="blog_img_file")
 @Table(name="blog_img_file")
 @Data
 @ToString

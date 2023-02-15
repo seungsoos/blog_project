@@ -33,7 +33,7 @@ public class BlogController {
     @GetMapping(value = "/login/error")
     public String loginError(Model model){
         model.addAttribute("loginErrorMsg", "아이디 또는 비밀번호를 확인해주세요");
-        return "/login/LoginForm";
+        return "/login/loginForm";
     }
 
     @GetMapping("/agree")
@@ -61,7 +61,7 @@ public class BlogController {
             model.addAttribute("errorMessage", e.getMessage());
             return "blog/joinForm";
         }
-        return "redirect:/main/mainPage";
+        return "blog/login";
     }
 
     @GetMapping("/logout")
