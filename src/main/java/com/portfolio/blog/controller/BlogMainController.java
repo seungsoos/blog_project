@@ -44,14 +44,14 @@ public class BlogMainController {
                                    BindingResult bindingResult,
                                    @RequestParam("blogLogo") MultipartFile blogLogo,
                                    Model model){
-        System.out.println("PostCreateBlog---------------------------");
-
-        System.out.println(blogInfoDTO);
+        log.info(blogInfoDTO);
+        log.info(blogLogo);
 
         if (bindingResult.hasErrors()){
-            System.out.println("에러------------발견");
+            log.info("에러------------발견");
             return "main/createBlogForm";
         }
+
         try {
             if (blogLogo != null && blogLogo.isEmpty()){
                 log.info("값이 있다.");

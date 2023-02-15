@@ -23,12 +23,13 @@ public class BlogList extends  BaseTimeEntity{
     @JoinColumn(name="Member_id")
     @OneToOne
     private Member member;
-
+    @Column(nullable = false)
     private String blogName;
 
     private  String blogDetail;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Authority blogAuthority ; // 블로그 권한
 
 
