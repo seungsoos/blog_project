@@ -1,5 +1,6 @@
 package com.portfolio.blog.dto;
 
+import com.portfolio.blog.constant.Authority;
 import lombok.Data;
 
 import javax.persistence.EnumType;
@@ -22,6 +23,6 @@ public class BlogInfoDTO {
     private String boxBgColor; //본문 컬러
 
     @Enumerated(EnumType.STRING)
-    private char viewChk; // 프로필 공개유무
+    private Authority viewChk; // 프로필 공개유무
 
 }
