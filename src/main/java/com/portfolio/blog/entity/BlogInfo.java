@@ -25,7 +25,7 @@ public class BlogInfo {
     @Enumerated(EnumType.STRING)
     private Authority blogLogo;
 
-    private String  my_profile;
+    private String  myProfile;
 
     private  String titleColor; // 제목 컬러
 
