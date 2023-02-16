@@ -1,5 +1,6 @@
 package com.portfolio.blog.controller;
 
+import com.mysema.commons.lang.Assert;
 import com.portfolio.blog.dto.BlogInfoDTO;
 import com.portfolio.blog.dto.MemberDTO;
 import com.portfolio.blog.entity.Member;
