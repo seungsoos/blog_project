@@ -14,6 +14,9 @@ public class BlogInfoDTO {
     @Enumerated(EnumType.STRING)
     private Authority blogLogo; // 블로그 로고
 
+    @Enumerated(EnumType.STRING)
+    private Authority blogLogo; // 블로그 로고
+
     private String  myProfile; // 개인 소개
 
     private  String titleBgColor; // 타이틀 컬러
