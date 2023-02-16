@@ -47,7 +47,7 @@ public class BlogController {
     @GetMapping("/join")
     public String join(Model model){
         log.info("Getjoin-------------------");
-        model.addAttribute("MemberDTO", new MemberDTO());
+        model.addAttribute("memberDTO", new MemberDTO());
         return "/login/joinForm";
     }
 

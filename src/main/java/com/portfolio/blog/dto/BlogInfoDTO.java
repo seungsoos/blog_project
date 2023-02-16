@@ -1,7 +1,10 @@
 package com.portfolio.blog.dto;
 
 import com.portfolio.blog.constant.Authority;
+import com.portfolio.blog.entity.BlogInfo;
+import com.portfolio.blog.entity.Member;
 import lombok.Data;
+import org.modelmapper.ModelMapper;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -10,9 +13,7 @@ import javax.persistence.Enumerated;
 public class BlogInfoDTO {
     private Long inum;
 
-    private  String id;
-    @Enumerated(EnumType.STRING)
-    private Authority blogLogo; // 블로그 로고
+    private Member member;
 
     @Enumerated(EnumType.STRING)
     private Authority blogLogo; // 블로그 로고
@@ -28,4 +29,14 @@ public class BlogInfoDTO {
     @Enumerated(EnumType.STRING)
     private Authority viewChk; // 프로필 공개유무
 
+    private static ModelMapper modelMapper = new ModelMapper();
+    //DTO -> Entity로 변경
+    public BlogInfo saveBlogInfo(){
+        return modelMapper.map(this, BlogInfo.class);
+    }
+
+    //DTO -> Entity로 변경
+    public static BlogInfoDTO of(BlogInfo blogInfo){
+        return modelMapper.map(blogInfo, BlogInfoDTO.class);
+    }
 }
