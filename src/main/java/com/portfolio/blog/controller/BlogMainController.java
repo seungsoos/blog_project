@@ -1,6 +1,6 @@
 package com.portfolio.blog.controller;
 
-import com.portfolio.blog.config.SecurityConfig;
+import com.mysema.commons.lang.Assert;
 import com.portfolio.blog.dto.BlogInfoDTO;
 import com.portfolio.blog.dto.BlogListDTO;
 import com.portfolio.blog.dto.MemberDTO;
