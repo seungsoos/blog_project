@@ -11,11 +11,13 @@ public class BlogInfoDTO {
     private Long inum;
 
     private  String id;
+    @Enumerated(EnumType.STRING)
+    private Authority blogLogo; // 블로그 로고
 
     @Enumerated(EnumType.STRING)
     private Authority blogLogo; // 블로그 로고
 
-    private String  my_profile; // 자기소개
+    private String  myProfile; // 개인 소개
 
     private  String titleBgColor; // 타이틀 컬러
 

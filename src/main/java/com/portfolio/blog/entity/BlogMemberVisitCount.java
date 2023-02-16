@@ -16,7 +16,7 @@ public class BlogMemberVisitCount extends  BaseTimeEntity{
     @Id
     @Column(name="m_num")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private  Long Mnum;
+    private  Long mnum;
 
     // 한명의 유저는 여러 블로그를 볼 수 있다.
     @JoinColumn(name="Member_id")

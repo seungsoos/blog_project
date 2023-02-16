@@ -6,23 +6,27 @@ import com.portfolio.blog.dto.BlogListDTO;
 import com.portfolio.blog.dto.MemberDTO;
 import com.portfolio.blog.entity.Member;
 import com.portfolio.blog.repository.BlogInfoRepository;
+import com.portfolio.blog.repository.MemberRepository;
+import com.portfolio.blog.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.tomcat.jni.User;
-import org.springframework.security.core.context.SecurityContext;
+
+import org.apache.catalina.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.net.http.HttpRequest;
-import java.util.List;
+import java.util.Optional;
 
 @Controller
 @Log4j2
@@ -30,11 +34,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BlogMainController {
 
-    private final BlogInfoRepository blogInfoRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(BlogMainController.class);
+    private final MemberRepository memberRepository;
 
     @GetMapping("/mainPage")
-    public String main(){
-        log.info("메인페이지----------------");
+    public String main(Authentication authentication, HttpSession session){
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String id = userDetails.getUsername();
+            LOGGER.info(userDetails.getUsername());
+
+            MemberDTO memberDTO = new MemberDTO();
+            Optional<Member> member = memberRepository.findById(id);
+        member.ifPresent(value -> memberDTO.setNickName(value.getNickName()));
+        member.ifPresent(value -> memberDTO.setId(value.getNickName()));
+        member.ifPresent(value -> memberDTO.setName(value.getNickName()));
+
+        session.setAttribute("memberDTO", memberDTO);
+
         return "main/mainForm";
     }
 
@@ -75,7 +91,4 @@ public class BlogMainController {
 
         return  "redirect:/main/mainPage";
     }
-    
-
-
 }
