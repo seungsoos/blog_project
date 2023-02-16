@@ -21,7 +21,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class SecurityConfig{
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -74,14 +73,14 @@ public class SecurityConfig{
         http.exceptionHandling()
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
         ;
-        http.sessionManagement()
+        http.sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .sessionFixation()
                 .changeSessionId()
                 .invalidSessionUrl("/blog/login")
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(true)
-                .expiredUrl("/blog/login");
+                .expiredUrl("/blog/login"));
 
         return  http.build();
 
