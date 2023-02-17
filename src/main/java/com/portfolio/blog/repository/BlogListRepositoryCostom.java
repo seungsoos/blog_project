@@ -4,7 +4,6 @@ import com.portfolio.blog.dto.BlogSearchDTO;
 import com.portfolio.blog.entity.BlogList;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BlogListRepositoryCostom {
 

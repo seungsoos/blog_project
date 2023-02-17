@@ -15,13 +15,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig{
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -39,8 +40,12 @@ public class SecurityConfig{
 
         http.authorizeRequests()
                 .antMatchers("/css/**", "/js/**", "/assets/**").permitAll()
+
                 .antMatchers("/", "/login/**").permitAll()
                 .antMatchers("/blog/**").permitAll()
+                .antMatchers("/", "/blog/**").permitAll()
+                .antMatchers("/main/**").permitAll()
+                .antMatchers("/blog-information-api/**").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
         ;
@@ -77,14 +82,15 @@ public class SecurityConfig{
         http.exceptionHandling()
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
         ;
-        http.sessionManagement()
+        http.sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .sessionFixation()
                 .changeSessionId()
                 .invalidSessionUrl("/login/loginMain")
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(true)
-                .expiredUrl("/login/loginMain");
+                .expiredUrl("/login/loginMain"))
+                ;
 
         /*http.headers()
                 .and()
@@ -93,10 +99,6 @@ public class SecurityConfig{
 
         return  http.build();
 
-
     }
-
-
-
 
 }

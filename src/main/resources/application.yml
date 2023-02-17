@@ -37,3 +37,9 @@ server:
       cache: false
     thymeleaf:
       cache: false
+
+  server:
+    servlet:
+      session:
+        timeout: -1
+

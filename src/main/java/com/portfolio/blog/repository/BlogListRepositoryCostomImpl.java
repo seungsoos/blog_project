@@ -7,16 +7,20 @@ import com.portfolio.blog.entity.QBlogList;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
-
+@Service
+@Transactional
+@RequiredArgsConstructor
 public class BlogListRepositoryCostomImpl  implements  BlogListRepositoryCostom {
 
     private JPAQueryFactory queryFactory;
@@ -61,7 +65,7 @@ public class BlogListRepositoryCostomImpl  implements  BlogListRepositoryCostom 
     public Page<BlogList> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable) {
 
         List<BlogList> content = queryFactory
-                .select(QBlogList.blogList)
+                .selectFrom(QBlogList.blogList)
                 .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
                         searchAuthorityEq(blogSearchDTO.getAuthority()),
                         searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery())
