@@ -1,54 +1,39 @@
-/*!
-* Start Bootstrap - Freelancer v7.0.6 (https://startbootstrap.com/theme/freelancer)
-* Copyright 2013-2022 Start Bootstrap
-* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-freelancer/blob/master/LICENSE)
-*/
-//
-// Scripts
-// 
+/*---------------------------------------------------------------------------------------------
+  Skip Link Focus Fix
+----------------------------------------------------------------------------------------------*/
+( function() {
+	var is_webkit = navigator.userAgent.toLowerCase().indexOf( 'webkit' ) > -1,
+	    is_opera  = navigator.userAgent.toLowerCase().indexOf( 'opera' )  > -1,
+	    is_ie     = navigator.userAgent.toLowerCase().indexOf( 'msie' )   > -1;
 
-window.addEventListener('DOMContentLoaded', event => {
+	if ( ( is_webkit || is_opera || is_ie ) && document.getElementById && window.addEventListener ) {
+		window.addEventListener( 'hashchange', function() {
+			var element = document.getElementById( location.hash.substring( 1 ) );
 
-    // Navbar shrink function
-    var navbarShrink = function () {
-        const navbarCollapsible = document.body.querySelector('#mainNav');
-        if (!navbarCollapsible) {
-            return;
-        }
-        if (window.scrollY === 0) {
-            navbarCollapsible.classList.remove('navbar-shrink')
+			if ( element ) {
+				if ( ! /^(?:a|select|input|button|textarea)$/i.test( element.tagName ) )
+					element.tabIndex = -1;
+
+				element.focus();
+			}
+		}, false );
+	}
+})();
+
+
+/*---------------------------------------------------------------------------------------------
+  Scroll to top
+----------------------------------------------------------------------------------------------*/
+jQuery(document).ready(function($){
+    $(window).scroll(function(){
+        if ($(this).scrollTop() < 400) {
+            $('.smoothup') .fadeOut();
         } else {
-            navbarCollapsible.classList.add('navbar-shrink')
+            $('.smoothup') .fadeIn();
         }
-
-    };
-
-    // Shrink the navbar 
-    navbarShrink();
-
-    // Shrink the navbar when page is scrolled
-    document.addEventListener('scroll', navbarShrink);
-
-    // Activate Bootstrap scrollspy on the main nav element
-    const mainNav = document.body.querySelector('#mainNav');
-    if (mainNav) {
-        new bootstrap.ScrollSpy(document.body, {
-            target: '#mainNav',
-            offset: 52,
-        });
-    };
-
-    // Collapse responsive navbar when toggler is visible
-    const navbarToggler = document.body.querySelector('.navbar-toggler');
-    const responsiveNavItems = [].slice.call(
-        document.querySelectorAll('#navbarResponsive .nav-link')
-    );
-    responsiveNavItems.map(function (responsiveNavItem) {
-        responsiveNavItem.addEventListener('click', () => {
-            if (window.getComputedStyle(navbarToggler).display !== 'none') {
-                navbarToggler.click();
-            }
-        });
     });
-
+    $('.smoothup').on('click', function(){
+        $('html, body').animate({scrollTop:0}, 'slow');
+        return false;
+        });
 });

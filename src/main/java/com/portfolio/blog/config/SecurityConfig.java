@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -38,19 +39,19 @@ public class SecurityConfig{
 
         http.authorizeRequests()
                 .antMatchers("/css/**", "/js/**", "/assets/**").permitAll()
-                .antMatchers("/", "/blog/**").permitAll()
-                .antMatchers("/main/**").permitAll()
+                .antMatchers("/", "/login/**").permitAll()
+                .antMatchers("/blog/**").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
         ;
 
         http.formLogin()
-                .loginPage("/blog/login") //로그인페이지 주소
-                .defaultSuccessUrl("/main/mainPage") // 로그인 성공시 이동주소
+                .loginPage("/login/loginMain") //로그인페이지 주소
+                .defaultSuccessUrl("/blog/blogMain") // 로그인 성공시 이동주소
                 .usernameParameter("id") //유저네임 변수명
                 .passwordParameter("password") // 패스워드 변수명
-                .failureUrl("/blog/login/error") //로그인 실패시 이동주소
-                .loginProcessingUrl("/blog/login")
+                .failureUrl("/login/loginMain/error") //로그인 실패시 이동주소
+                .loginProcessingUrl("/login/loginMain")
                 .permitAll()
 
         ;
@@ -60,12 +61,14 @@ public class SecurityConfig{
                 .sessionManagement()
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(true)
-                .expiredUrl("/blog/login")
+                .expiredUrl("/login/loginMain")
         ;
 
 
         http.logout()
-                .logoutSuccessUrl("/blog/login")
+                .logoutUrl("/login/logout")
+                .logoutSuccessUrl("/login/loginMain")
+                .logoutRequestMatcher(new AntPathRequestMatcher("/login/logout"))
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()
@@ -78,10 +81,15 @@ public class SecurityConfig{
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .sessionFixation()
                 .changeSessionId()
-                .invalidSessionUrl("/blog/login")
+                .invalidSessionUrl("/login/loginMain")
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(true)
-                .expiredUrl("/blog/login");
+                .expiredUrl("/login/loginMain");
+
+        /*http.headers()
+                .and()
+                .csrf()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());*/
 
         return  http.build();
 

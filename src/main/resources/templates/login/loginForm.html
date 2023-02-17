@@ -37,18 +37,18 @@
     </style>
 
 
-<div layout:fragment="content" class="container">
+<div layout:fragment="content">
     <div class="div-class text-center m-auto">
         <img class="mb-4 mt-5" th:src="@{/assets/img/blogMain.png}" alt="" width="100" height="100">
-        <h2>포트폴리오_블로그</h2>
-        <form role="form" action="/blog/login" method="post">
+        <h2 class="text-center">포트폴리오_블로그</h2>
+        <form role="form" action="/login/loginMain" method="post">
             <div class="form-floating">
-                <input type="text" class="form-control" name="id" id="id">
                 <label th:for="id">아이디</label>
+                <input type="text" class="form-control" name="id" id="id">
             </div>
             <div class="form-floating">
-                <input type="password" class="form-control" name="password" id="password">
                 <label th:for="password">비밀번호</label>
+                <input type="password" class="form-control" name="password" id="password">
             </div>
             <p th:if="${loginErrorMsg}" class="error" th:text="${loginErrorMsg}"></p>
             <div class="d-flex justify-content-between">
@@ -57,13 +57,11 @@
                     <label class="form-check-label fs-6">아이디 저장하기</label>
                 </div>
                 <ul class="mt-2">
-                    <li><a href="/blog/idSearch" class="color-black li-a idSearch">아이디 찾기</a></li>
-                    <li><a href="/blog/pwdSearch" class="color-black li-a pwSearch">비밀번호 찾기</a></li>
-                    <li><a href="/blog/agree" class="color-black li-a">회원가입</a></li>
+                    <li><a href="/login/agree" class="color-black li-a">회원가입</a></li>
                 </ul>
             </div>
             <br>
-            <input type="submit" class="w-100 btn btn-lg btn-primary mt-2 loginBtn" value="로그인">
+            <input type="submit" class="w-100 btn btn-lg btn-primary mt-2 loginBtn mb-5" value="로그인">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         </form>
     </div>
@@ -71,10 +69,12 @@
     <script layout:fragment="script">
 
         $(document).ready(function(){
-            var errorMessage = [[${loginErrorMsg}]];
-            if(errorMessage != null){
-                alert(errorMessage);
+
+            var errorMessage = "[[${loginErrorMsg != null ? loginErrorMsg : ""}]]";
+            if(errorMessage != ""){
+                alert(""+errorMessage);
             }
+
         });
     </script>
 </html>

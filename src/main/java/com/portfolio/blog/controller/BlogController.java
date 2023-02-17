@@ -1,92 +1,95 @@
 package com.portfolio.blog.controller;
 
+import com.portfolio.blog.dto.BlogInfoDTO;
+import com.portfolio.blog.dto.BlogListDTO;
 import com.portfolio.blog.dto.MemberDTO;
 import com.portfolio.blog.entity.Member;
-import com.portfolio.blog.service.MemberService;
+import com.portfolio.blog.repository.MemberRepository;
+import com.portfolio.blog.service.BlogInfoService;
+import com.portfolio.blog.service.BlogListService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
-@RequestMapping("/blog")
 @Log4j2
+@RequestMapping("/blog")
 @RequiredArgsConstructor
 public class BlogController {
 
-    private final MemberService memberService;
-    private final PasswordEncoder passwordEncoder;
+    private static final Logger LOGGER = LoggerFactory.getLogger(BlogController.class);
+    private final MemberRepository memberRepository;
+    private final BlogListService blogListService;
+    private final BlogInfoService blogInfoService;
 
-    @GetMapping("/login")
-    public String login(){
-        log.info("login-------------------");
-        return "/login/loginForm";
+    @GetMapping("/blogMain")
+    public String main(Authentication authentication, HttpSession session){
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String id = userDetails.getUsername();
+//            LOGGER.info(userDetails.getUsername());
+
+            MemberDTO memberDTO = new MemberDTO();
+            Optional<Member> member = memberRepository.findById(id);
+        member.ifPresent(value -> memberDTO.setNickName(value.getNickName()));
+        member.ifPresent(value -> memberDTO.setId(value.getNickName()));
+        member.ifPresent(value -> memberDTO.setName(value.getNickName()));
+
+        session.setAttribute("memberDTO", memberDTO);
+//        log.info("세션값 확인 : " + memberDTO);
+        return "blog/blogForm";
     }
 
-    @GetMapping(value = "/login/error")
-    public String loginError(Model model){
-        model.addAttribute("loginErrorMsg", "아이디 또는 비밀번호를 확인해주세요");
-        return "/login/loginForm";
+    //블로그생성
+    @GetMapping("/blogCreate")
+    public String createBlog(Model model){
+        model.addAttribute("blogInfoDTO", new BlogInfoDTO());
+        model.addAttribute("blogListDTO", new BlogListDTO());
+        return "blog/createBlogForm";
     }
 
-    @GetMapping("/agree")
-    public String agree(){
-        log.info("agree-------------------");
-        return "/login/agreeForm";
+    //블로그정보
+    @PostMapping("/blogCreate")
+    public String createBlogResult(@Valid BlogInfoDTO blogInfoDTO,
+                                   @Valid BlogListDTO blogListDTO,
+                                   @RequestParam(value = "blogLogoImg") List<MultipartFile> blogLogoImg,
+                                   @RequestParam("id") Member id,
+                                   BindingResult bindingResult,
+                                   Model model){
+
+        if (bindingResult.hasErrors()){
+            log.info("에러------------발견");
+            return "blog/createBlogForm";
+        }
+
+        blogInfoDTO.setMember(id);
+        blogListDTO.setMember(id);
+
+        log.info("blogInfoDTO : " + blogInfoDTO);
+        log.info("blogListDTO : " + blogListDTO);
+
+        blogInfoService.saveBlogInfo(blogInfoDTO, blogLogoImg);
+        blogListService.saveBlogList(blogListDTO);
+
+        return  "redirect:/blog/blogMain";
+    }// 파일업로드는 하다말았음.
+
+    @GetMapping("/PostCreate")
+    public String createPost(){
+
+        return "main/createPostForm";
     }
-
-    @GetMapping("/join")
-    public String join(Model model){
-        log.info("Getjoin-------------------");
-        model.addAttribute("memberDTO", new MemberDTO());
-        return "/login/joinForm";
-    }
-
-    @PostMapping(value = "/join")
-        public String newMember(@Valid MemberDTO memberDTO,
-                BindingResult bindingResult,
-                Model model){
-            if(bindingResult.hasErrors()){
-                return "login/joinForm";
-            }
-            try {
-                Member member = Member.createMember(memberDTO, passwordEncoder);
-                memberService.saveMember(member);
-            } catch (IllegalStateException e){
-                model.addAttribute("errorMessage", e.getMessage());
-                return "login/joinForm";
-            }
-
-            return "login/loginForm";
-    }
-
-    @GetMapping("/logout")
-    public String logout(){
-
-        return "/login/loginForm";
-    }
-
-    @GetMapping("/idSearch")
-    public String idSearch(Model model){
-        model.addAttribute("MemberDTO",new MemberDTO());
-        return "/login/idSearch";
-    }
-
-    @GetMapping("pwdSearch")
-    public String pwdSearch(Model model){
-
-        model.addAttribute("MemberDTO",new MemberDTO());
-        return "/login/pwdSearch";
-    }
-
-
 }
