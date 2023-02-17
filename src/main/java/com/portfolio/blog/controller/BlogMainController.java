@@ -1,25 +1,16 @@
 package com.portfolio.blog.controller;
 
-import com.mysema.commons.lang.Assert;
 import com.portfolio.blog.dto.BlogInfoDTO;
 import com.portfolio.blog.dto.BlogListDTO;
 import com.portfolio.blog.dto.MemberDTO;
 import com.portfolio.blog.entity.BlogInfo;
 import com.portfolio.blog.entity.Member;
-import com.portfolio.blog.repository.BlogInfoRepository;
 import com.portfolio.blog.repository.MemberRepository;
-import com.portfolio.blog.service.BlogInfoService;
-import com.portfolio.blog.service.BlogListService;
-import com.portfolio.blog.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
-import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,10 +42,11 @@ public class BlogMainController {
 
             MemberDTO memberDTO = new MemberDTO();
             Optional<Member> member = memberRepository.findById(id);
-        member.ifPresent(value -> memberDTO.setNickName(value.getNickName()));
-        member.ifPresent(value -> memberDTO.setId(value.getNickName()));
-        member.ifPresent(value -> memberDTO.setName(value.getNickName()));
 
+        member.ifPresent(value -> memberDTO.setNickName(value.getNickName()));
+        member.ifPresent(value -> memberDTO.setId(value.getId()));
+        member.ifPresent(value -> memberDTO.setName(value.getName()));
+        LOGGER.info(memberDTO+"");
         session.setAttribute("memberDTO", memberDTO);
 //        log.info("세션값 확인 : " + memberDTO);
         return "main/mainForm";
