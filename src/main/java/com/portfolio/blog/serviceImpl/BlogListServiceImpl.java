@@ -17,10 +17,10 @@ public class BlogListServiceImpl implements BlogListService {
     private  final BlogListRepository blogListRepository;
 
     @Override
-    public BlogList findByMember(String id) {
-        return blogListRepository.findByMember(id);
+    public BlogList findByMember_id(String id) {
+        return blogListRepository.findByMember_Id(id);
     }
-    
+
     //블로그 정보저장
     @Override
     public void saveBlogList(BlogListDTO blogListDTO) {

@@ -7,9 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface BlogInfoService{
-    BlogInfo findByMember(String id);
+    BlogInfo findByMember_Id(String id);
 
     //블로그 정보저장
-    public void saveBlogInfo(BlogInfoDTO blogInfoDTO,
+    void saveBlogInfo(BlogInfoDTO blogInfoDTO,
                              List<MultipartFile> blogLogoImg);
 }

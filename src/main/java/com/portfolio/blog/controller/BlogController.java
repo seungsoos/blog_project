@@ -37,16 +37,17 @@ public class BlogController {
     private final BlogInfoService blogInfoService;
 
     @GetMapping("/blogMain")
-    public String main(Authentication authentication, HttpSession session){
+    public String main(Authentication authentication, HttpSession session) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String id = userDetails.getUsername();
-//            LOGGER.info(userDetails.getUsername());
+            LOGGER.info(userDetails.getUsername());
 
-            MemberDTO memberDTO = new MemberDTO();
-            Optional<Member> member = memberRepository.findById(id);
-        member.ifPresent(value -> memberDTO.setNickName(value.getNickName()));
-        member.ifPresent(value -> memberDTO.setId(value.getNickName()));
-        member.ifPresent(value -> memberDTO.setName(value.getNickName()));
+        MemberDTO memberDTO = new MemberDTO();
+        Optional<Member> member = memberRepository.findById(id);
+
+        memberDTO.setNickName(member.get().getNickName());
+        memberDTO.setName(member.get().getName());
+        memberDTO.setId(member.get().getId());
 
         session.setAttribute("memberDTO", memberDTO);
 //        log.info("세션값 확인 : " + memberDTO);
@@ -55,7 +56,7 @@ public class BlogController {
 
     //블로그생성
     @GetMapping("/blogCreate")
-    public String createBlog(Model model){
+    public String createBlog(Model model) {
         model.addAttribute("blogInfoDTO", new BlogInfoDTO());
         model.addAttribute("blogListDTO", new BlogListDTO());
         return "blog/createBlogForm";
@@ -68,9 +69,9 @@ public class BlogController {
                                    @RequestParam(value = "blogLogoImg") List<MultipartFile> blogLogoImg,
                                    @RequestParam("id") Member id,
                                    BindingResult bindingResult,
-                                   Model model){
+                                   Model model) {
 
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             log.info("에러------------발견");
             return "blog/createBlogForm";
         }
@@ -84,11 +85,11 @@ public class BlogController {
         blogInfoService.saveBlogInfo(blogInfoDTO, blogLogoImg);
         blogListService.saveBlogList(blogListDTO);
 
-        return  "redirect:/blog/blogMain";
+        return "redirect:/blog/blogMain";
     }// 파일업로드는 하다말았음.
 
     @GetMapping("/PostCreate")
-    public String createPost(){
+    public String createPost() {
 
         return "main/createPostForm";
     }

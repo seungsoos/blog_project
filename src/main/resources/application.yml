@@ -1,7 +1,7 @@
 spring:
   datasource:
-    username: root
-    url: jdbc:mysql://127.0.0.1:3307/mydb?characterEncoding=utf8
+    username: myDB
+    url: jdbc:mysql://127.0.0.1:3306/blog?characterEncoding=utf8
     driverClassName: com.mysql.cj.jdbc.Driver
     password: '1234'
   thymeleaf:
@@ -9,6 +9,11 @@ spring:
   devtools:
     livereload:
       enabled: 'true'
+  servlet:
+    multipart:
+      maxFileSize: 20MB
+      maxRequestSize: 100MB
+
   jpa:
     database: mysql   # ?? ?? ??
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect # ?? ?? ??
@@ -18,7 +23,7 @@ spring:
         format_sql: 'true'
         show_sql: 'true'
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
 logging:
   level:
     org:
@@ -43,3 +48,5 @@ server:
       session:
         timeout: -1
 
+postImgLocation : /Users/Kungas_57/Desktop/study_java/test/src/main/resources/static/assets/upload
+uploadPath : file:///Users/Kungas_57/Desktop/study_java/test/

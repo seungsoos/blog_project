@@ -14,8 +14,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BlogBrdListServiceImpl implements BlogBrdListService {
     private  final BlogBrdListRepository blogBrdListRepository;
+
     @Override
-    public List<BlogBrdList> findByMember(String id) {
-        return blogBrdListRepository.findByMember(id);
+    public List<BlogBrdList> findByMember_Id(String id) {
+        return blogBrdListRepository.findByMember_Id(id);
     }
 }

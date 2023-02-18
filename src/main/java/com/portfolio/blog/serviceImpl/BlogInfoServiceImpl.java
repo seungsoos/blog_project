@@ -2,9 +2,7 @@ package com.portfolio.blog.serviceImpl;
 
 import com.portfolio.blog.dto.BlogInfoDTO;
 import com.portfolio.blog.entity.BlogInfo;
-import com.portfolio.blog.repository.BlogImgFileRepository;
 import com.portfolio.blog.repository.BlogInfoRepository;
-import com.portfolio.blog.service.BlogImgFileService;
 import com.portfolio.blog.service.BlogInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,13 +17,12 @@ import java.util.List;
 public class BlogInfoServiceImpl implements BlogInfoService {
 
     private final BlogInfoRepository blogInfoRepository;
-    private final BlogImgFileService blogImgFileService;
 
     @Override
-    public BlogInfo findByMember(String id) {
-        return blogInfoRepository.findByMember(id);
+    public BlogInfo findByMember_Id(String id) {
+        return blogInfoRepository.findByMember_Id(id);
     }
-    
+
     //블로그 정보 저장
     @Override
     public void saveBlogInfo(BlogInfoDTO blogInfoDTO,
