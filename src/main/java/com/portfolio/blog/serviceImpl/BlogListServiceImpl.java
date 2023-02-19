@@ -2,6 +2,7 @@ package com.portfolio.blog.serviceImpl;
 
 import com.portfolio.blog.dto.BlogListDTO;
 import com.portfolio.blog.entity.BlogList;
+import com.portfolio.blog.entity.Member;
 import com.portfolio.blog.repository.BlogListRepository;
 import com.portfolio.blog.service.BlogListService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,8 @@ public class BlogListServiceImpl implements BlogListService {
     //블로그 정보수정
     @Override
     public void modifyBlogList(BlogListDTO blogListDTO) {
-        String id = String.valueOf(blogListDTO.getId());
+        Member member = blogListDTO.getId();
+        String id = member.getId();
         BlogList blogList = blogListRepository.findByMember_id(id);
         blogList.modifyBlogList(blogListDTO);
     }

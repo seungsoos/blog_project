@@ -27,6 +27,8 @@
     <div class="container">
       <h2>블로그 수정</h2>
       <form th:action="@{/blog/blogModify}" method="post" th:object="${blogInfoDTO}">
+        <input type="hidden" th:field="${blogListDTO.bnum}">
+        <input type="hidden" th:field="*{inum}">
         <div class="form-group mb-3">
           <label th:for="myProfile">한줄 자기소개</label>
           <input type="text" th:field="*{myProfile}" class="form-control">
@@ -56,7 +58,7 @@
           </select>
         </div>
         <input type="submit" class="btn btn-primary" value="수정하기"/>
-        <input type="hidden" th:value="${session.memberDTO.id}" name="id">
+        <input type="hidden" th:value="${session.memberDTO.id}" name="member">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
       </form>
 

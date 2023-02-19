@@ -67,7 +67,7 @@ public class BlogController {
     @PostMapping("/blogCreate")
     public String createBlogResult(@Valid BlogInfoDTO blogInfoDTO,
                                    @Valid BlogListDTO blogListDTO,
-                                   @RequestParam("id") String id,
+                                   @RequestParam("member") Member id,
                                    BindingResult bindingResult,
                                    Model model) {
 
@@ -75,10 +75,9 @@ public class BlogController {
             log.info("에러------------발견");
             return "blog/createBlogForm";
         }
-        Optional<Member> member = memberRepository.findById(id);
         log.info("*--------------" + id);
-        blogInfoDTO.setId(member.get());
-        blogListDTO.setId(member.get());
+        blogInfoDTO.setId(id);
+        blogListDTO.setId(id);
 
         log.info("blogInfoDTO : " + blogInfoDTO);
         log.info("blogListDTO : " + blogListDTO);
@@ -108,7 +107,7 @@ public class BlogController {
 
     //블로그 수정
     @GetMapping("/blogModify")
-    public String blogModify(HttpSession session,Model model){
+    public String blogModify(HttpSession session, Model model){
 
         log.info("확인1----------------------");
         MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
@@ -132,7 +131,7 @@ public class BlogController {
     @PostMapping("/blogModify")
     public String blogModify(@Valid BlogInfoDTO blogInfoDTO,
                              @Valid BlogListDTO blogListDTO,
-                             @RequestParam("member") Member member,
+                             @RequestParam("member") Member id,
                              BindingResult bindingResult,
                              Model model){
 
@@ -141,11 +140,12 @@ public class BlogController {
             return "blog/blogModifyForm";
         }
 
-        log.info(member);
+        log.info(id);
 
         log.info(blogInfoDTO);
         log.info(blogListDTO);
-
+        blogInfoDTO.setId(id);
+        blogListDTO.setId(id);
         blogInfoService.modifyBlogInfo(blogInfoDTO);
         blogListService.modifyBlogList(blogListDTO);
 
