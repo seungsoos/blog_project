@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public interface BlogInfoService{
 
-
     BlogInfo findByMember_id(String id);
 
     //블로그 정보저장

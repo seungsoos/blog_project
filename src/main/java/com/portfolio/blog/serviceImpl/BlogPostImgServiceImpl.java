@@ -1,5 +1,4 @@
 package com.portfolio.blog.serviceImpl;
-
 import com.portfolio.blog.entity.BlogPostImg;
 import com.portfolio.blog.repository.BlogPostImgRepository;
 import com.portfolio.blog.service.BlogPostImgService;

@@ -21,7 +21,7 @@ public class BlogInfoServiceImpl implements BlogInfoService {
     public BlogInfo findByMember_id(String id) {
         return blogInfoRepository.findByMember_id(id);
     }
-    
+
     //블로그 정보 저장
     @Override
     public void saveBlogInfo(BlogInfoDTO blogInfoDTO) {

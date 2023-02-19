@@ -41,7 +41,7 @@ public class BlogController {
     private final BlogInfoRepository blogInfoRepository;
 
     @GetMapping("/blogMain")
-    public String main(Authentication authentication, HttpSession session){
+    public String main(Authentication authentication, HttpSession session) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String id = userDetails.getUsername();
 
@@ -57,7 +57,7 @@ public class BlogController {
 
     //블로그생성
     @GetMapping("/blogCreate")
-    public String createBlog(Model model){
+    public String createBlog(Model model) {
         model.addAttribute("blogInfoDTO", new BlogInfoDTO());
         model.addAttribute("blogListDTO", new BlogListDTO());
         return "blog/createBlogForm";
@@ -69,9 +69,9 @@ public class BlogController {
                                    @Valid BlogListDTO blogListDTO,
                                    @RequestParam("id") String id,
                                    BindingResult bindingResult,
-                                   Model model){
+                                   Model model) {
 
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             log.info("에러------------발견");
             return "blog/createBlogForm";
         }

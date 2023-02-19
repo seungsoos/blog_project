@@ -1,5 +1,7 @@
 package com.portfolio.blog.service;
 
+import java.time.LocalDateTime;
+
 public interface BlogMemberVisitCountService {
-    int  CountByVisitDate(String VisitDate);
+    int  findCountByRegTime(LocalDateTime regTime);
 }
