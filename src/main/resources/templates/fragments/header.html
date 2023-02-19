@@ -17,8 +17,9 @@
                 <div class="menu-menu-1-container">
                     <ul id="menu-menu-1" class="menu">
                         <li><a href="/blog/blogMain" sec:authorize="permitAll()">블로그</a></li>
-                        <li><a href="about.html" sec:authorize="isAuthenticated()">블로그 수정</a></li>
-                        <li><a href="shop.html" sec:authorize="isAuthenticated()">게시글 작성</a></li>
+                        <li><a href="/blog/blogCreate" sec:authorize="isAuthenticated()">블로그 생성</a></li>
+                        <li><a href="/blog/blogModify" sec:authorize="isAuthenticated()">블로그 수정</a></li>
+                        <li><a href="/blog/postCreate" sec:authorize="isAuthenticated()">게시글 작성</a></li>
                         <li><a href="blog.html" sec:authorize="isAuthenticated()">친구목록</a></li>
                         <li><a href="/login/loginMain" sec:authorize="isAnonymous()">로그인</a></li>
                         <li><a href="/login/logout" sec:authorize="isAuthenticated()">로그아웃</a></li>

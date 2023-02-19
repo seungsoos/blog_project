@@ -1,5 +1,6 @@
 package com.portfolio.blog.dto;
 
+import com.portfolio.blog.entity.Member;
 import lombok.Data;
 import lombok.ToString;
 
@@ -8,15 +9,14 @@ import lombok.ToString;
 public class ImgFileDTO {
     private  Long imgNum;
 
-    private String logoImg;
+    private String member;
 
-    private  String logoImgPath; // 로고 이미지
+    private String uuid;
 
-    private  String mainImg; //메인 이미지
+    private  String postFileName; // 게시글 제목
 
-    private  String mainImgPath; // 메인이미지 주소
+    private  String postFilePath; // 게시글 주소
 
-    private  String mainImgExt; // 메인이미지 확장자
+    private  String postFileExt; // 메인이미지 확장자
 
-    private  String logImgExt; // 로고 이미지 확장자
 }

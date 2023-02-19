@@ -2,8 +2,11 @@ package com.portfolio.blog.controller;
 
 import com.portfolio.blog.dto.BlogInfoDTO;
 import com.portfolio.blog.dto.BlogListDTO;
+import com.portfolio.blog.dto.BlogPostDTO;
 import com.portfolio.blog.dto.MemberDTO;
+import com.portfolio.blog.entity.BlogInfo;
 import com.portfolio.blog.entity.Member;
+import com.portfolio.blog.repository.BlogInfoRepository;
 import com.portfolio.blog.repository.MemberRepository;
 import com.portfolio.blog.service.BlogInfoService;
 import com.portfolio.blog.service.BlogListService;
@@ -35,21 +38,20 @@ public class BlogController {
     private final MemberRepository memberRepository;
     private final BlogListService blogListService;
     private final BlogInfoService blogInfoService;
+    private final BlogInfoRepository blogInfoRepository;
 
     @GetMapping("/blogMain")
     public String main(Authentication authentication, HttpSession session){
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String id = userDetails.getUsername();
-//            LOGGER.info(userDetails.getUsername());
 
-            MemberDTO memberDTO = new MemberDTO();
-            Optional<Member> member = memberRepository.findById(id);
+        MemberDTO memberDTO = new MemberDTO();
+        Optional<Member> member = memberRepository.findById(id);
         member.ifPresent(value -> memberDTO.setNickName(value.getNickName()));
-        member.ifPresent(value -> memberDTO.setId(value.getNickName()));
-        member.ifPresent(value -> memberDTO.setName(value.getNickName()));
+        member.ifPresent(value -> memberDTO.setId(value.getId()));
+        member.ifPresent(value -> memberDTO.setName(value.getName()));
 
         session.setAttribute("memberDTO", memberDTO);
-//        log.info("세션값 확인 : " + memberDTO);
         return "blog/blogForm";
     }
 
@@ -61,12 +63,11 @@ public class BlogController {
         return "blog/createBlogForm";
     }
 
-    //블로그정보
+    //블로그생성
     @PostMapping("/blogCreate")
     public String createBlogResult(@Valid BlogInfoDTO blogInfoDTO,
                                    @Valid BlogListDTO blogListDTO,
-                                   @RequestParam(value = "blogLogoImg") List<MultipartFile> blogLogoImg,
-                                   @RequestParam("id") Member id,
+                                   @RequestParam("id") String id,
                                    BindingResult bindingResult,
                                    Model model){
 
@@ -74,22 +75,81 @@ public class BlogController {
             log.info("에러------------발견");
             return "blog/createBlogForm";
         }
-
-        blogInfoDTO.setMember(id);
-        blogListDTO.setMember(id);
+        Optional<Member> member = memberRepository.findById(id);
+        log.info("*--------------" + id);
+        blogInfoDTO.setId(member.get());
+        blogListDTO.setId(member.get());
 
         log.info("blogInfoDTO : " + blogInfoDTO);
         log.info("blogListDTO : " + blogListDTO);
 
-        blogInfoService.saveBlogInfo(blogInfoDTO, blogLogoImg);
+        blogInfoService.saveBlogInfo(blogInfoDTO);
         blogListService.saveBlogList(blogListDTO);
 
         return  "redirect:/blog/blogMain";
-    }// 파일업로드는 하다말았음.
-
-    @GetMapping("/PostCreate")
-    public String createPost(){
-
-        return "main/createPostForm";
     }
+
+    //게시글 생성
+    @GetMapping("/postCreate")
+    public String createPost(Model model){
+        model.addAttribute("blogPostDTO", new BlogPostDTO());
+        return "blog/createPostForm";
+    }
+    //게시글 생성
+    @PostMapping("/postCreate")
+    public String createPost(@Valid BlogPostDTO blogPostDTO,
+                             @RequestParam("id") String id){
+        log.info(blogPostDTO);
+        blogPostDTO.setMember(id);
+        log.info("게시글 저장---------------------");
+
+        return  "redirect:/blog/blogMain";
+    }
+
+    //블로그 수정
+    @GetMapping("/blogModify")
+    public String blogModify(HttpSession session,Model model){
+
+        log.info("확인1----------------------");
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+        String id =memberDTO.getId();
+        log.info("확인2----------------------" + id);
+
+
+        log.info("제발 : " + blogInfoRepository.findByMember_id(id));
+
+        BlogInfoDTO blogInfoDTO = BlogInfoDTO.of(blogInfoService.findByMember_id(id));
+        log.info("blogInfoDTO : " + blogInfoDTO);
+        BlogListDTO blogListDTO = BlogListDTO.of(blogListService.findByMember_id(id));
+        log.info("blogListDTO : " + blogListDTO);
+
+
+        model.addAttribute("blogInfoDTO", blogInfoDTO);
+        model.addAttribute("blogListDTO", blogListDTO);
+        return "blog/blogModifyForm";
+    }
+
+    @PostMapping("/blogModify")
+    public String blogModify(@Valid BlogInfoDTO blogInfoDTO,
+                             @Valid BlogListDTO blogListDTO,
+                             @RequestParam("member") Member member,
+                             BindingResult bindingResult,
+                             Model model){
+
+        if (bindingResult.hasErrors()){
+            log.info("에러------------발견");
+            return "blog/blogModifyForm";
+        }
+
+        log.info(member);
+
+        log.info(blogInfoDTO);
+        log.info(blogListDTO);
+
+        blogInfoService.modifyBlogInfo(blogInfoDTO);
+        blogListService.modifyBlogList(blogListDTO);
+
+        return "redirect:/blog/blogMain";
+    }
+
 }

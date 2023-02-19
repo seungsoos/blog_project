@@ -1,6 +1,7 @@
 package com.portfolio.blog.entity;
 
 import com.portfolio.blog.constant.Authority;
+import com.portfolio.blog.dto.BlogInfoDTO;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Table(name="blog_info")
 @Data
 @ToString
-public class BlogInfo {
+public class BlogInfo extends BaseTimeEntity {
     @Id
     @Column(name="i_num")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,18 +24,17 @@ public class BlogInfo {
     @OneToOne
     private  Member member;
 
-    @Enumerated(EnumType.STRING)
-    private Authority blogLogo;
-
     private String  myProfile;
-
-    private  String titleColor; // 제목 컬러
-
-    private  String sideColor; // 사이드 컬러
-
-    private String boxBgColor; // 본문 컬러
 
     @Enumerated(EnumType.STRING)
     private  Authority viewChk; // 개인 프로필 공개 여부
+
+    //정보수정
+    public void modifyBlogInfo(BlogInfoDTO blogInfoDTO){
+        this.inum = blogInfoDTO.getInum();
+        this.member = blogInfoDTO.getId();
+        this.myProfile = blogInfoDTO.getMyProfile();
+        this.viewChk = blogInfoDTO.getViewChk();
+    }
 
 }

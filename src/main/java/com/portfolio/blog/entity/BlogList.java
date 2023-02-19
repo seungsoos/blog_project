@@ -1,6 +1,8 @@
 package com.portfolio.blog.entity;
 
 import com.portfolio.blog.constant.Authority;
+import com.portfolio.blog.dto.BlogInfoDTO;
+import com.portfolio.blog.dto.BlogListDTO;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +32,14 @@ public class BlogList extends  BaseTimeEntity{
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Authority blogAuthority ; // 블로그 권한
+    private Authority blogAuthority ; // 블로그 공개범위
 
-
+    //정보수정
+    public void modifyBlogList(BlogListDTO blogListDTO){
+        this.bnum = blogListDTO.getBnum();
+        this.member = blogListDTO.getId();
+        this.blogName = blogListDTO.getBlogName();
+        this.blogDetail = blogListDTO.getBlogDetail();
+        this.blogAuthority = blogListDTO.getBlogAuthority();
+    }
 }

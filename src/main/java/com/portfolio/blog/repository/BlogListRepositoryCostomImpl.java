@@ -55,9 +55,6 @@ public class BlogListRepositoryCostomImpl  implements  BlogListRepositoryCostom 
             return QBlogList.blogList.blogName.like("%"+searchQuery+"%");
         } else if (StringUtils.equals("blogDetail", searchBy)) {
             return  QBlogList.blogList.blogDetail.like("%"+searchQuery+"%");
-
-        } else if (StringUtils.equals("member", searchBy)) {
-            return QBlogList.blogList.member.nickName.like("%"+searchQuery+"%");
         }
         return  null;
     }
