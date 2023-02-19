@@ -6,10 +6,8 @@ import com.portfolio.blog.repository.BlogInfoRepository;
 import com.portfolio.blog.service.BlogInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Service
 @Transactional
@@ -18,25 +16,26 @@ public class BlogInfoServiceImpl implements BlogInfoService {
 
     private final BlogInfoRepository blogInfoRepository;
 
+
     @Override
-    public BlogInfo findByMember_Id(String id) {
-        return blogInfoRepository.findByMember_Id(id);
+    public BlogInfo findByMember_id(String id) {
+        return blogInfoRepository.findByMember_id(id);
     }
 
     //블로그 정보 저장
     @Override
-    public void saveBlogInfo(BlogInfoDTO blogInfoDTO,
-                             List<MultipartFile> blogLogoImg) {
+    public void saveBlogInfo(BlogInfoDTO blogInfoDTO) {
         BlogInfo blogInfo = blogInfoDTO.saveBlogInfo();
         blogInfoRepository.save(blogInfo);
-
-        try {
-            if (!(blogLogoImg.isEmpty())){
-
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
     }
+    
+    //블로그 정보 수정
+    @Override
+    public void modifyBlogInfo(BlogInfoDTO blogInfoDTO) {
+        String id = String.valueOf(blogInfoDTO.getId());
+        BlogInfo blogInfo = blogInfoRepository.findByMember_id(id);
+        blogInfo.modifyBlogInfo(blogInfoDTO);
+    }
+
+
 }

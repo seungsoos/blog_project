@@ -1,10 +1,6 @@
 package com.portfolio.blog.serviceImpl;
-
-import com.portfolio.blog.entity.BlogPost;
 import com.portfolio.blog.entity.BlogPostImg;
-import com.portfolio.blog.repository.BlogBrdListRepository;
 import com.portfolio.blog.repository.BlogPostImgRepository;
-import com.portfolio.blog.repository.BlogPostRepository;
 import com.portfolio.blog.service.BlogPostImgService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

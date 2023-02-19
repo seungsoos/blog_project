@@ -4,5 +4,5 @@ import com.portfolio.blog.entity.BlogList;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BlogListRepository extends JpaRepository<BlogList, Long> {
-    BlogList findByMember_Id(String id);
+    BlogList findByMember_id(String id);
 }

@@ -18,7 +18,7 @@ public class BlogListServiceImpl implements BlogListService {
 
     @Override
     public BlogList findByMember_id(String id) {
-        return blogListRepository.findByMember_Id(id);
+        return blogListRepository.findByMember_id(id);
     }
 
     //블로그 정보저장
@@ -26,5 +26,13 @@ public class BlogListServiceImpl implements BlogListService {
     public void saveBlogList(BlogListDTO blogListDTO) {
         BlogList bloglist = blogListDTO.saveBlogList();
         blogListRepository.save(bloglist);
+    }
+
+    //블로그 정보수정
+    @Override
+    public void modifyBlogList(BlogListDTO blogListDTO) {
+        String id = String.valueOf(blogListDTO.getId());
+        BlogList blogList = blogListRepository.findByMember_id(id);
+        blogList.modifyBlogList(blogListDTO);
     }
 }
