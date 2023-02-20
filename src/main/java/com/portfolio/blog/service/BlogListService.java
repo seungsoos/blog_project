@@ -8,7 +8,7 @@ public interface BlogListService {
     BlogList findByMember_id(String id);
 
     //블로그 정보저장
-    public void saveBlogList(BlogListDTO blogListDTO);
+    void saveBlogList(BlogListDTO blogListDTO);
 
     //블로그 정보수정
     void modifyBlogList(BlogListDTO blogListDTO);

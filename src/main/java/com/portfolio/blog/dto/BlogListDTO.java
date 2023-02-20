@@ -27,14 +27,10 @@ public class BlogListDTO { // 유저 한명당 하나의 블로그를 가짐
     @Enumerated(EnumType.STRING)
     private Authority blogAuthority; // 블로그 공개범위
 
-    /*@QueryProjection
-    public BlogListDTO(Member member){
-        this.id = member.getId();
-    }*/
 
     private static ModelMapper modelMapper = new ModelMapper();
     //DTO -> Entity로 변경
-    public BlogList saveBlogList(){
+    public BlogList createBlogList(){
         return modelMapper.map(this, BlogList.class);
     }
 

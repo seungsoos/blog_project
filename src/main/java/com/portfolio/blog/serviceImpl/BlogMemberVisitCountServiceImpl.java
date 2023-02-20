@@ -1,5 +1,8 @@
 package com.portfolio.blog.serviceImpl;
 
+import com.portfolio.blog.dto.BlogVisitCountDTO;
+import com.portfolio.blog.entity.BlogBrdList;
+import com.portfolio.blog.entity.BlogVisitCount;
 import com.portfolio.blog.repository.BlogVisitCountRepository;
 import com.portfolio.blog.service.BlogVisitCountService;
 import lombok.RequiredArgsConstructor;
@@ -19,5 +22,9 @@ public class BlogMemberVisitCountServiceImpl implements BlogVisitCountService {
         return blogVisitCountRepository.findCountByRegTime(regTime);
     }
 
-
+    @Override
+    public void saveBlogVisitCount(BlogVisitCountDTO blogVisitCountDTO) {
+        BlogVisitCount blogVisitCount = blogVisitCountDTO.createBlogMemberVisitCount();
+        blogVisitCountRepository.save(blogVisitCount);
+    }
 }

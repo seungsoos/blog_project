@@ -24,16 +24,9 @@ public class BlogInfoDTO {
     @Enumerated(EnumType.STRING)
     private Authority viewChk; // 프로필 공개유무
 
-
-    /*@QueryProjection
-    public BlogInfoDTO(Member member){
-        this.id = member.getId();
-    }*/
-
-
     private static ModelMapper modelMapper = new ModelMapper();
     //DTO를 -> Entity로 변경
-    public BlogInfo saveBlogInfo(){
+    public BlogInfo createBlogInfo(){
         return modelMapper.map(this, BlogInfo.class);
     }
 

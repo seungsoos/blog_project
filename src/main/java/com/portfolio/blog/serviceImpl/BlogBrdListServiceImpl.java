@@ -1,6 +1,8 @@
 package com.portfolio.blog.serviceImpl;
 
+import com.portfolio.blog.dto.BlogBrdListDTO;
 import com.portfolio.blog.entity.BlogBrdList;
+import com.portfolio.blog.entity.BlogList;
 import com.portfolio.blog.repository.BlogBrdListRepository;
 import com.portfolio.blog.service.BlogBrdListService;
 import lombok.RequiredArgsConstructor;
@@ -19,4 +21,17 @@ public class BlogBrdListServiceImpl implements BlogBrdListService {
     public List<BlogBrdList> findByMember_Id(String id) {
         return blogBrdListRepository.findByMember_Id(id);
     }
+
+    @Override
+    public List<BlogBrdList> findAll() {
+        return null;
+    }
+
+    @Override
+    public void saveBlogBrdList(BlogBrdListDTO blogBrdListDTO) {
+        BlogBrdList blogBrdList = blogBrdListDTO.createBlogBrdList();
+        blogBrdListRepository.save(blogBrdList);
+    }
+
+
 }

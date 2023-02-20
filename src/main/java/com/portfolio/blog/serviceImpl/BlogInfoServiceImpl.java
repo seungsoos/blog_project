@@ -26,7 +26,7 @@ public class BlogInfoServiceImpl implements BlogInfoService {
     //블로그 정보 저장
     @Override
     public void saveBlogInfo(BlogInfoDTO blogInfoDTO) {
-        BlogInfo blogInfo = blogInfoDTO.saveBlogInfo();
+        BlogInfo blogInfo = blogInfoDTO.createBlogInfo();
         blogInfoRepository.save(blogInfo);
     }
     

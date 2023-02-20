@@ -1,15 +1,16 @@
 package com.portfolio.blog.controller;
 
-import com.portfolio.blog.dto.BlogInfoDTO;
-import com.portfolio.blog.dto.BlogListDTO;
-import com.portfolio.blog.dto.BlogPostDTO;
-import com.portfolio.blog.dto.MemberDTO;
-import com.portfolio.blog.entity.BlogInfo;
+import com.portfolio.blog.dto.*;
+import com.portfolio.blog.entity.BlogBrdList;
 import com.portfolio.blog.entity.Member;
+import com.portfolio.blog.repository.BlogBrdListRepository;
 import com.portfolio.blog.repository.BlogInfoRepository;
+import com.portfolio.blog.repository.BlogPostRepository;
 import com.portfolio.blog.repository.MemberRepository;
+import com.portfolio.blog.service.BlogBrdListService;
 import com.portfolio.blog.service.BlogInfoService;
 import com.portfolio.blog.service.BlogListService;
+import com.portfolio.blog.service.BlogPostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -21,11 +22,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -38,7 +37,10 @@ public class BlogController {
     private final MemberRepository memberRepository;
     private final BlogListService blogListService;
     private final BlogInfoService blogInfoService;
-    private final BlogInfoRepository blogInfoRepository;
+    private  final BlogPostService blogPostService;
+    private  final BlogPostRepository blogPostRepository;
+    private  final BlogBrdListService blogBrdListService;
+    private  final BlogBrdListRepository blogBrdListRepository;
 
     @GetMapping("/blogMain")
     public String main(Authentication authentication, HttpSession session) {
@@ -92,16 +94,31 @@ public class BlogController {
     @GetMapping("/postCreate")
     public String createPost(Model model){
         model.addAttribute("blogPostDTO", new BlogPostDTO());
+        model.addAttribute("blogBrdListDTO", new BlogBrdListDTO());
         return "blog/createPostForm";
     }
     //게시글 생성
     @PostMapping("/postCreate")
     public String createPost(@Valid BlogPostDTO blogPostDTO,
-                             @RequestParam("id") String id){
-        log.info(blogPostDTO);
-        blogPostDTO.setMember(id);
-        log.info("게시글 저장---------------------");
+                             @Valid BlogBrdListDTO blogBrdListDTO,
+                             @RequestParam("member") Member id){
+        log.info(blogBrdListDTO);
 
+        log.info(blogPostDTO.getPostText());
+
+//      blogPost 저장, blogBrdPost (읽기, 댓글쓰기 권한) 저장, 후에 blogPostImg 저장
+        blogBrdListDTO.setId(id);
+        BlogBrdList blogBrdList=  blogBrdListDTO.createBlogBrdList(); // DTO -> 엔티티
+        Long cnum = blogBrdListRepository.save(blogBrdList).getCnum(); // 저장되면서 만들어진 cnum 가져오기
+
+
+        blogBrdList.setCnum(cnum); // cnum과 일치하는 엔티티 값을 저장
+        blogPostDTO.setBlogBrdList(blogBrdList);
+        blogPostDTO.setId(id); // 파라미터로 가져온 id값
+
+        blogPostService.saveBlogPost(blogPostDTO);
+
+        // blogPostImg blogPost가 foreign key로 들어감
         return  "redirect:/blog/blogMain";
     }
 
@@ -115,7 +132,7 @@ public class BlogController {
         log.info("확인2----------------------" + id);
 
 
-        log.info("제발 : " + blogInfoRepository.findByMember_id(id));
+        log.info("제발 : " + blogInfoService.findByMember_id(id));
 
         BlogInfoDTO blogInfoDTO = BlogInfoDTO.of(blogInfoService.findByMember_id(id));
         log.info("blogInfoDTO : " + blogInfoDTO);

@@ -1,6 +1,8 @@
 package com.portfolio.blog.serviceImpl;
 
+import com.portfolio.blog.dto.BlogPostDTO;
 import com.portfolio.blog.entity.BlogPost;
+import com.portfolio.blog.entity.BlogPostImg;
 import com.portfolio.blog.repository.BlogPostRepository;
 import com.portfolio.blog.service.BlogPostService;
 import lombok.RequiredArgsConstructor;
@@ -17,5 +19,11 @@ public class BlogPostServiceImpl implements BlogPostService {
     @Override
     public List<BlogPost> findAll() {
         return blogPostRepository.findAll();
+    }
+
+    @Override
+    public void saveBlogPost(BlogPostDTO blogPostDTO) {
+        BlogPost blogPost = blogPostDTO.createBlogPost();
+        blogPostRepository.save(blogPost);
     }
 }

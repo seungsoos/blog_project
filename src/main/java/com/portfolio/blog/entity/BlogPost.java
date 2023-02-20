@@ -1,13 +1,10 @@
 package com.portfolio.blog.entity;
 
 import com.portfolio.blog.constant.Category;
-import com.portfolio.blog.dto.ImgFileDTO;
-import com.portfolio.blog.repository.BlogBrdListRepository;
 import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity(name="blog_post")
 @Table(name="blog_post")
@@ -29,7 +26,7 @@ public class BlogPost extends  BaseTimeEntity{
 
     @Column(nullable = false)
     private String postTitle; // 게시글 제목
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
     private String postText; // 게시글 본문
 
     @Enumerated(EnumType.STRING)

@@ -1,7 +1,11 @@
 package com.portfolio.blog.dto;
 
+import com.portfolio.blog.entity.BlogList;
+import com.portfolio.blog.entity.BlogMemberVisitCount;
+import com.portfolio.blog.entity.Member;
 import lombok.Data;
 import lombok.ToString;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.annotation.CreatedBy;
 
 import javax.persistence.Column;
@@ -11,6 +15,17 @@ import javax.persistence.Column;
 public class BlogMemberVisitCountDTO {
     private  Long mnum;
 
-    private  String id;
+    private Member id;
 
+
+    private static ModelMapper modelMapper = new ModelMapper();
+    //DTO -> Entity로 변경
+    public BlogMemberVisitCount createBlogMemberVisitCount(){
+        return modelMapper.map(this, BlogMemberVisitCount.class);
+    }
+
+    //DTO -> Entity로 변경
+    public static BlogMemberVisitCountDTO of(BlogMemberVisitCount blogMemberVisitCount){
+        return modelMapper.map(blogMemberVisitCount, BlogMemberVisitCountDTO.class);
+    }
 }
