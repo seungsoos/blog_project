@@ -2,13 +2,16 @@ package com.portfolio.blog.entity;
 
 import com.portfolio.blog.constant.Category;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity(name="blog_post")
 @Table(name="blog_post")
-@Data
+@Getter
+@Setter
 @ToString
 public class BlogPost extends  BaseTimeEntity{
     @Id
@@ -26,6 +29,8 @@ public class BlogPost extends  BaseTimeEntity{
 
     @Column(nullable = false)
     private String postTitle; // 게시글 제목
+
+
     @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
     private String postText; // 게시글 본문
 

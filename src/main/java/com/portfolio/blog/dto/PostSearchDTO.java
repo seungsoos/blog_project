@@ -6,10 +6,10 @@ import lombok.ToString;
 
 @Data
 @ToString
-public class BlogSearchDTO {
-
-    private  String searchDateType; // 최신 블로그
+public class PostSearchDTO {
+    private  String searchDateType; // 블로그 최근게시글
     private  String searchBy; // 블로그 조건
-    private Authority blogAuthority; // 공개범위
+    private Authority brdRead; // 읽기범위
+    private Authority brdWrite; // 쓰기범위
     private  String searchQuery = "";
 }

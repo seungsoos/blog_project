@@ -20,10 +20,10 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MemberRepositoryCostomImlp implements MemberRepositoryCostom{
+public class MemberRepositoryCustomImlp implements MemberRepositoryCustom {
         private JPAQueryFactory queryFactory;
 
-    public  MemberRepositoryCostomImlp(EntityManager em){
+    public MemberRepositoryCustomImlp(EntityManager em){
         this.queryFactory = new JPAQueryFactory(em);
     }
 

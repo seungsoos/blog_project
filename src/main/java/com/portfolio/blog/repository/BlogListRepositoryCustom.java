@@ -5,7 +5,7 @@ import com.portfolio.blog.entity.BlogList;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface BlogListRepositoryCostom {
+public interface BlogListRepositoryCustom {
 
     Page<BlogList> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable);
 }

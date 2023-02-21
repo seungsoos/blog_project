@@ -48,5 +48,6 @@ server:
       session:
         timeout: -1
 
+
 postImgLocation : /Users/Kungas_57/Desktop/study_java/test/src/main/resources/static/assets/upload
 uploadPath : file:///Users/Kungas_57/Desktop/study_java/test/

@@ -2,11 +2,10 @@ package com.portfolio.blog.controller;
 
 import com.portfolio.blog.dto.*;
 import com.portfolio.blog.entity.BlogBrdList;
+import com.portfolio.blog.entity.BlogList;
+import com.portfolio.blog.entity.BlogPost;
 import com.portfolio.blog.entity.Member;
-import com.portfolio.blog.repository.BlogBrdListRepository;
-import com.portfolio.blog.repository.BlogInfoRepository;
-import com.portfolio.blog.repository.BlogPostRepository;
-import com.portfolio.blog.repository.MemberRepository;
+import com.portfolio.blog.repository.*;
 import com.portfolio.blog.service.BlogBrdListService;
 import com.portfolio.blog.service.BlogInfoService;
 import com.portfolio.blog.service.BlogListService;
@@ -14,8 +13,11 @@ import com.portfolio.blog.service.BlogPostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import org.hibernate.engine.jdbc.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.*;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -39,11 +42,13 @@ public class BlogController {
     private final BlogInfoService blogInfoService;
     private  final BlogPostService blogPostService;
     private  final BlogPostRepository blogPostRepository;
+    private  final BlogPostRepositoryCustom blogPostRepositoryCustom;
     private  final BlogBrdListService blogBrdListService;
     private  final BlogBrdListRepository blogBrdListRepository;
+    private  final BlogListRepository blogListRepository;
 
     @GetMapping("/blogMain")
-    public String main(Authentication authentication, HttpSession session) {
+    public String main(Authentication authentication, HttpSession session, @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 5, page = 0) Pageable pageable) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String id = userDetails.getUsername();
 
@@ -54,6 +59,19 @@ public class BlogController {
         member.ifPresent(value -> memberDTO.setName(value.getName()));
 
         session.setAttribute("memberDTO", memberDTO);
+        List<BlogBrdList> list = blogBrdListRepository.findByMember_Id("AAA");
+        BlogSearchDTO blogSearchDTO = new BlogSearchDTO();
+
+        blogSearchDTO.setSearchQuery("aa");
+        blogSearchDTO.setSearchBy("blogName");
+
+        Page<BlogList>  blogLists = blogListRepository.getMemberBlogPage(blogSearchDTO, pageable);
+
+        for (BlogList blogList : blogLists){
+            log.info(blogList);
+        }
+
+
         return "blog/blogForm";
     }
 
@@ -107,15 +125,13 @@ public class BlogController {
         log.info(blogPostDTO.getPostText());
 
 //      blogPost 저장, blogBrdPost (읽기, 댓글쓰기 권한) 저장, 후에 blogPostImg 저장
-        blogBrdListDTO.setId(id);
         BlogBrdList blogBrdList=  blogBrdListDTO.createBlogBrdList(); // DTO -> 엔티티
         Long cnum = blogBrdListRepository.save(blogBrdList).getCnum(); // 저장되면서 만들어진 cnum 가져오기
 
 
         blogBrdList.setCnum(cnum); // cnum과 일치하는 엔티티 값을 저장
-        blogPostDTO.setBlogBrdList(blogBrdList);
         blogPostDTO.setId(id); // 파라미터로 가져온 id값
-
+        blogPostDTO.setBlogBrdList(blogBrdList);
         blogPostService.saveBlogPost(blogPostDTO);
 
         // blogPostImg blogPost가 foreign key로 들어감
@@ -143,6 +159,20 @@ public class BlogController {
         model.addAttribute("blogInfoDTO", blogInfoDTO);
         model.addAttribute("blogListDTO", blogListDTO);
         return "blog/blogModifyForm";
+    }
+
+    @GetMapping({"/friendBlogList", "/friendBlogList/{page}"})
+    public String friendBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
+    PostSearchDTO postSearchDTO){
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+        Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 8);
+        Page<BlogPost>  memberBlogList = blogPostService.getMemberBlogPage(postSearchDTO,pageable);
+
+        model.addAttribute("memberBlog", memberBlogList);
+        model.addAttribute("postSearchDTO", postSearchDTO);
+        model.addAttribute("maxPage", 10);
+
+        return "blog/memberBlogForm";
     }
 
     @PostMapping("/blogModify")

@@ -2,7 +2,7 @@ package com.portfolio.blog.api;
 
 import com.portfolio.blog.dto.MemberSearchDTO;
 import com.portfolio.blog.entity.Member;
-import com.portfolio.blog.repository.MemberRepositoryCostom;
+import com.portfolio.blog.repository.MemberRepositoryCustom;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ import java.util.HashMap;
 public class BolgApi {
     private static final Logger logger = LoggerFactory.getLogger(BolgApi.class);
 
-    final private MemberRepositoryCostom memberRepositoryCostom;
+    final private MemberRepositoryCustom memberRepositoryCostom;
 
     @PostMapping("/memberSearch")
     public ResponseEntity<Page<Member>> memberSearch(@RequestBody @NonNull HashMap<String, String> map, @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 5, page = 0)

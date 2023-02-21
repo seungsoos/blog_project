@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout01}">
+
+<div layout:fragment="content">
+  <div id="content" class="site-content">
+    <div id="primary" class="content-area column full">
+      <main id="main" class="site-main">
+        <div class="grid portfoliogrid">
+          <article class="hentry" th:each="Blog, status: ${memberBlog.getContent()}">
+            <header class="entry-header">
+              <h2 class="entry-title"><a href="portfolio-item.html" rel="bookmark" th:text="${Blog.postTitle}"></a></h2>
+              <a class='portfoliotype' href='portfolio-category.html' th:text="${Blog.postTitle}"></a>
+              <a class='portfoliotype' href='portfolio-category.html' th:text="${Blog.blogBrdList.brdRead == T(com.portfolio.blog.constant.Authority).PERMISSION ? 읽기가능 :}"></a>
+              <a class='portfoliotype' href='portfolio-category.html' th:text="${Blog.blogBrdList.brdWrite == T(com.portfolio.blog.constant.Authority).PERMISSION ? 댓글가능 :}"></a>
+            </header>
+          </article>
+        </div>
+        <!-- .grid -->
+
+        <div th:with="start=${(memberBlog.number/maxPage)*maxPage + 1}, end=(${(memberBlog.totalPages == 0) ? 1 : (start + (maxPage - 1) < memberBlog.totalPages ? start + (maxPage - 1) : memberBlog.totalPages)})">
+          <ul class="pagination justify-content-center">
+          <li th:classappend="${memberBlog.first}?'disabled'">
+          <a class="Previous page-numbers" th:onclick="'javascript:page(' + ${memberBlog.number - 1} + ')'">Previous</a>
+          </li>
+          <li th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${memberBlog.number eq page-1}?'active':''">
+          <a class="page-numbers current" th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text">[[${page}]]</a>
+          </li>
+          <li th:classappend="${memberBlog.last}?'disabled'">
+          <a class="next page-numbers" th:onclick="'javascript:page(' + ${memberBlog.number + 1} + ')'" aria-label='Next' >Next</a>
+          </li>
+          </ul>
+        </div>
+        <br/>
+
+      </main>
+      <!-- #main -->
+    </div>
+    <!-- #primary -->
+  </div>
+  <!-- #content -->
+
+
+</div>
+
+</html>

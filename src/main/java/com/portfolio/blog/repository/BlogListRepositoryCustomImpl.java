@@ -7,25 +7,24 @@ import com.portfolio.blog.entity.QBlogList;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.thymeleaf.util.StringUtils;
 
 import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
-@Service
-@Transactional
-@RequiredArgsConstructor
-public class BlogListRepositoryCostomImpl  implements  BlogListRepositoryCostom {
+
+@Repository
+@Primary
+public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
 
     private JPAQueryFactory queryFactory;
 
-    public  BlogListRepositoryCostomImpl(EntityManager em){
+    public BlogListRepositoryCustomImpl(EntityManager em){
         this.queryFactory = new JPAQueryFactory(em);
     }
 
@@ -64,7 +63,7 @@ public class BlogListRepositoryCostomImpl  implements  BlogListRepositoryCostom 
         List<BlogList> content = queryFactory
                 .selectFrom(QBlogList.blogList)
                 .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
-                        searchAuthorityEq(blogSearchDTO.getAuthority()),
+                        searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
                         searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery())
                 )
                 .orderBy(QBlogList.blogList.regTime.desc())
@@ -76,7 +75,7 @@ public class BlogListRepositoryCostomImpl  implements  BlogListRepositoryCostom 
                 .select(Wildcard.count)
                 .from(QBlogList.blogList)
                 .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
-                        searchAuthorityEq(blogSearchDTO.getAuthority()),
+                        searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
                         searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery())
                 )
                 .fetchOne();
