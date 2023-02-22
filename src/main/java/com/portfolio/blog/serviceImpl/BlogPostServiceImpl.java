@@ -19,8 +19,13 @@ import java.util.List;
 public class BlogPostServiceImpl implements BlogPostService {
     private final BlogPostRepository blogPostRepository;
     @Override
-    public List<BlogPost> findAll() {
-        return blogPostRepository.findAll();
+    public List<BlogPost> findByMember_Id(String id) {
+        return blogPostRepository.findByMember_Id(id);
+    }
+
+    @Override
+    public BlogPost findByBlogList_Bnum(Long bnum) {
+        return blogPostRepository.findByBlogList_Bnum(bnum);
     }
 
     @Override

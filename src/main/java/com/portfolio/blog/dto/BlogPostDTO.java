@@ -2,10 +2,7 @@ package com.portfolio.blog.dto;
 
 import com.portfolio.blog.constant.Authority;
 import com.portfolio.blog.constant.Category;
-import com.portfolio.blog.entity.BlogBrdList;
-import com.portfolio.blog.entity.BlogMemberVisitCount;
-import com.portfolio.blog.entity.BlogPost;
-import com.portfolio.blog.entity.Member;
+import com.portfolio.blog.entity.*;
 import lombok.Data;
 import lombok.ToString;
 import org.modelmapper.ModelMapper;
@@ -20,6 +17,8 @@ import java.util.List;
 public class BlogPostDTO {
 
     private  Long pnum;
+
+    private BlogList blogList;
 
     private BlogBrdList blogBrdList;
 

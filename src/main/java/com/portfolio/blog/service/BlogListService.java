@@ -2,7 +2,12 @@ package com.portfolio.blog.service;
 
 import com.portfolio.blog.dto.BlogInfoDTO;
 import com.portfolio.blog.dto.BlogListDTO;
+import com.portfolio.blog.dto.BlogSearchDTO;
+import com.portfolio.blog.dto.PostSearchDTO;
 import com.portfolio.blog.entity.BlogList;
+import com.portfolio.blog.entity.BlogPost;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface BlogListService {
     BlogList findByMember_id(String id);
@@ -12,4 +17,6 @@ public interface BlogListService {
 
     //블로그 정보수정
     void modifyBlogList(BlogListDTO blogListDTO);
+
+    Page<BlogList> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable);
 }

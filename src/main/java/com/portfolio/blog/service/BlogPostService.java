@@ -10,8 +10,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface BlogPostService {
-    List<BlogPost> findAll();
+    List<BlogPost> findByMember_Id(String id);
 
+    BlogPost findByBlogList_Bnum(Long bnum);
     void saveBlogPost(BlogPostDTO blogPostDTO);
 
     Page<BlogPost> getMemberBlogPage(PostSearchDTO postSearchDTO, Pageable pageable);

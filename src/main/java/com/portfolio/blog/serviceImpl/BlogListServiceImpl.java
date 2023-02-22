@@ -1,11 +1,14 @@
 package com.portfolio.blog.serviceImpl;
 
 import com.portfolio.blog.dto.BlogListDTO;
+import com.portfolio.blog.dto.BlogSearchDTO;
 import com.portfolio.blog.entity.BlogList;
 import com.portfolio.blog.entity.Member;
 import com.portfolio.blog.repository.BlogListRepository;
 import com.portfolio.blog.service.BlogListService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -38,4 +41,8 @@ public class BlogListServiceImpl implements BlogListService {
         blogList.modifyBlogList(blogListDTO);
     }
 
+    @Override
+    public Page<BlogList> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable) {
+        return blogListRepository.getMemberBlogPage(blogSearchDTO, pageable);
+    }
 }

@@ -22,6 +22,9 @@ public class BlogPost extends  BaseTimeEntity{
     @JoinColumn(name="c_num")
     @ManyToOne(fetch = FetchType.LAZY)
     private BlogBrdList blogBrdList;    //BlogBrdList FK
+    @JoinColumn(name="b_num")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private BlogList blogList;    //BlogBrdList FK
 
     @JoinColumn(name="Member_id")
     @ManyToOne(fetch = FetchType.LAZY)

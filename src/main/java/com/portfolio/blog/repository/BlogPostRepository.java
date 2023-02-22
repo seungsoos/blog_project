@@ -7,5 +7,8 @@ import java.util.List;
 
 public interface BlogPostRepository extends JpaRepository<BlogPost, Long>, BlogPostRepositoryCustom {
 
-    List<BlogPost> findAll();
+    List<BlogPost> findByMember_Id(String id);
+
+    BlogPost findByBlogList_Bnum (Long bnum);
+
 }

@@ -47,8 +47,9 @@ public class BlogController {
     private  final BlogBrdListRepository blogBrdListRepository;
     private  final BlogListRepository blogListRepository;
 
-    @GetMapping("/blogMain")
-    public String main(Authentication authentication, HttpSession session, @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 5, page = 0) Pageable pageable) {
+    @RequestMapping({"/blogMain", "/blogMain/{page}"})
+    public String main(Authentication authentication, HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
+                       PostSearchDTO postSearchDTO) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String id = userDetails.getUsername();
 
@@ -59,21 +60,28 @@ public class BlogController {
         member.ifPresent(value -> memberDTO.setName(value.getName()));
 
         session.setAttribute("memberDTO", memberDTO);
-        List<BlogBrdList> list = blogBrdListRepository.findByMember_Id("AAA");
-        BlogSearchDTO blogSearchDTO = new BlogSearchDTO();
 
-        blogSearchDTO.setSearchQuery("aa");
-        blogSearchDTO.setSearchBy("blogName");
+        Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 8);
+        Page<BlogPost>  memberBlogList = blogPostService.getMemberBlogPage(postSearchDTO,pageable);
 
-        Page<BlogList>  blogLists = blogListRepository.getMemberBlogPage(blogSearchDTO, pageable);
-
-        for (BlogList blogList : blogLists){
-            log.info(blogList);
-        }
-
+        model.addAttribute("memberBlog", memberBlogList);
+        model.addAttribute("postSearchDTO", postSearchDTO);
+        model.addAttribute("maxPage", 10);
 
         return "blog/blogForm";
     }
+
+    @RequestMapping("/blogView/{bnum}")
+    public String blogView( @PathVariable("bnum") Optional<Integer> bnum, Model model){
+//        BlogListDTO blogListDTO = new BlogListDTO();
+//        blogListDTO.setBnum(bnum.get().longValue());
+//        BlogList blogList =  blogListDTO.createBlogList();
+        BlogPost blogPost = blogPostService.findByBlogList_Bnum(bnum.get().longValue());
+
+        model.addAttribute("BlogPost", blogPost);
+        return  "blog/blogView";
+    }
+
 
     //블로그생성
     @GetMapping("/blogCreate")
@@ -127,9 +135,10 @@ public class BlogController {
 //      blogPost 저장, blogBrdPost (읽기, 댓글쓰기 권한) 저장, 후에 blogPostImg 저장
         BlogBrdList blogBrdList=  blogBrdListDTO.createBlogBrdList(); // DTO -> 엔티티
         Long cnum = blogBrdListRepository.save(blogBrdList).getCnum(); // 저장되면서 만들어진 cnum 가져오기
-
+        BlogList blogList = blogListService.findByMember_id(id.getId());
 
         blogBrdList.setCnum(cnum); // cnum과 일치하는 엔티티 값을 저장
+        blogPostDTO.setBlogList(blogList); //  BlogList forinKey 저장
         blogPostDTO.setId(id); // 파라미터로 가져온 id값
         blogPostDTO.setBlogBrdList(blogBrdList);
         blogPostService.saveBlogPost(blogPostDTO);
@@ -161,15 +170,14 @@ public class BlogController {
         return "blog/blogModifyForm";
     }
 
-    @GetMapping({"/friendBlogList", "/friendBlogList/{page}"})
+    @RequestMapping({"/friendBlogList", "/friendBlogList/{page}"})
     public String friendBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
-    PostSearchDTO postSearchDTO){
-        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+    BlogSearchDTO blogSearchDTO){
         Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 8);
-        Page<BlogPost>  memberBlogList = blogPostService.getMemberBlogPage(postSearchDTO,pageable);
+        Page<BlogList>  memberBlogList = blogListService.getMemberBlogPage(blogSearchDTO,pageable);
 
         model.addAttribute("memberBlog", memberBlogList);
-        model.addAttribute("postSearchDTO", postSearchDTO);
+        model.addAttribute("blogSearchDTO", blogSearchDTO);
         model.addAttribute("maxPage", 10);
 
         return "blog/memberBlogForm";

@@ -10,10 +10,9 @@
         <div class="grid portfoliogrid">
           <article class="hentry" th:each="Blog, status: ${memberBlog.getContent()}">
             <header class="entry-header">
-              <h2 class="entry-title"><a href="portfolio-item.html" rel="bookmark" th:text="${Blog.postTitle}"></a></h2>
-              <a class='portfoliotype' href='portfolio-category.html' th:text="${Blog.postTitle}"></a>
-              <a class='portfoliotype' href='portfolio-category.html' th:text="${Blog.blogBrdList.brdRead == T(com.portfolio.blog.constant.Authority).PERMISSION ? 읽기가능 :}"></a>
-              <a class='portfoliotype' href='portfolio-category.html' th:text="${Blog.blogBrdList.brdWrite == T(com.portfolio.blog.constant.Authority).PERMISSION ? 댓글가능 :}"></a>
+              <h2 class="entry-title"><a th:href="@{/${Blog.bnum}}" rel="bookmark" th:text="${Blog.blogName}"></a></h2>
+              <a class='portfoliotype' th:href="@{/}" th:text="${Blog.blogDetail}"></a>
+              <a class='portfoliotype' th:href="@{/}" th:text="${Blog.blogAuthority== T(com.portfolio.blog.constant.Authority).PERMISSION ? '공개': Blog.blogAuthority == T(com.portfolio.blog.constant.Authority).GROUP ?  '친구만' : '비공개'}"></a>
             </header>
           </article>
         </div>
@@ -21,27 +20,67 @@
 
         <div th:with="start=${(memberBlog.number/maxPage)*maxPage + 1}, end=(${(memberBlog.totalPages == 0) ? 1 : (start + (maxPage - 1) < memberBlog.totalPages ? start + (maxPage - 1) : memberBlog.totalPages)})">
           <ul class="pagination justify-content-center">
-          <li th:classappend="${memberBlog.first}?'disabled'">
-          <a class="Previous page-numbers" th:onclick="'javascript:page(' + ${memberBlog.number - 1} + ')'">Previous</a>
+          <li>
+          <a class="Previous page-numbers" th:classappend="${memberBlog.first}?'disabled'" th:href="@{/blog/friendBlogList/{page}(page = ${memberBlog.number - 1})}">Previous</a>
           </li>
-          <li th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${memberBlog.number eq page-1}?'active':''">
-          <a class="page-numbers current" th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text">[[${page}]]</a>
+          <li th:each="page: ${#numbers.sequence(start, end)}">
+          <a class="page-numbers" th:classappend="${memberBlog.number eq page-1}?'current':''" th:href="@{/blog/friendBlogList/{page}(page = ${page - 1})}" th:inline="text">[[${page}]]</a>
           </li>
-          <li th:classappend="${memberBlog.last}?'disabled'">
-          <a class="next page-numbers" th:onclick="'javascript:page(' + ${memberBlog.number + 1} + ')'" aria-label='Next' >Next</a>
+          <li>
+          <a class="next page-numbers" th:classappend="${memberBlog.last}?'disabled'" th:href="@{/blog/friendBlogList/{page}(page = ${memberBlog.number + 1})}" aria-label='Next' >Next</a>
           </li>
           </ul>
         </div>
         <br/>
-
       </main>
+    </div>
+      <form th:action="@{'/friendBlogList/' + ${memberBlog.number}}" role="form" method="post" th:object="${memberBlog}">
+      <div class="form-inline justify-content-center" th:object="${blogSearchDTO}">
+        <select th:field="*{searchDateType}" class="form-control" style="width:auto;">
+          <option value="all">전체기간</option>
+          <option value="1d">1일</option>
+          <option value="1w">1주</option>
+          <option value="1m">1개월</option>
+          <option value="6m">6개월</option>
+        </select>
+        <select th:field="*{blogAuthority}" class="form-control" style="width:auto;">
+          <option value="" selected disabled>블로그 공개범위</option>
+          <option value="PERMISSION">공개</option>
+          <option value="GROUP">친구만</option>
+          <option value="UNLICENSED">비공개</option>
+        </select>
+        <select th:field="*{searchBy}" class="form-control" style="width:auto;">
+          <option value="blogName">블로그 이름</option>
+          <option value="blogDetail">블로그 설명</option>
+        </select>
+        <input th:field="*{searchQuery}" type="text" class="form-control" placeholder="검색어를 입력해주세요">
+        <button id="searchBtn" type="submit" class="btn btn-current current">검색</button>
+      </div>
+      </form>
       <!-- #main -->
     </div>
     <!-- #primary -->
   </div>
   <!-- #content -->
+<script layout:fragment="script" th:inline="javascript">
+  $(document).ready(function(){
+            $("#searchBtn").on("click",function(e) {
+                e.preventDefault();
+                page(0);
+            });
+        });
 
+        function page(page){
+            var searchDateType = $("#searchDateType").val();
+            var blogAuthority = $("#blogAuthority").val();
+            var searchBy = $("#searchBy").val();
+            var searchQuery = $("#searchQuery").val();
 
-</div>
+            location.href="/friendBlogList/" + page + "?searchDateType=" + searchDateType
+            + "&blogAuthority=" + blogAuthority
+            + "&searchBy=" + searchBy
+            + "&searchQuery=" + searchQuery;
+        }
+</script>
 
 </html>
