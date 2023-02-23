@@ -12,4 +12,5 @@ public class BlogSearchDTO {
     private  String searchBy; // 블로그 조건
     private Authority blogAuthority; // 공개범위
     private  String searchQuery = "";
+    private  Long bnum;
 }

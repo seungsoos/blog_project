@@ -2,18 +2,27 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout01}">
+<head>
+  <meta name="_csrf" th:content="${_csrf.token}">
+  <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
 
 <div layout:fragment="content">
   <div id="content" class="site-content">
     <div id="primary" class="content-area column full">
       <main id="main" class="site-main">
         <div class="grid portfoliogrid">
-          <article class="hentry" th:each="Blog, status: ${memberBlog.getContent()}">
+          <article class="hentry" th:each="Blog, BlogStat: ${memberBlog.getContent()}">
             <header class="entry-header">
               <h2 class="entry-title"><a th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.bnum})}" rel="bookmark" th:text="${Blog.blogName}"></a></h2>
               <a class='portfoliotype' th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.bnum})}" th:text="${Blog.blogDetail}"></a>
               <a class='portfoliotype' th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.bnum})}" th:text="${Blog.member.nickName}"></a>
               <a class='portfoliotype' th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.bnum})}" th:text="${Blog.blogAuthority== T(com.portfolio.blog.constant.Authority).PERMISSION ? '공개': Blog.blogAuthority == T(com.portfolio.blog.constant.Authority).GROUP ?  '친구만' : '비공개'}"></a>
+              <span class="cat-links">
+                <input type="hidden" th:value="${Blog.member.id}" th:name="friendId">
+                <p th:text="${Blog.member.id}"></p>
+				  <button th:attrappend="id=${BlogStat.index}" name="friendAdd" th:value="${Blog.member.id}">친구추가</button>
+				</span>
             </header>
           </article>
         </div>
@@ -22,20 +31,20 @@
         <div th:with="start=${(memberBlog.number/maxPage)*maxPage + 1}, end=(${(memberBlog.totalPages == 0) ? 1 : (start + (maxPage - 1) < memberBlog.totalPages ? start + (maxPage - 1) : memberBlog.totalPages)})">
           <ul class="pagination justify-content-center">
           <li>
-          <a class="Previous page-numbers" th:classappend="${memberBlog.first}?'disabled'" th:href="@{/blog/friendBlogList/{page}(page = ${memberBlog.number - 1})}">Previous</a>
+          <a class="Previous page-numbers" th:classappend="${memberBlog.first}?'disabled'" th:href="@{/blog/memberBlogList/{page}(page = ${memberBlog.number - 1})}">Previous</a>
           </li>
           <li th:each="page: ${#numbers.sequence(start, end)}">
-          <a class="page-numbers" th:classappend="${memberBlog.number eq page-1}?'current':''" th:href="@{/blog/friendBlogList/{page}(page = ${page - 1})}" th:inline="text">[[${page}]]</a>
+          <a class="page-numbers" th:classappend="${memberBlog.number eq page-1}?'current':''" th:href="@{/blog/memberBlogList/{page}(page = ${page - 1})}" th:inline="text">[[${page}]]</a>
           </li>
           <li>
-          <a class="next page-numbers" th:classappend="${memberBlog.last}?'disabled'" th:href="@{/blog/friendBlogList/{page}(page = ${memberBlog.number + 1})}" aria-label='Next' >Next</a>
+          <a class="next page-numbers" th:classappend="${memberBlog.last}?'disabled'" th:href="@{/blog/memberBlogList/{page}(page = ${memberBlog.number + 1})}" aria-label='Next' >Next</a>
           </li>
           </ul>
         </div>
         <br/>
       </main>
     </div>
-      <form th:action="@{'/friendBlogList/' + ${memberBlog.number}}" role="form" method="post" th:object="${memberBlog}">
+      <form th:action="@{/blog/memberBlogList/{page}(page = ${memberBlog.number})}" role="form" method="post" th:object="${memberBlog}">
       <div class="form-inline justify-content-center" th:object="${blogSearchDTO}">
         <select th:field="*{searchDateType}" class="form-control" style="width:auto;">
           <option value="all">전체기간</option>
@@ -43,12 +52,6 @@
           <option value="1w">1주</option>
           <option value="1m">1개월</option>
           <option value="6m">6개월</option>
-        </select>
-        <select th:field="*{blogAuthority}" class="form-control" style="width:auto;">
-          <option value="" selected disabled>블로그 공개범위</option>
-          <option value="PERMISSION">공개</option>
-          <option value="GROUP">친구만</option>
-          <option value="UNLICENSED">비공개</option>
         </select>
         <select th:field="*{searchBy}" class="form-control" style="width:auto;">
           <option value="blogName">블로그 이름</option>
@@ -63,25 +66,41 @@
     <!-- #primary -->
   </div>
   <!-- #content -->
-<script layout:fragment="script" th:inline="javascript">
-  $(document).ready(function(){
-            $("#searchBtn").on("click",function(e) {
-                e.preventDefault();
-                page(0);
-            });
-        });
+<script layout:fragment="script">
+   $(function() {
+   $('button[name=friendAdd]').click(function() {
+     var index = $(this).attr("id");
+     console.log(index)
 
-        function page(page){
-            var searchDateType = $("#searchDateType").val();
-            var blogAuthority = $("#blogAuthority").val();
-            var searchBy = $("#searchBy").val();
-            var searchQuery = $("#searchQuery").val();
+       let friendId = $(this).val();
+       console.log(friendId)
+       var id = {friendId : friendId}
+       console.log(id)
 
-            location.href="/friendBlogList/" + page + "?searchDateType=" + searchDateType
-            + "&blogAuthority=" + blogAuthority
-            + "&searchBy=" + searchBy
-            + "&searchQuery=" + searchQuery;
-        }
+       var token = $("meta[name='_csrf']").attr("content");
+       var header = $("meta[name='_csrf_header']").attr("content");
+                  $.ajax({
+                      type : 'post',
+                      url : '/blog/friendRequest',
+                      data :  JSON.stringify(id),
+                      contentType : "application/json",
+                      beforeSend : function(xhr){
+                        xhr.setRequestHeader(header, token)
+                      },
+                      success : function() {
+                          console.log('성공')
+                          alert('친구신청이 완료되었습니다.')
+                      },//success
+                      error: function(a,b,c) {
+                              console.log(a,b,c);
+                              alert('서버요청실패');
+                      }//error
+
+                  })//ajax
+
+  })
+})
 </script>
+
 
 </html>

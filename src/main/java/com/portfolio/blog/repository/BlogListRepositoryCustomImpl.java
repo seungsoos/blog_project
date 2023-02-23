@@ -70,7 +70,9 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
                 .selectFrom(QBlogList.blogList)
                 .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
                         searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
-                        searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery())
+                        searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
+                        QBlogList.blogList.blogAuthority.eq(Authority.PERMISSION),
+                        QBlogList.blogList.bnum.ne(blogSearchDTO.getBnum())
                 )
                 .orderBy(QBlogList.blogList.regTime.desc())
                 .offset(pageable.getOffset())
@@ -82,7 +84,9 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
                 .from(QBlogList.blogList)
                 .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
                         searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
-                        searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery())
+                        searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
+                        QBlogList.blogList.blogAuthority.eq(Authority.PERMISSION),
+                        QBlogList.blogList.bnum.eq(blogSearchDTO.getBnum())
                 )
                 .fetchOne();
 

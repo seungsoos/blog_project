@@ -6,10 +6,7 @@ import com.portfolio.blog.entity.BlogList;
 import com.portfolio.blog.entity.BlogPost;
 import com.portfolio.blog.entity.Member;
 import com.portfolio.blog.repository.*;
-import com.portfolio.blog.service.BlogBrdListService;
-import com.portfolio.blog.service.BlogInfoService;
-import com.portfolio.blog.service.BlogListService;
-import com.portfolio.blog.service.BlogPostService;
+import com.portfolio.blog.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -27,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +45,8 @@ public class BlogController {
     private  final BlogBrdListRepository blogBrdListRepository;
     private  final BlogListRepository blogListRepository;
 
+    private  final MemberFriendService memberFriendService;
+
     @RequestMapping({"/blogMain", "/blogMain/{page}", "/blogMain/{bnum}"})
     public String main(Authentication authentication, HttpSession session, @PathVariable("page") Optional<Integer> page, @PathVariable("bnum") Optional<Integer> bnum, Model model,
                        PostSearchDTO postSearchDTO) {
@@ -60,8 +60,10 @@ public class BlogController {
         member.ifPresent(value -> memberDTO.setName(value.getName()));
 
         session.setAttribute("memberDTO", memberDTO);
+        if(blogListService.findByMember_id(memberDTO.getId()) == null){
+            return "redirect:/blog/blogCreate";
+        }
         BlogList blogList = blogListService.findByMember_id(memberDTO.getId());
-
         if (bnum.isPresent()) {
             postSearchDTO.setBnum(bnum.get().longValue());
         } else {
@@ -79,13 +81,21 @@ public class BlogController {
     }
 
     @RequestMapping("/blogView/{bnum}")
-    public String blogView( @PathVariable("bnum") Optional<Integer> bnum, Model model){
-//        BlogListDTO blogListDTO = new BlogListDTO();
-//        blogListDTO.setBnum(bnum.get().longValue());
-//        BlogList blogList =  blogListDTO.createBlogList();
+    public String blogView( @PathVariable("bnum") Optional<Integer> bnum, Model model, PostSearchDTO postSearchDTO, HttpSession session){
+        Pageable pageable = PageRequest.of(0, 8);
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+        BlogList blogList = blogListService.findByMember_id(memberDTO.getId());
+        if (bnum.isPresent()) {
+            postSearchDTO.setBnum(bnum.get().longValue());
+        }else {
+            postSearchDTO.setBnum(blogList.getBnum());
+        }
+        Page<BlogPost>  memberBlogList = blogPostService.getMemberBlogPage(postSearchDTO,pageable);
+
         BlogPost blogPost = blogPostService.findByBlogList_Bnum(bnum.get().longValue());
 
         model.addAttribute("BlogPost", blogPost);
+        model.addAttribute("memberBlogList", memberBlogList);
         return  "blog/blogView";
     }
 
@@ -158,28 +168,49 @@ public class BlogController {
     @GetMapping("/blogModify")
     public String blogModify(HttpSession session, Model model){
 
-        log.info("확인1----------------------");
         MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
         String id =memberDTO.getId();
-        log.info("확인2----------------------" + id);
-
-
-        log.info("제발 : " + blogInfoService.findByMember_id(id));
 
         BlogInfoDTO blogInfoDTO = BlogInfoDTO.of(blogInfoService.findByMember_id(id));
         log.info("blogInfoDTO : " + blogInfoDTO);
         BlogListDTO blogListDTO = BlogListDTO.of(blogListService.findByMember_id(id));
         log.info("blogListDTO : " + blogListDTO);
 
-
         model.addAttribute("blogInfoDTO", blogInfoDTO);
         model.addAttribute("blogListDTO", blogListDTO);
         return "blog/blogModifyForm";
     }
+    //친구요청 Ajax
+    @ResponseBody
+    @PostMapping("/friendRequest")
+    public void friendRequest(HttpSession session,
+                              @RequestBody HashMap<String, String> memberFriend){
 
-    @RequestMapping({"/friendBlogList", "/friendBlogList/{page}"})
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+
+        String friendId = memberFriend.get("friendId");
+
+        //친구 추가에서 친구 정보 가져오기
+        Optional<Member> friend =memberRepository.findById(friendId);
+
+        //친구 추가 작업하기
+        MemberFriendDTO memberFriendDTO = new MemberFriendDTO();
+
+        memberFriendDTO.setFriendId(friend.get().getId());
+        memberFriendDTO.setLoginId(memberDTO.getId());
+        log.info(memberFriendDTO);
+
+        memberFriendService.saveFriendList(memberFriendDTO);
+    }
+    @RequestMapping({"/memberBlogList", "/memberBlogList/{page}"})
     public String friendBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
     BlogSearchDTO blogSearchDTO){
+        log.info(blogSearchDTO);
+
+        MemberDTO memberDTO =  (MemberDTO) session.getAttribute("memberDTO");
+        BlogList blogList =  blogListService.findByMember_id(memberDTO.getId());
+
+        blogSearchDTO.setBnum(blogList.getBnum());
         Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 8);
         Page<BlogList>  memberBlogList = blogListService.getMemberBlogPage(blogSearchDTO,pageable);
 
