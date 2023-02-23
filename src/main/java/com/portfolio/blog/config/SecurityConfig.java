@@ -40,7 +40,6 @@ public class SecurityConfig{
 
         http.authorizeRequests()
                 .antMatchers("/css/**", "/js/**", "/assets/**", "/fonts/**").permitAll()
-
                 .antMatchers("/", "/login/**").permitAll()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/blog/**").permitAll()

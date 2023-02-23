@@ -2,20 +2,25 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout01}">
+<head>
+  <meta name="_csrf" th:content="${_csrf.token}">
+  <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
 
 <div layout:fragment="content">
   <div id="content" class="site-content">
     <div id="primary" class="content-area column full">
       <main id="main" class="site-main">
         <div class="grid portfoliogrid">
-          <article class="hentry" th:each="Blog, status: ${memberBlog.getContent()}">
-            <header class="entry-header">
-              <h2 class="entry-title"><a th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.bnum})}" rel="bookmark" th:text="${Blog.blogName}"></a></h2>
-              <a class='portfoliotype' th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.bnum})}" th:text="${Blog.blogDetail}"></a>
-              <a class='portfoliotype' th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.bnum})}" th:text="${Blog.member.nickName}"></a>
-              <a class='portfoliotype' th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.bnum})}" th:text="${Blog.blogAuthority== T(com.portfolio.blog.constant.Authority).PERMISSION ? '공개': Blog.blogAuthority == T(com.portfolio.blog.constant.Authority).GROUP ?  '친구만' : '비공개'}"></a>
-            </header>
-          </article>
+            <article class="hentry" th:each="Blog : ${memberBlog.getContent()}">
+              <header class="entry-header">
+                <a class='portfoliotype' th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.bnum})}" th:text="${friendInfo[BlogStat.index].member.nickName}">닉네임</a>
+                <a class='portfoliotype' th:attrappend="id=${BlogStat.index}" name="friendAdd">친구삭제</a>
+                <h2 class="entry-title"><a th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.bnum})}" rel="bookmark" th:text="${friendInfo[BlogStat.index].blogName}">블로그 이름</a></h2>
+                <a class='portfoliotype' th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.bnum})}" th:text="${friendInfo[BlogStat.index].blogDetail}">블로그 설명</a>
+                <input type="hidden" th:value="${friendInfo[BlogStat.index].member.id}"  th:attrappend="id=${BlogStat}" name="friendId">
+              </header>
+            </article>
         </div>
         <!-- .grid -->
 
@@ -65,10 +70,43 @@
   <!-- #content -->
 <script layout:fragment="script" th:inline="javascript">
   $(document).ready(function(){
+
             $("#searchBtn").on("click",function(e) {
                 e.preventDefault();
                 page(0);
             });
+
+      $('button[name=friendAdd]').click(function() {
+	  var index = $(this).attr("id");
+	  console.log(index)
+
+       let friendId = $('input[name=friendId]').eq(index).val();
+       console.log(friendId)
+       var id = {friendId :  friendId}
+       console.log(id)
+
+       var token = $("meta[name='_csrf']").attr("content");
+       var header = $("meta[name='_csrf_header']").attr("content");
+                  $.ajax({
+                      type : 'post',
+                      url : '/blog/friendDelete',
+                      data :  JSON.stringify(id),
+                      contentType : "application/json",
+                      beforeSend : function(xhr){
+                        xhr.setRequestHeader(header, token)
+                      },
+                      success : function() {
+                          console.log('성공')
+                          alert('친구삭제가 완료되었습니다.')
+                      },//success
+                      error: function(a,b,c) {
+                              console.log(a,b,c);
+                              alert('서버요청실패');
+                      }//error
+
+                  })//ajax
+
+            })
         });
 
         function page(page){

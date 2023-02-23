@@ -1,5 +1,6 @@
 package com.portfolio.blog.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.portfolio.blog.dto.MemberDTO;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;

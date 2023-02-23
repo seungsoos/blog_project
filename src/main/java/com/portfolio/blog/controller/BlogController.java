@@ -1,15 +1,9 @@
 package com.portfolio.blog.controller;
 
 import com.portfolio.blog.dto.*;
-import com.portfolio.blog.entity.BlogBrdList;
-import com.portfolio.blog.entity.BlogList;
-import com.portfolio.blog.entity.BlogPost;
-import com.portfolio.blog.entity.Member;
+import com.portfolio.blog.entity.*;
 import com.portfolio.blog.repository.*;
-import com.portfolio.blog.service.BlogBrdListService;
-import com.portfolio.blog.service.BlogInfoService;
-import com.portfolio.blog.service.BlogListService;
-import com.portfolio.blog.service.BlogPostService;
+import com.portfolio.blog.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -27,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,18 +30,19 @@ import java.util.Optional;
 @Log4j2
 @RequestMapping("/blog")
 @RequiredArgsConstructor
-public class BlogController {
+public class    BlogController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BlogController.class);
     private final MemberRepository memberRepository;
     private final BlogListService blogListService;
     private final BlogInfoService blogInfoService;
-    private  final BlogPostService blogPostService;
-    private  final BlogPostRepository blogPostRepository;
-    private  final BlogPostRepositoryCustom blogPostRepositoryCustom;
-    private  final BlogBrdListService blogBrdListService;
-    private  final BlogBrdListRepository blogBrdListRepository;
-    private  final BlogListRepository blogListRepository;
+    private final BlogPostService blogPostService;
+    private final BlogPostRepository blogPostRepository;
+    private final BlogPostRepositoryCustom blogPostRepositoryCustom;
+    private final BlogBrdListService blogBrdListService;
+    private final BlogBrdListRepository blogBrdListRepository;
+    private final BlogListRepository blogListRepository;
+    private final MemberFriendService memberFriendService;
 
     @RequestMapping({"/blogMain", "/blogMain/{page}", "/blogMain/{bnum}"})
     public String main(Authentication authentication, HttpSession session, @PathVariable("page") Optional<Integer> page, @PathVariable("bnum") Optional<Integer> bnum, Model model,
@@ -177,19 +174,7 @@ public class BlogController {
         return "blog/blogModifyForm";
     }
 
-    @RequestMapping({"/friendBlogList", "/friendBlogList/{page}"})
-    public String friendBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
-    BlogSearchDTO blogSearchDTO){
-        Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 8);
-        Page<BlogList>  memberBlogList = blogListService.getMemberBlogPage(blogSearchDTO,pageable);
-
-        model.addAttribute("memberBlog", memberBlogList);
-        model.addAttribute("blogSearchDTO", blogSearchDTO);
-        model.addAttribute("maxPage", 10);
-
-        return "blog/memberBlogForm";
-    }
-
+    //블로그 수정
     @PostMapping("/blogModify")
     public String blogModify(@Valid BlogInfoDTO blogInfoDTO,
                              @Valid BlogListDTO blogListDTO,
@@ -214,4 +199,65 @@ public class BlogController {
         return "redirect:/blog/blogMain";
     }
 
+    //친구블로그 목록
+    @RequestMapping({"/friendBlogList", "/friendBlogList/{page}"})
+    public String friendBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
+                                 BlogSearchDTO blogSearchDTO){
+        log.info("친구목록-------------------");
+        Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 8);
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+        String loginId =memberDTO.getId();
+        Page<MemberFriend> friendBlogList = blogListService.getMemberBlogPage(blogSearchDTO,pageable,loginId);
+
+        List<BlogList> friendInfo = new ArrayList<>();
+
+        for (int i=0; i<friendBlogList.getContent().size(); i++){
+            String friendId = friendBlogList.getContent().get(i).getFriendId();
+            log.info(friendId);
+
+            BlogList blogList =  blogListService.findByMember_id(friendId);
+            friendInfo.add(blogList);
+            log.info("----------------------------------");
+            log.info(friendInfo);
+            log.info("----------------------------------");
+
+        }
+        log.info(friendInfo);
+
+        model.addAttribute("memberBlog", friendBlogList);
+        model.addAttribute("friendInfo", friendInfo);
+        model.addAttribute("blogSearchDTO", blogSearchDTO);
+        model.addAttribute("maxPage", 10);
+
+        return "blog/friendBlogForm";
+    }
+
+    //전체블로그 목록
+
+
+    //친구추가
+
+    //친구삭제
+    @ResponseBody
+    @PostMapping("/friendDelete")
+    public void friendDelete(HttpSession session,
+                             @RequestBody HashMap<String, String> memberFriend,
+                             MemberDTO memberDTO){
+
+        MemberDTO member = (MemberDTO) session.getAttribute("memberDTO");
+        Member login = member.save();
+        String friend =  memberFriend.get("friendId");
+
+        log.info("login : " + login);
+        log.info("friend : " + friend);
+        memberDTO.setId(friend);
+        Member friendId = memberDTO.save();
+
+        MemberFriendDTO memberFriendDTO = new MemberFriendDTO();
+        memberFriendDTO.setLoginId(login);
+        memberFriendDTO.setFriendId(friendId);
+        log.info(memberFriendDTO);
+        memberFriendService.deleteFriendList(memberFriendDTO);
+
+    }
 }

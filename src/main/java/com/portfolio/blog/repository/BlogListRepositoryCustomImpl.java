@@ -1,11 +1,9 @@
 package com.portfolio.blog.repository;
 
 import com.portfolio.blog.constant.Authority;
+import com.portfolio.blog.constant.FriendShip;
 import com.portfolio.blog.dto.BlogSearchDTO;
-import com.portfolio.blog.entity.BlogList;
-import com.portfolio.blog.entity.Member;
-import com.portfolio.blog.entity.QBlogList;
-import com.portfolio.blog.entity.QMember;
+import com.portfolio.blog.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -63,23 +61,26 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
         }
         return  null;
     }
-    @Override
-    public Page<BlogList> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable) {
 
-        List<BlogList> content = queryFactory
-                .selectFrom(QBlogList.blogList)
-                .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
+    @Override
+    public Page<MemberFriend> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable, String loginId) {
+
+        List<MemberFriend> content = queryFactory
+                .selectFrom(QMemberFriend.memberFriend)
+                .where(QMemberFriend.memberFriend.loginId.eq(loginId),
+                        QMemberFriend.memberFriend.type.eq(FriendShip.FRIENDS),
+                        regDtsAfter(blogSearchDTO.getSearchDateType()),
                         searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
                         searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery())
                 )
-                .orderBy(QBlogList.blogList.regTime.desc())
+                .orderBy(QMemberFriend.memberFriend.regTime.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
          Long total = queryFactory
                 .select(Wildcard.count)
-                .from(QBlogList.blogList)
+                .from(QMemberFriend.memberFriend)
                 .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
                         searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
                         searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery())

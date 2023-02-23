@@ -21,4 +21,16 @@ public class MemberDTO {
 
     private String password;
 
+    private static ModelMapper modelMapper = new ModelMapper();
+
+    // DTO를 -> Entity로 변경
+    public Member save(){
+        return modelMapper.map(this, Member.class);
+    }
+
+    //Entity를 -> DTO로 변경
+    public static MemberDTO of(Member member){
+        return modelMapper.map(member, MemberDTO.class);
+    }
+
 }
