@@ -60,7 +60,14 @@ public class BlogController {
         member.ifPresent(value -> memberDTO.setName(value.getName()));
 
         session.setAttribute("memberDTO", memberDTO);
-        bnum.ifPresent(integer -> postSearchDTO.setBnum(integer.longValue()));
+        BlogList blogList = blogListService.findByMember_id(memberDTO.getId());
+
+        if (bnum.isPresent()) {
+            postSearchDTO.setBnum(bnum.get().longValue());
+        } else {
+            postSearchDTO.setBnum(blogList.getBnum());
+        }
+
         Pageable pageable = PageRequest.of(page.orElse(0), 8);
         Page<BlogPost>  memberBlogList = blogPostService.getMemberBlogPage(postSearchDTO,pageable);
 

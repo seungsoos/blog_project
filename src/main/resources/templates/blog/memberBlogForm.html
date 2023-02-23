@@ -12,6 +12,7 @@
             <header class="entry-header">
               <h2 class="entry-title"><a th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.bnum})}" rel="bookmark" th:text="${Blog.blogName}"></a></h2>
               <a class='portfoliotype' th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.bnum})}" th:text="${Blog.blogDetail}"></a>
+              <a class='portfoliotype' th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.bnum})}" th:text="${Blog.member.nickName}"></a>
               <a class='portfoliotype' th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.bnum})}" th:text="${Blog.blogAuthority== T(com.portfolio.blog.constant.Authority).PERMISSION ? '공개': Blog.blogAuthority == T(com.portfolio.blog.constant.Authority).GROUP ?  '친구만' : '비공개'}"></a>
             </header>
           </article>
