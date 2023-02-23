@@ -76,6 +76,10 @@ public class BlogPostRepositoryCustomImpl implements BlogPostRepositoryCustom{
         return  null;
     }
 
+    private  BooleanExpression searchByBnum(Long bnum){
+        return  bnum == null ? null : QBlogList.blogList.bnum.eq(bnum);
+    }
+
     @Override
     public Page<BlogPost> getMemberBlogPage(PostSearchDTO postSearchDTO, Pageable pageable) {
 
@@ -86,7 +90,8 @@ public class BlogPostRepositoryCustomImpl implements BlogPostRepositoryCustom{
                         searchAuthorityEq1(postSearchDTO.getBrdWrite()),
                         searchAuthorityEq2(postSearchDTO.getBrdRead()),
                         searchCategoryEq(postSearchDTO.getCategory()),
-                        searchByLike(postSearchDTO.getSearchBy(), postSearchDTO.getSearchQuery())
+                        searchByLike(postSearchDTO.getSearchBy(), postSearchDTO.getSearchQuery()),
+                        searchByBnum(postSearchDTO.getBnum())
                 )
                 .orderBy(QBlogPost.blogPost.postTitle.desc())
                 .offset(pageable.getOffset())

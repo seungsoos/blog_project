@@ -47,8 +47,8 @@ public class BlogController {
     private  final BlogBrdListRepository blogBrdListRepository;
     private  final BlogListRepository blogListRepository;
 
-    @RequestMapping({"/blogMain", "/blogMain/{page}"})
-    public String main(Authentication authentication, HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
+    @RequestMapping({"/blogMain", "/blogMain/{page}", "/blogMain/{bnum}"})
+    public String main(Authentication authentication, HttpSession session, @PathVariable("page") Optional<Integer> page, @PathVariable("bnum") Optional<Integer> bnum, Model model,
                        PostSearchDTO postSearchDTO) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String id = userDetails.getUsername();
@@ -60,8 +60,8 @@ public class BlogController {
         member.ifPresent(value -> memberDTO.setName(value.getName()));
 
         session.setAttribute("memberDTO", memberDTO);
-
-        Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 8);
+        bnum.ifPresent(integer -> postSearchDTO.setBnum(integer.longValue()));
+        Pageable pageable = PageRequest.of(page.orElse(0), 8);
         Page<BlogPost>  memberBlogList = blogPostService.getMemberBlogPage(postSearchDTO,pageable);
 
         model.addAttribute("memberBlog", memberBlogList);
