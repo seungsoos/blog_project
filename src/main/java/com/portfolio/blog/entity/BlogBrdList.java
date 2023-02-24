@@ -3,7 +3,6 @@ package com.portfolio.blog.entity;
 import com.portfolio.blog.constant.Authority;
 import lombok.Data;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 

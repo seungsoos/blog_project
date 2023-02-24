@@ -1,16 +1,10 @@
 package com.portfolio.blog.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.portfolio.blog.constant.Authority;
 import com.portfolio.blog.constant.FriendShip;
-import lombok.*;
+import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
-import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.List;
 
 @Entity(name="friend_ship")
 @Table(name="friend_ship")

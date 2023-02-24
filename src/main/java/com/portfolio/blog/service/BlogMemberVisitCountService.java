@@ -1,6 +1,5 @@
 package com.portfolio.blog.service;
 
-import com.portfolio.blog.dto.BlogBrdListDTO;
 import com.portfolio.blog.dto.BlogMemberVisitCountDTO;
 
 import java.time.LocalDateTime;

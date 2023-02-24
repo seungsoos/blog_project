@@ -1,12 +1,14 @@
 package com.portfolio.blog.entity;
 
 import com.portfolio.blog.dto.MemberDTO;
-import lombok.*;
+import lombok.Data;
+import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import lombok.ToString;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
     @Entity(name="member")
     @Table(name="member")

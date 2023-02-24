@@ -1,6 +1,5 @@
 package com.portfolio.blog.dto;
 
-import com.portfolio.blog.entity.BlogPost;
 import com.portfolio.blog.entity.BlogVisitCount;
 import lombok.Data;
 import lombok.ToString;

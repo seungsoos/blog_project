@@ -2,14 +2,9 @@ package com.portfolio.blog.dto;
 
 import com.portfolio.blog.entity.BlogPost;
 import com.portfolio.blog.entity.BlogPostImg;
-import com.portfolio.blog.entity.Member;
 import lombok.Data;
 import lombok.ToString;
 import org.modelmapper.ModelMapper;
-
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Data
 @ToString

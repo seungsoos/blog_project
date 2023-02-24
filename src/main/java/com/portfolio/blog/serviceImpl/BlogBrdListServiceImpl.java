@@ -2,7 +2,6 @@ package com.portfolio.blog.serviceImpl;
 
 import com.portfolio.blog.dto.BlogBrdListDTO;
 import com.portfolio.blog.entity.BlogBrdList;
-import com.portfolio.blog.entity.BlogList;
 import com.portfolio.blog.repository.BlogBrdListRepository;
 import com.portfolio.blog.service.BlogBrdListService;
 import lombok.RequiredArgsConstructor;

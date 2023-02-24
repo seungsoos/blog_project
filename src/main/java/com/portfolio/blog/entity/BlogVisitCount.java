@@ -2,7 +2,6 @@ package com.portfolio.blog.entity;
 
 import lombok.Data;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 

@@ -5,7 +5,6 @@ import com.portfolio.blog.dto.BlogSearchDTO;
 import com.portfolio.blog.entity.BlogList;
 import com.portfolio.blog.entity.Member;
 import com.portfolio.blog.entity.QBlogList;
-import com.portfolio.blog.entity.QMember;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;

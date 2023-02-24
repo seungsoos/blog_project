@@ -10,11 +10,9 @@ import com.portfolio.blog.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-import org.hibernate.engine.jdbc.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -25,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -203,7 +200,7 @@ public class BlogController {
         memberFriendService.saveFriendList(memberFriendDTO);
     }
     @RequestMapping({"/memberBlogList", "/memberBlogList/{page}"})
-    public String friendBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
+    public String memberBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
     BlogSearchDTO blogSearchDTO){
         log.info(blogSearchDTO);
 
@@ -211,7 +208,7 @@ public class BlogController {
         BlogList blogList =  blogListService.findByMember_id(memberDTO.getId());
 
         blogSearchDTO.setBnum(blogList.getBnum());
-        Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 8);
+        Pageable pageable = PageRequest.of(page.orElse(0), 8);
         Page<BlogList>  memberBlogList = blogListService.getMemberBlogPage(blogSearchDTO,pageable);
 
         model.addAttribute("memberBlog", memberBlogList);
