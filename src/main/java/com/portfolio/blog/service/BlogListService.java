@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 public interface BlogListService {
     BlogList findByMember_id(String id);
 
+    BlogList findByBnum(Long bnum);
+
     //블로그 정보저장
     void saveBlogList(BlogListDTO blogListDTO);
 

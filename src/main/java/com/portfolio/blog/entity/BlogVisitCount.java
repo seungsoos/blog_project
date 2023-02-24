@@ -14,4 +14,8 @@ public class BlogVisitCount extends BaseTimeEntity{
     @Column(name="v_num")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private  Long vnum;
+
+    @JoinColumn(name="b_num")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private  BlogList blogList;
 }

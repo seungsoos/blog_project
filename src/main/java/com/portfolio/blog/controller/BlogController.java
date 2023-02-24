@@ -1,18 +1,19 @@
 package com.portfolio.blog.controller;
 
 import com.portfolio.blog.dto.*;
-import com.portfolio.blog.entity.BlogBrdList;
-import com.portfolio.blog.entity.BlogList;
-import com.portfolio.blog.entity.BlogPost;
-import com.portfolio.blog.entity.Member;
+import com.portfolio.blog.entity.*;
 import com.portfolio.blog.repository.*;
 import com.portfolio.blog.service.*;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -22,7 +23,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Optional;
 
 @Controller
@@ -36,12 +40,9 @@ public class BlogController {
     private final BlogListService blogListService;
     private final BlogInfoService blogInfoService;
     private  final BlogPostService blogPostService;
-    private  final BlogPostRepository blogPostRepository;
-    private  final BlogPostRepositoryCustom blogPostRepositoryCustom;
-    private  final BlogBrdListService blogBrdListService;
     private  final BlogBrdListRepository blogBrdListRepository;
-    private  final BlogListRepository blogListRepository;
-
+    private  final BlogVisitCountService blogVisitCountService;
+    private  final BlogMemberVisitCountService blogMemberVisitCountService;
     private  final MemberFriendService memberFriendService;
 
     @RequestMapping({"/blogMain", "/blogMain/{page}", "/blogMain/{bnum}"})
@@ -56,6 +57,12 @@ public class BlogController {
         member.ifPresent(value -> memberDTO.setId(value.getId()));
         member.ifPresent(value -> memberDTO.setName(value.getName()));
 
+        LocalDateTime date = LocalDateTime.now();
+        LocalDateTime startDateTime = date.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime endDateTime = date.withHour(23).withMinute(59).withSecond(59).withNano(0);
+
+        int visit, memberVisit, todayTotalVisit, totalVisit;
+
         session.setAttribute("memberDTO", memberDTO);
         if(blogListService.findByMember_id(memberDTO.getId()) == null){
             return "redirect:/blog/blogCreate";
@@ -63,9 +70,18 @@ public class BlogController {
         BlogList blogList = blogListService.findByMember_id(memberDTO.getId());
         if (bnum.isPresent()) {
             postSearchDTO.setBnum(bnum.get().longValue());
+            visit = blogVisitCountService.countByBlogList_BnumAndRegTimeBetween(bnum.get().longValue(), startDateTime, endDateTime);
+            memberVisit = blogMemberVisitCountService.countByBlogList_BnumAndRegTimeBetween(bnum.get().longValue(), startDateTime, endDateTime);
         } else {
             postSearchDTO.setBnum(blogList.getBnum());
+            visit = blogVisitCountService.countByBlogList_BnumAndRegTimeBetween(blogList.getBnum(), startDateTime, endDateTime);
+            memberVisit = blogMemberVisitCountService.countByBlogList_BnumAndRegTimeBetween(blogList.getBnum(), startDateTime, endDateTime);
         }
+        todayTotalVisit = visit + memberVisit;
+        model.addAttribute("todayTotalVisit", todayTotalVisit);
+
+        totalVisit = blogVisitCountService.countBy() + blogMemberVisitCountService.countBy();
+        model.addAttribute("totalVisit", totalVisit);
 
         Pageable pageable = PageRequest.of(page.orElse(0), 8);
         Page<BlogPost>  memberBlogList = blogPostService.getMemberBlogPage(postSearchDTO,pageable);
@@ -95,7 +111,6 @@ public class BlogController {
         model.addAttribute("memberBlogList", memberBlogList);
         return  "blog/blogView";
     }
-
 
     //블로그생성
     @GetMapping("/blogCreate")
@@ -180,25 +195,47 @@ public class BlogController {
     //친구요청 Ajax
     @ResponseBody
     @PostMapping("/friendRequest")
-    public void friendRequest(HttpSession session,
-                              @RequestBody HashMap<String, String> memberFriend){
+    public ResponseEntity<String> friendRequest(HttpSession session,
+                                               @RequestBody HashMap<String, String> memberFriend){
 
+        HttpHeaders resHeaders = new HttpHeaders();
+        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
         MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
-
+        String loginId = memberDTO.getId();
         String friendId = memberFriend.get("friendId");
 
-        //친구 추가에서 친구 정보 가져오기
-        Optional<Member> friend =memberRepository.findById(friendId);
-
+        // 로그인 유저와 일반 유저가 이미 친구요청을 했다면, 저장 안함
+        if(memberFriendService.countByLoginIdAndFriendId(loginId, friendId) < 1 && memberFriendService.countByLoginIdAndFriendId(friendId, loginId) < 1){
         //친구 추가 작업하기
         MemberFriendDTO memberFriendDTO = new MemberFriendDTO();
-
-        memberFriendDTO.setFriendId(friend.get().getId());
-        memberFriendDTO.setLoginId(memberDTO.getId());
+        memberFriendDTO.setFriendId(friendId);
+        memberFriendDTO.setLoginId(loginId);
         log.info(memberFriendDTO);
-
         memberFriendService.saveFriendList(memberFriendDTO);
+        return new ResponseEntity<String>("친구신청이 완료되었습니다.", resHeaders, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<String>("이미 신청한 유저입니다.", resHeaders, HttpStatus.BAD_REQUEST);
+        }
     }
+    @ResponseBody
+    @PostMapping("/blogVisitRequest")
+    public void blogVisitRequest(HttpSession session, @RequestBody HashMap<String, String> map){
+            MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+            BlogList blogList =  blogListService.findByBnum(Long.parseLong(map.get("bnum")));
+            log.info(blogList);
+            if(memberDTO != null){
+            BlogMemberVisitCountDTO blogMemberVisitCountDTO = new BlogMemberVisitCountDTO();
+            blogMemberVisitCountDTO.setId(memberDTO.createMember());
+            blogMemberVisitCountDTO.setBlogList(blogList);
+            blogMemberVisitCountService.saveBlogMemberVisitCount(blogMemberVisitCountDTO);
+            }else {
+                BlogVisitCountDTO blogVisitCountDTO = new BlogVisitCountDTO();
+                blogVisitCountDTO.setBlogList(blogList);
+                blogVisitCountService.saveBlogVisitCount(blogVisitCountDTO);
+            }
+
+    }
+
     @RequestMapping({"/memberBlogList", "/memberBlogList/{page}"})
     public String memberBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
     BlogSearchDTO blogSearchDTO){
@@ -241,5 +278,4 @@ public class BlogController {
 
         return "redirect:/blog/blogMain";
     }
-
 }

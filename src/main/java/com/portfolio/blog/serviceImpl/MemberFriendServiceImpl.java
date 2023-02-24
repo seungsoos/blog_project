@@ -21,4 +21,9 @@ public class MemberFriendServiceImpl implements MemberFriendService {
         MemberFriend memberFriend = memberFriendDTO.createMemberFriend();
         memberFriendRepository.save(memberFriend);
     }
+
+    @Override
+    public int countByLoginIdAndFriendId(String loginId, String friendId) {
+        return memberFriendRepository.countByLoginIdAndFriendId(loginId, friendId);
+    }
 }

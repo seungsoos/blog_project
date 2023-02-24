@@ -1,5 +1,6 @@
 package com.portfolio.blog.dto;
 
+import com.portfolio.blog.entity.BlogList;
 import com.portfolio.blog.entity.BlogMemberVisitCount;
 import com.portfolio.blog.entity.Member;
 import lombok.Data;
@@ -14,6 +15,7 @@ public class BlogMemberVisitCountDTO {
 
     private Member id;
 
+    private BlogList blogList;
 
     private static ModelMapper modelMapper = new ModelMapper();
     //DTO -> Entity로 변경

@@ -1,5 +1,6 @@
 package com.portfolio.blog.dto;
 
+import com.portfolio.blog.entity.BlogList;
 import com.portfolio.blog.entity.BlogVisitCount;
 import lombok.Data;
 import lombok.ToString;
@@ -11,6 +12,9 @@ public class BlogVisitCountDTO {
     private  Long vnum;
 
     private static ModelMapper modelMapper = new ModelMapper();
+
+    private BlogList blogList;
+
     //DTO -> Entity로 변경
     public BlogVisitCount createBlogMemberVisitCount(){
         return modelMapper.map(this, BlogVisitCount.class);
