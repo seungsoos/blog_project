@@ -1,13 +1,9 @@
 package com.portfolio.blog.entity;
 
 import com.portfolio.blog.constant.Authority;
-import com.portfolio.blog.dto.BlogInfoDTO;
 import com.portfolio.blog.dto.BlogListDTO;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 

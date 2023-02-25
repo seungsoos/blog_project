@@ -1,11 +1,10 @@
 package com.portfolio.blog.entity;
 
-
 import com.portfolio.blog.constant.FriendShip;
-import lombok.*;
+import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
-import javax.persistence.*;
 
+import javax.persistence.*;
 
 @Entity(name="friend_ship")
 @Table(name="friend_ship")

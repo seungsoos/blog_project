@@ -1,6 +1,5 @@
 package com.portfolio.blog.service;
 
-import com.portfolio.blog.dto.BlogListDTO;
 import com.portfolio.blog.dto.BlogPostDTO;
 import com.portfolio.blog.dto.PostSearchDTO;
 import com.portfolio.blog.entity.BlogPost;

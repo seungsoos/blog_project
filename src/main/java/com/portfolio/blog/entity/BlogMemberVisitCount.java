@@ -1,10 +1,7 @@
 package com.portfolio.blog.entity;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 
@@ -22,4 +19,9 @@ public class BlogMemberVisitCount extends  BaseTimeEntity{
     @JoinColumn(name="Member_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private  Member member;
+
+    // 하나의 블로그에 여러명이 올수 있다.
+    @JoinColumn(name="b_num")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private  BlogList blogList;
 }
