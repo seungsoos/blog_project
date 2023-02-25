@@ -9,7 +9,6 @@ import java.util.List;
 public interface MemberFriendRepository extends JpaRepository<MemberFriend, Long> {
 
     void deleteByLoginIdAndFriendId(String loginId, String friendId);
-
     int countByLoginIdAndFriendId(String loginId, String friendId);
 
     List<MemberFriend> findByFriendIdAndType(String friendId, FriendShip friendShip);
@@ -17,5 +16,4 @@ public interface MemberFriendRepository extends JpaRepository<MemberFriend, Long
     List<MemberFriend> findByFriendId(String friendId);
 
     MemberFriend findByLoginIdAndFriendId(String loginId, String friendId);
-
 }

@@ -17,6 +17,7 @@ public class MemberDTO {
     private  String name;
 
     private String password;
+
     private static ModelMapper modelMapper = new ModelMapper();
 
     // DTO를 -> Entity로 변경

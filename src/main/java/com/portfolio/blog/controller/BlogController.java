@@ -34,7 +34,7 @@ import java.util.*;
 @Log4j2
 @RequestMapping("/blog")
 @RequiredArgsConstructor
-public class BlogController {
+public class    BlogController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BlogController.class);
     private final MemberRepository memberRepository;
@@ -107,6 +107,7 @@ public class BlogController {
         return "blog/blogForm";
     }
 
+    // 특정 게시글 보기
     @RequestMapping("/blogView/{bnum}")
     public String blogView( @PathVariable("bnum") Optional<Integer> bnum, Model model, PostSearchDTO postSearchDTO, HttpSession session){
         Pageable pageable = PageRequest.of(0, 8);
@@ -206,6 +207,32 @@ public class BlogController {
         model.addAttribute("blogListDTO", blogListDTO);
         return "blog/blogModifyForm";
     }
+
+    //블로그 수정
+    @PostMapping("/blogModify")
+    public String blogModify(@Valid BlogInfoDTO blogInfoDTO,
+                             @Valid BlogListDTO blogListDTO,
+                             @RequestParam("member") Member id,
+                             BindingResult bindingResult,
+                             Model model){
+
+        if (bindingResult.hasErrors()){
+            log.info("에러------------발견");
+            return "blog/blogModifyForm";
+        }
+
+        log.info(id);
+
+        log.info(blogInfoDTO);
+        log.info(blogListDTO);
+        blogInfoDTO.setId(id);
+        blogListDTO.setId(id);
+        blogInfoService.modifyBlogInfo(blogInfoDTO);
+        blogListService.modifyBlogList(blogListDTO);
+
+        return "redirect:/blog/blogMain";
+    }
+
     //친구요청 Ajax
     @ResponseBody
     @PostMapping("/friendRequest")
@@ -328,27 +355,60 @@ public class BlogController {
         return "blog/memberBlogForm";
     }
 
-    @PostMapping("/blogModify")
-    public String blogModify(@Valid BlogInfoDTO blogInfoDTO,
-                             @Valid BlogListDTO blogListDTO,
-                             @RequestParam("member") Member id,
-                             BindingResult bindingResult,
-                             Model model){
+    //친구블로그 목록
+    @RequestMapping({"/friendBlogList", "/friendBlogList/{page}"})
+    public String friendBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
+                                 BlogSearchDTO blogSearchDTO){
+        log.info("친구목록-------------------");
+        Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 8);
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+        String loginId =memberDTO.getId();
 
-        if (bindingResult.hasErrors()){
-            log.info("에러------------발견");
-            return "blog/blogModifyForm";
+        BlogList blogList = new BlogList();
+        blogList =  blogListService.findByMember_id(memberDTO.getId());
+        blogSearchDTO.setBnum(blogList.getBnum());
+        Page<MemberFriend> friendBlogList = blogListService.getFriendBlogPage(blogSearchDTO,pageable,loginId);
+        log.info(friendBlogList.getContent());
+
+        List<BlogList> friendInfo = new ArrayList<>();
+        for (int i=0; i<friendBlogList.getContent().size(); i++){
+
+            String friendId = friendBlogList.getContent().get(i).getFriendId();
+            log.info(friendId);
+            blogList =  blogListService.findByMember_id(friendId);
+            friendInfo.add(blogList);
+
         }
+        log.info(friendInfo);
 
-        log.info(id);
+        model.addAttribute("memberBlog", friendBlogList);
+        model.addAttribute("friendInfo", friendInfo);
+        model.addAttribute("blogSearchDTO", blogSearchDTO);
+        model.addAttribute("maxPage", 10);
 
-        log.info(blogInfoDTO);
-        log.info(blogListDTO);
-        blogInfoDTO.setId(id);
-        blogListDTO.setId(id);
-        blogInfoService.modifyBlogInfo(blogInfoDTO);
-        blogListService.modifyBlogList(blogListDTO);
+        return "blog/friendBlogForm";
+    }
 
-        return "redirect:/blog/blogMain";
+    //친구삭제
+    @ResponseBody
+    @PostMapping("/friendDelete")
+    public void friendDelete(HttpSession session,
+                             @RequestBody HashMap<String, String> memberFriend,
+                             MemberDTO memberDTO){
+        log.info("친구삭제 --------------------");
+        MemberDTO member = (MemberDTO) session.getAttribute("memberDTO");
+        Member login = member.createMember();
+        String friend =  memberFriend.get("friendId");
+
+        log.info("login : " + login);
+        log.info("friend : " + friend);
+        memberDTO.setId(friend);
+        Member friendId = memberDTO.createMember();
+
+        MemberFriendDTO memberFriendDTO = new MemberFriendDTO();
+        memberFriendDTO.setLoginId(login.getId());
+        memberFriendDTO.setFriendId(friendId.getId());
+        log.info(memberFriendDTO);
+        memberFriendService.deleteFriendList(memberFriendDTO);
     }
 }
