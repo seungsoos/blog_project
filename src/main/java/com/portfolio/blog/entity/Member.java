@@ -15,9 +15,8 @@ import javax.persistence.Table;
     @Data
     @ToString
     public class Member extends BaseTimeEntity{
-
         @Id
-        @Column(name="member_id")
+        @Column(name="member_id", nullable = false)
         private String id;
         @Column(nullable = false)
         private String name;

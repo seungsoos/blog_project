@@ -3,6 +3,7 @@ package com.portfolio.blog.entity;
 import com.portfolio.blog.constant.FriendShip;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
