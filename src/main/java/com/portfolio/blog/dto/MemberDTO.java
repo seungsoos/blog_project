@@ -24,7 +24,7 @@ public class MemberDTO {
     private static ModelMapper modelMapper = new ModelMapper();
 
     // DTO를 -> Entity로 변경
-    public Member save(){
+    public Member createMember(){
         return modelMapper.map(this, Member.class);
     }
 
@@ -32,5 +32,4 @@ public class MemberDTO {
     public static MemberDTO of(Member member){
         return modelMapper.map(member, MemberDTO.class);
     }
-
 }

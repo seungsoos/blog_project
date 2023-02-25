@@ -93,21 +93,22 @@ public class BlogPostRepositoryCustomImpl implements BlogPostRepositoryCustom{
                         searchAuthorityEq2(postSearchDTO.getBrdRead()),
                         searchCategoryEq(postSearchDTO.getCategory()),
                         searchByLike(postSearchDTO.getSearchBy(), postSearchDTO.getSearchQuery()),
-                        searchByBnum(postSearchDTO.getBnum())
+                        searchByBnum(postSearchDTO.getBnum()),
+                        QBlogPost.blogPost.blogBrdList.brdRead.eq(Authority.PERMISSION)
                 )
                 .orderBy(QBlogPost.blogPost.postTitle.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-
-        long total = queryFactory
+        Long total = queryFactory
                 .select(Wildcard.count)
                 .from(QBlogPost.blogPost)
                 .where(
                         regDtsAfter(postSearchDTO.getSearchDateType()),
                         searchAuthorityEq1(postSearchDTO.getBrdWrite()),
                         searchAuthorityEq2(postSearchDTO.getBrdRead()),
-                        searchByLike(postSearchDTO.getSearchBy(), postSearchDTO.getSearchQuery())
+                        searchByLike(postSearchDTO.getSearchBy(), postSearchDTO.getSearchQuery()),
+                        QBlogPost.blogPost.blogBrdList.brdRead.eq(Authority.PERMISSION)
                 )
                 .fetchOne();
         return new PageImpl<>(blogLists, pageable, total);

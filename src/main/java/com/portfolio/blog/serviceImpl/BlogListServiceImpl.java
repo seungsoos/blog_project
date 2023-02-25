@@ -43,7 +43,12 @@ public class BlogListServiceImpl implements BlogListService {
     }
 
     @Override
-    public Page<MemberFriend> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable, String loginId) {
-        return blogListRepository.getMemberBlogPage(blogSearchDTO, pageable, loginId);
+    public Page<BlogList> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable) {
+        return blogListRepository.getMemberBlogPage(blogSearchDTO, pageable);
+    }
+
+    @Override
+    public Page<MemberFriend> getFriendBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable, String loginId) {
+        return blogListRepository.getFriendBlogPage(blogSearchDTO, pageable, loginId);
     }
 }

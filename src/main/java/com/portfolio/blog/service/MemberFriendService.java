@@ -1,7 +1,6 @@
 package com.portfolio.blog.service;
 
 import com.portfolio.blog.dto.MemberFriendDTO;
-import com.portfolio.blog.entity.MemberFriend;
 
 public interface MemberFriendService {
 

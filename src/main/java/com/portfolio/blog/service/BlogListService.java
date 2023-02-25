@@ -19,5 +19,7 @@ public interface BlogListService {
     //블로그 정보수정
     void modifyBlogList(BlogListDTO blogListDTO);
 
-    Page<MemberFriend> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable, String loginId);
+    Page<BlogList> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable);
+
+    Page<MemberFriend> getFriendBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable, String loginId);
 }
