@@ -202,6 +202,7 @@ public class BlogController {
 
         memberFriendService.saveFriendList(memberFriendDTO);
     }
+
     @RequestMapping({"/memberBlogList", "/memberBlogList/{page}"})
     public String friendBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
     BlogSearchDTO blogSearchDTO){
@@ -221,28 +222,5 @@ public class BlogController {
         return "blog/memberBlogForm";
     }
 
-    @PostMapping("/blogModify")
-    public String blogModify(@Valid BlogInfoDTO blogInfoDTO,
-                             @Valid BlogListDTO blogListDTO,
-                             @RequestParam("member") Member id,
-                             BindingResult bindingResult,
-                             Model model){
-
-        if (bindingResult.hasErrors()){
-            log.info("에러------------발견");
-            return "blog/blogModifyForm";
-        }
-
-        log.info(id);
-
-        log.info(blogInfoDTO);
-        log.info(blogListDTO);
-        blogInfoDTO.setId(id);
-        blogListDTO.setId(id);
-        blogInfoService.modifyBlogInfo(blogInfoDTO);
-        blogListService.modifyBlogList(blogListDTO);
-
-        return "redirect:/blog/blogMain";
-    }
 
 }
