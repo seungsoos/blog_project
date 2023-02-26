@@ -1,6 +1,7 @@
 package com.portfolio.blog.repository;
 
 import com.portfolio.blog.constant.Authority;
+import com.portfolio.blog.constant.FriendShip;
 import com.portfolio.blog.dto.BlogSearchDTO;
 import com.portfolio.blog.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -90,8 +91,34 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
         return new PageImpl<>(content, pageable, total);
     }
 
+    //친구목록
     @Override
     public Page<MemberFriend> getFriendBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable, String loginId) {
-        return null;
+        List<MemberFriend> content = queryFactory
+                .selectFrom(QMemberFriend.memberFriend)
+                .where(QMemberFriend.memberFriend.loginId.eq(loginId)
+                                .or(QMemberFriend.memberFriend.friendId.eq(loginId)),
+                        QMemberFriend.memberFriend.type.eq(FriendShip.FRIENDS),
+                        regDtsAfter(blogSearchDTO.getSearchDateType()),
+                        searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
+                        searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
+                        QMemberFriend.memberFriend.fnum.ne(blogSearchDTO.getBnum())
+                )
+                .orderBy(QMemberFriend.memberFriend.regTime.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = queryFactory
+                .select(Wildcard.count)
+                .from(QMemberFriend.memberFriend)
+                .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
+                        searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
+                        searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
+                        QMemberFriend.memberFriend.fnum.eq(blogSearchDTO.getBnum())
+                )
+                .fetchOne();
+
+        return new PageImpl<>(content, pageable, total);
     }
 }
