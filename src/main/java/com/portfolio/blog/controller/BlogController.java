@@ -164,29 +164,6 @@ public class BlogController {
         return "blog/blogModifyForm";
     }
 
-    //친구요청 Ajax
-    @ResponseBody
-    @PostMapping("/friendRequest")
-    public void friendRequest(HttpSession session,
-                              @RequestBody HashMap<String, String> memberFriend){
-
-        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
-
-        String friendId = memberFriend.get("friendId");
-
-        //친구 추가에서 친구 정보 가져오기
-        Optional<Member> friend =memberRepository.findById(friendId);
-
-        //친구 추가 작업하기
-        MemberFriendDTO memberFriendDTO = new MemberFriendDTO();
-
-        memberFriendDTO.setFriendId(friend.get().getId());
-        memberFriendDTO.setLoginId(memberDTO.getId());
-        log.info(memberFriendDTO);
-
-        memberFriendService.saveFriendList(memberFriendDTO);
-    }
-
     //전체블로그 목록
     @RequestMapping({"/memberBlogList", "/memberBlogList/{page}"})
     public String memberBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
@@ -242,4 +219,50 @@ public class BlogController {
     }
 
 
+    //친구요청 Ajax
+    @ResponseBody
+    @PostMapping("/friendRequest")
+    public void friendRequest(HttpSession session,
+                              @RequestBody HashMap<String, String> memberFriend){
+
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+
+        String friendId = memberFriend.get("friendId");
+
+        //친구 추가에서 친구 정보 가져오기
+        Optional<Member> friend =memberRepository.findById(friendId);
+
+        //친구 추가 작업하기
+        MemberFriendDTO memberFriendDTO = new MemberFriendDTO();
+
+        memberFriendDTO.setFriendId(friend.get().getId());
+        memberFriendDTO.setLoginId(memberDTO.getId());
+        log.info(memberFriendDTO);
+
+        memberFriendService.saveFriendList(memberFriendDTO);
+    }
+
+
+    //친구삭제
+    @ResponseBody
+    @PostMapping("/friendDelete")
+    public void friendDelete(HttpSession session,
+                             @RequestBody HashMap<String, String> memberFriend,
+                             MemberDTO memberDTO){
+        log.info("친구삭제 --------------------");
+        MemberDTO member = (MemberDTO) session.getAttribute("memberDTO");
+        Member login = member.createMember();
+        String friend =  memberFriend.get("friendId");
+
+        log.info("login : " + login);
+        log.info("friend : " + friend);
+        memberDTO.setId(friend);
+        Member friendId = memberDTO.createMember();
+
+        MemberFriendDTO memberFriendDTO = new MemberFriendDTO();
+        memberFriendDTO.setLoginId(login.getId());
+        memberFriendDTO.setFriendId(friendId.getId());
+        log.info(memberFriendDTO);
+        memberFriendService.deleteFriendList(memberFriendDTO);
+    }
 }

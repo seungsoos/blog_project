@@ -4,6 +4,7 @@ import com.portfolio.blog.dto.BlogListDTO;
 import com.portfolio.blog.dto.BlogSearchDTO;
 import com.portfolio.blog.entity.BlogList;
 import com.portfolio.blog.entity.Member;
+import com.portfolio.blog.entity.MemberFriend;
 import com.portfolio.blog.repository.BlogListRepository;
 import com.portfolio.blog.service.BlogListService;
 import lombok.RequiredArgsConstructor;
@@ -44,5 +45,10 @@ public class BlogListServiceImpl implements BlogListService {
     @Override
     public Page<BlogList> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable) {
         return blogListRepository.getMemberBlogPage(blogSearchDTO, pageable);
+    }
+
+    @Override
+    public Page<MemberFriend> getFriendBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable, String loginId) {
+        return blogListRepository.getFriendBlogPage(blogSearchDTO, pageable, loginId);
     }
 }
