@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -78,7 +81,7 @@ public class BlogController {
         return "blog/blogForm";
     }
 
-
+    //특정 게시글 보기
     @RequestMapping("/blogView/{bnum}")
     public String blogView( @PathVariable("bnum") Optional<Integer> bnum, Model model, PostSearchDTO postSearchDTO, HttpSession session){
         Pageable pageable = PageRequest.of(0, 8);
@@ -96,6 +99,14 @@ public class BlogController {
         model.addAttribute("BlogPost", blogPost);
         model.addAttribute("memberBlogList", memberBlogList);
         return  "blog/blogView";
+    }
+
+    //블로그생성
+    @GetMapping("/blogCreate")
+    public String createBlog(Model model) {
+        model.addAttribute("blogInfoDTO", new BlogInfoDTO());
+        model.addAttribute("blogListDTO", new BlogListDTO());
+        return "blog/createBlogForm";
     }
 
     //블로그생성
@@ -121,6 +132,14 @@ public class BlogController {
         blogListService.saveBlogList(blogListDTO);
 
         return  "redirect:/blog/blogMain";
+    }
+
+    //게시글 생성
+    @GetMapping("/postCreate")
+    public String createPost(Model model){
+        model.addAttribute("blogPostDTO", new BlogPostDTO());
+        model.addAttribute("blogBrdListDTO", new BlogBrdListDTO());
+        return "blog/createPostForm";
     }
 
     //게시글 생성
@@ -162,6 +181,31 @@ public class BlogController {
         model.addAttribute("blogInfoDTO", blogInfoDTO);
         model.addAttribute("blogListDTO", blogListDTO);
         return "blog/blogModifyForm";
+    }
+
+    //블로그 수정
+    @PostMapping("/blogModify")
+    public String blogModify(@Valid BlogInfoDTO blogInfoDTO,
+                             @Valid BlogListDTO blogListDTO,
+                             @RequestParam("member") Member id,
+                             BindingResult bindingResult,
+                             Model model){
+
+        if (bindingResult.hasErrors()){
+            log.info("에러------------발견");
+            return "blog/blogModifyForm";
+        }
+
+        log.info(id);
+
+        log.info(blogInfoDTO);
+        log.info(blogListDTO);
+        blogInfoDTO.setId(id);
+        blogListDTO.setId(id);
+        blogInfoService.modifyBlogInfo(blogInfoDTO);
+        blogListService.modifyBlogList(blogListDTO);
+
+        return "redirect:/blog/blogMain";
     }
 
     //전체블로그 목록
@@ -222,28 +266,31 @@ public class BlogController {
     //친구요청 Ajax
     @ResponseBody
     @PostMapping("/friendRequest")
-    public void friendRequest(HttpSession session,
-                              @RequestBody HashMap<String, String> memberFriend){
+    public ResponseEntity<String> friendRequest(HttpSession session,
+                                                @RequestBody HashMap<String, String> memberFriend){
 
+        HttpHeaders resHeaders = new HttpHeaders();
+        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
         MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
-
+        String loginId = memberDTO.getId();
         String friendId = memberFriend.get("friendId");
 
-        //친구 추가에서 친구 정보 가져오기
-        Optional<Member> friend =memberRepository.findById(friendId);
-
-        //친구 추가 작업하기
-        MemberFriendDTO memberFriendDTO = new MemberFriendDTO();
-
-        memberFriendDTO.setFriendId(friend.get().getId());
-        memberFriendDTO.setLoginId(memberDTO.getId());
-        log.info(memberFriendDTO);
-
-        memberFriendService.saveFriendList(memberFriendDTO);
+        // 로그인 유저와 일반 유저가 이미 친구요청을 했다면, 저장 안함
+        if(memberFriendService.countByLoginIdAndFriendId(loginId, friendId) < 1 && memberFriendService.countByLoginIdAndFriendId(friendId, loginId) < 1){
+            //친구 추가 작업하기
+            MemberFriendDTO memberFriendDTO = new MemberFriendDTO();
+            memberFriendDTO.setFriendId(friendId);
+            memberFriendDTO.setLoginId(loginId);
+            log.info(memberFriendDTO);
+            memberFriendService.saveFriendList(memberFriendDTO);
+            return new ResponseEntity<String>("친구신청이 완료되었습니다.", resHeaders, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<String>("이미 신청한 유저입니다.", resHeaders, HttpStatus.BAD_REQUEST);
+        }
     }
 
 
-    //친구삭제
+    //친구삭제 Ajax
     @ResponseBody
     @PostMapping("/friendDelete")
     public void friendDelete(HttpSession session,

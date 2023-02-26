@@ -31,4 +31,10 @@ public class MemberFriendServiceImpl implements MemberFriendService {
         String friendId = memberFriend.getFriendId();
         memberFriendRepository.deleteByLoginIdAndFriendId(loginId, friendId);
     }
+
+    //친구추가 중복검사
+    @Override
+    public int countByLoginIdAndFriendId(String loginId, String friendId) {
+        return memberFriendRepository.countByLoginIdAndFriendId(loginId, friendId);
+    }
 }
