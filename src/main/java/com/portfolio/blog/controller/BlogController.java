@@ -1,10 +1,7 @@
 package com.portfolio.blog.controller;
 
 import com.portfolio.blog.dto.*;
-import com.portfolio.blog.entity.BlogBrdList;
-import com.portfolio.blog.entity.BlogList;
-import com.portfolio.blog.entity.BlogPost;
-import com.portfolio.blog.entity.Member;
+import com.portfolio.blog.entity.*;
 import com.portfolio.blog.repository.*;
 import com.portfolio.blog.service.*;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -80,6 +78,7 @@ public class BlogController {
         return "blog/blogForm";
     }
 
+
     @RequestMapping("/blogView/{bnum}")
     public String blogView( @PathVariable("bnum") Optional<Integer> bnum, Model model, PostSearchDTO postSearchDTO, HttpSession session){
         Pageable pageable = PageRequest.of(0, 8);
@@ -97,15 +96,6 @@ public class BlogController {
         model.addAttribute("BlogPost", blogPost);
         model.addAttribute("memberBlogList", memberBlogList);
         return  "blog/blogView";
-    }
-
-
-    //블로그생성
-    @GetMapping("/blogCreate")
-    public String createBlog(Model model) {
-        model.addAttribute("blogInfoDTO", new BlogInfoDTO());
-        model.addAttribute("blogListDTO", new BlogListDTO());
-        return "blog/createBlogForm";
     }
 
     //블로그생성
@@ -133,13 +123,6 @@ public class BlogController {
         return  "redirect:/blog/blogMain";
     }
 
-    //게시글 생성
-    @GetMapping("/postCreate")
-    public String createPost(Model model){
-        model.addAttribute("blogPostDTO", new BlogPostDTO());
-        model.addAttribute("blogBrdListDTO", new BlogBrdListDTO());
-        return "blog/createPostForm";
-    }
     //게시글 생성
     @PostMapping("/postCreate")
     public String createPost(@Valid BlogPostDTO blogPostDTO,
@@ -180,6 +163,7 @@ public class BlogController {
         model.addAttribute("blogListDTO", blogListDTO);
         return "blog/blogModifyForm";
     }
+
     //친구요청 Ajax
     @ResponseBody
     @PostMapping("/friendRequest")
@@ -203,9 +187,10 @@ public class BlogController {
         memberFriendService.saveFriendList(memberFriendDTO);
     }
 
+    //전체블로그 목록
     @RequestMapping({"/memberBlogList", "/memberBlogList/{page}"})
-    public String friendBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
-    BlogSearchDTO blogSearchDTO){
+    public String memberBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
+                                 BlogSearchDTO blogSearchDTO){
         log.info(blogSearchDTO);
 
         MemberDTO memberDTO =  (MemberDTO) session.getAttribute("memberDTO");
@@ -220,6 +205,40 @@ public class BlogController {
         model.addAttribute("maxPage", 10);
 
         return "blog/memberBlogForm";
+    }
+
+    //친구블로그 목록
+    @RequestMapping({"/friendBlogList", "/friendBlogList/{page}"})
+    public String friendBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
+                                 BlogSearchDTO blogSearchDTO){
+        log.info("친구목록-------------------");
+        Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 8);
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+        String loginId =memberDTO.getId();
+
+        BlogList blogList = new BlogList();
+        blogList =  blogListService.findByMember_id(memberDTO.getId());
+        blogSearchDTO.setBnum(blogList.getBnum());
+        Page<MemberFriend> friendBlogList = blogListService.getFriendBlogPage(blogSearchDTO,pageable,loginId);
+        log.info(friendBlogList.getContent());
+
+        List<BlogList> friendInfo = new ArrayList<>();
+        for (int i=0; i<friendBlogList.getContent().size(); i++){
+
+            String friendId = friendBlogList.getContent().get(i).getFriendId();
+            log.info(friendId);
+            blogList =  blogListService.findByMember_id(friendId);
+            friendInfo.add(blogList);
+
+        }
+        log.info(friendInfo);
+
+        model.addAttribute("memberBlog", friendBlogList);
+        model.addAttribute("friendInfo", friendInfo);
+        model.addAttribute("blogSearchDTO", blogSearchDTO);
+        model.addAttribute("maxPage", 10);
+
+        return "blog/friendBlogForm";
     }
 
 
