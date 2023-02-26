@@ -1,9 +1,7 @@
 package com.portfolio.blog.repository;
 
-import com.portfolio.blog.dto.BlogBrdListDTO;
 import com.portfolio.blog.entity.BlogBrdList;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 

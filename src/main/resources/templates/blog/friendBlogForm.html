@@ -3,6 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout01}">
 <head>
+<<<<<<< HEAD
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
 </head>
@@ -66,6 +67,71 @@
         <!-- #main -->
     </div>
     <!-- #primary -->
+=======
+  <meta name="_csrf" th:content="${_csrf.token}">
+  <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+
+<div layout:fragment="content">
+  <div id="content" class="site-content">
+    <div id="primary" class="content-area column full">
+      <main id="main" class="site-main">
+        <div class="grid portfoliogrid">
+          <article class="hentry" th:each="Blog : ${memberBlog.getContent()}">
+            <header class="entry-header">
+              <a class='portfoliotype' th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.fnum})}" th:text="${friendInfo[BlogStat.index].member.nickName}">닉네임</a>
+              <button class='portfoliotype' th:attrappend="id=${BlogStat.index}" name="friendAdd">친구삭제</button>
+              <h2 class="entry-title"><a th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.fnum})}" rel="bookmark" th:text="${friendInfo[BlogStat.index].blogName}">블로그 이름</a></h2>
+              <a class='portfoliotype' th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.fnum})}" th:text="${friendInfo[BlogStat.index].blogDetail}">블로그 설명</a>
+              <input type="hidden" th:value="${friendInfo[BlogStat.index].member.id}"  th:attrappend="id=${BlogStat}" name="friendId">
+            </header>
+          </article>
+        </div>
+        <!-- .grid -->
+
+        <div th:with="start=${(memberBlog.number/maxPage)*maxPage + 1}, end=(${(memberBlog.totalPages == 0) ? 1 : (start + (maxPage - 1) < memberBlog.totalPages ? start + (maxPage - 1) : memberBlog.totalPages)})">
+          <ul class="pagination justify-content-center">
+            <li>
+              <a class="Previous page-numbers" th:classappend="${memberBlog.first}?'disabled'" th:href="@{/blog/friendBlogList/{page}(page = ${memberBlog.number - 1})}">Previous</a>
+            </li>
+            <li th:each="page: ${#numbers.sequence(start, end)}">
+              <a class="page-numbers" th:classappend="${memberBlog.number eq page-1}?'current':''" th:href="@{/blog/friendBlogList/{page}(page = ${page - 1})}" th:inline="text">[[${page}]]</a>
+            </li>
+            <li>
+              <a class="next page-numbers" th:classappend="${memberBlog.last}?'disabled'" th:href="@{/blog/friendBlogList/{page}(page = ${memberBlog.number + 1})}" aria-label='Next' >Next</a>
+            </li>
+          </ul>
+        </div>
+        <br/>
+      </main>
+    </div>
+    <form th:action="@{'/friendBlogList/' + ${memberBlog.number}}" role="form" method="post" th:object="${memberBlog}">
+      <div class="form-inline justify-content-center" th:object="${blogSearchDTO}">
+        <select th:field="*{searchDateType}" class="form-control" style="width:auto;">
+          <option value="all">전체기간</option>
+          <option value="1d">1일</option>
+          <option value="1w">1주</option>
+          <option value="1m">1개월</option>
+          <option value="6m">6개월</option>
+        </select>
+        <select th:field="*{blogAuthority}" class="form-control" style="width:auto;">
+          <option value="" selected disabled>블로그 공개범위</option>
+          <option value="PERMISSION">공개</option>
+          <option value="GROUP">친구만</option>
+          <option value="UNLICENSED">비공개</option>
+        </select>
+        <select th:field="*{searchBy}" class="form-control" style="width:auto;">
+          <option value="blogName">블로그 이름</option>
+          <option value="blogDetail">블로그 설명</option>
+        </select>
+        <input th:field="*{searchQuery}" type="text" class="form-control" placeholder="검색어를 입력해주세요">
+        <button id="searchBtn" type="submit" class="btn btn-current current">검색</button>
+      </div>
+    </form>
+    <!-- #main -->
+  </div>
+  <!-- #primary -->
+>>>>>>> b971cbce2de90af80f0878aa9e72dc66ef8fcffe
 </div>
 <!-- #content -->
 <script layout:fragment="script" th:inline="javascript">

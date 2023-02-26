@@ -1,12 +1,16 @@
 package com.portfolio.blog.service;
 
-import com.portfolio.blog.dto.BlogBrdListDTO;
 import com.portfolio.blog.dto.BlogMemberVisitCountDTO;
+import com.portfolio.blog.dto.MemberFriendDTO;
+import com.portfolio.blog.entity.BlogList;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface BlogMemberVisitCountService {
-    int  findCountByRegTime(LocalDateTime regTime);
+    int  countByBlogList_BnumAndRegTimeBetween(Long bnum, LocalDateTime startDateTime, LocalDateTime endDateTime);
+
+    int countBy();
 
     void saveBlogMemberVisitCount(BlogMemberVisitCountDTO blogMemberVisitCountDTO);
 }

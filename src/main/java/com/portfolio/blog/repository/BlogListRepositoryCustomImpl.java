@@ -61,9 +61,11 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
         }
         return  null;
     }
+
+    //전체목록
     @Override
     public Page<BlogList> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable) {
-
+    System.out.println(blogSearchDTO);
         List<BlogList> content = queryFactory
                 .selectFrom(QBlogList.blogList)
                 .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
@@ -77,7 +79,7 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-         Long total = queryFactory
+        Long total = queryFactory
                 .select(Wildcard.count)
                 .from(QBlogList.blogList)
                 .where(regDtsAfter(blogSearchDTO.getSearchDateType()),

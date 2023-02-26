@@ -2,14 +2,11 @@ package com.portfolio.blog.dto;
 
 import com.portfolio.blog.constant.Authority;
 import com.portfolio.blog.entity.BlogBrdList;
-import com.portfolio.blog.entity.BlogList;
 import com.portfolio.blog.entity.Member;
 import lombok.Data;
 import lombok.ToString;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.annotation.CreatedBy;
 
-import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 

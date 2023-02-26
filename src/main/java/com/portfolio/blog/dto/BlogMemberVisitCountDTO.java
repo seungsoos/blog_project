@@ -6,9 +6,7 @@ import com.portfolio.blog.entity.Member;
 import lombok.Data;
 import lombok.ToString;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.annotation.CreatedBy;
 
-import javax.persistence.Column;
 
 @Data
 @ToString
@@ -17,6 +15,7 @@ public class BlogMemberVisitCountDTO {
 
     private Member id;
 
+    private BlogList blogList;
 
     private static ModelMapper modelMapper = new ModelMapper();
     //DTO -> Entity로 변경

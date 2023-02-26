@@ -1,7 +1,6 @@
 package com.portfolio.blog.service;
 
 import com.portfolio.blog.dto.BlogBrdListDTO;
-import com.portfolio.blog.dto.BlogInfoDTO;
 import com.portfolio.blog.entity.BlogBrdList;
 
 import java.util.List;

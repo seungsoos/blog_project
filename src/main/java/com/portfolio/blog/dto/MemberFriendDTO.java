@@ -1,17 +1,26 @@
 package com.portfolio.blog.dto;
 
+
+import com.portfolio.blog.constant.FriendShip;
 import com.portfolio.blog.entity.MemberFriend;
 import lombok.Data;
 import lombok.ToString;
 import org.modelmapper.ModelMapper;
 
-@ToString
-@Data
-public class MemberFriendDTO {
-    private  String FriendId;
-    private  String LoginId;
-    private static ModelMapper modelMapper = new ModelMapper();
 
+@Data
+@ToString
+public class MemberFriendDTO {
+
+    private Long bnum;
+
+    private String loginId;
+
+    private String friendId;
+
+    private FriendShip type;
+
+    private static ModelMapper modelMapper = new ModelMapper();
 
     //DTO를 -> Entity로 변경
     public MemberFriend createMemberFriend(){

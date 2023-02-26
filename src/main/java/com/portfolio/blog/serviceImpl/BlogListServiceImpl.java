@@ -21,6 +21,11 @@ public class BlogListServiceImpl implements BlogListService {
 
     private  final BlogListRepository blogListRepository;
 
+     @Override
+     public BlogList findByBnum(Long bnum){
+         return blogListRepository.findByBnum(bnum);
+    }
+
     @Override
     public BlogList findByMember_id(String id) {
         return blogListRepository.findByMember_id(id);

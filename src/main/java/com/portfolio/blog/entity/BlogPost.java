@@ -1,7 +1,6 @@
 package com.portfolio.blog.entity;
 
 import com.portfolio.blog.constant.Category;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

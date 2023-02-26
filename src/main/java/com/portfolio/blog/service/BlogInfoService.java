@@ -2,10 +2,6 @@ package com.portfolio.blog.service;
 
 import com.portfolio.blog.dto.BlogInfoDTO;
 import com.portfolio.blog.entity.BlogInfo;
-import com.portfolio.blog.entity.Member;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Optional;
 
 public interface BlogInfoService{
 

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface BlogListRepositoryCustom {
 
+    //전체목록
     Page<BlogList> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable);
 
     //친구목록
