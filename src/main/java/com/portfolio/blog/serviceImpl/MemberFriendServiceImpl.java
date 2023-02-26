@@ -16,9 +16,19 @@ public class MemberFriendServiceImpl implements MemberFriendService {
 
     private final MemberFriendRepository memberFriendRepository;
 
+    //친구추가
     @Override
     public void saveFriendList(MemberFriendDTO memberFriendDTO) {
         MemberFriend memberFriend = memberFriendDTO.createMemberFriend();
         memberFriendRepository.save(memberFriend);
+    }
+
+    //친구삭제
+    @Override
+    public void deleteFriendList(MemberFriendDTO memberFriendDTO) {
+        MemberFriend memberFriend = memberFriendDTO.createMemberFriend();
+        String loginId = memberFriend.getLoginId();
+        String friendId = memberFriend.getFriendId();
+        memberFriendRepository.deleteByLoginIdAndFriendId(loginId, friendId);
     }
 }

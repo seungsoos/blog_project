@@ -2,10 +2,7 @@ package com.portfolio.blog.repository;
 
 import com.portfolio.blog.constant.Authority;
 import com.portfolio.blog.dto.BlogSearchDTO;
-import com.portfolio.blog.entity.BlogList;
-import com.portfolio.blog.entity.Member;
-import com.portfolio.blog.entity.QBlogList;
-import com.portfolio.blog.entity.QMember;
+import com.portfolio.blog.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -91,5 +88,10 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
                 .fetchOne();
 
         return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Page<MemberFriend> getFriendBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable, String loginId) {
+        return null;
     }
 }

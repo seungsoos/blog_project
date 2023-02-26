@@ -13,6 +13,7 @@ public class MemberFriendDTO {
     private static ModelMapper modelMapper = new ModelMapper();
 
 
+    //DTO를 -> Entity로 변경
     public MemberFriend createMemberFriend(){
         return modelMapper.map(this, MemberFriend.class);
     }
@@ -20,5 +21,6 @@ public class MemberFriendDTO {
     public static MemberFriendDTO of(MemberFriend memberFriend){
         return modelMapper.map(memberFriend, MemberFriendDTO.class);
     }
+
 
 }
