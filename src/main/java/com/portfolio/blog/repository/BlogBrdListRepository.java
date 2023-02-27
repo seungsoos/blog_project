@@ -13,4 +13,6 @@ public interface BlogBrdListRepository extends JpaRepository<BlogBrdList, Long> 
 
     List<BlogBrdList> findAll();
 
+    BlogBrdList findByCnum(Long cnum);
+
 }

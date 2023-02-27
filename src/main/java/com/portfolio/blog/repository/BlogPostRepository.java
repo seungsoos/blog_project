@@ -11,4 +11,6 @@ public interface BlogPostRepository extends JpaRepository<BlogPost, Long>, BlogP
 
     BlogPost findByBlogList_Bnum (Long bnum);
 
+    BlogPost findByPnum(Long pnum);
+
 }

@@ -24,8 +24,8 @@ public class BlogVisitCountServiceImpl implements BlogVisitCountService {
     }
 
     @Override
-    public int countBy() {
-        return blogVisitCountRepository.countBy();
+    public int countByBlogList_Bnum(Long bnum) {
+        return blogVisitCountRepository.countByBlogList_Bnum(bnum);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.portfolio.blog.entity;
 
 import com.portfolio.blog.constant.Category;
+import com.portfolio.blog.dto.BlogPostDTO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -40,4 +41,13 @@ public class BlogPost extends  BaseTimeEntity{
     @Column(nullable = false)
     private Category category;  // 게시글 분류
 
+    public void modifyBlogPost(BlogPostDTO blogPostDTO) {
+        this.pnum = blogPostDTO.getPnum();
+        this.blogList = blogPostDTO.getBlogList();
+        this.member = blogPostDTO.getId();
+        this.postText = blogPostDTO.getPostText();
+        this.blogBrdList = blogPostDTO.getBlogBrdList();
+        this.category = blogPostDTO.getCategory();
+        this.postTitle = blogPostDTO.getPostTitle();
+    }
 }

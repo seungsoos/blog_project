@@ -12,6 +12,10 @@ public interface BlogPostService {
     List<BlogPost> findByMember_Id(String id);
 
     BlogPost findByBlogList_Bnum(Long bnum);
+
+    void modifyBlogPost(BlogPostDTO blogPostDTO);
+
+    BlogPost findByPnum(Long pnum);
     void saveBlogPost(BlogPostDTO blogPostDTO);
 
     Page<BlogPost> getMemberBlogPage(PostSearchDTO postSearchDTO, Pageable pageable);

@@ -43,7 +43,7 @@ public class SecurityConfig{
 
         http.formLogin()
                 .loginPage("/login/loginMain") //로그인페이지 주소
-                .defaultSuccessUrl("/blog/blogMain") // 로그인 성공시 이동주소
+                .defaultSuccessUrl("/blog/blogMain/0") // 로그인 성공시 이동주소
                 .usernameParameter("id") //유저네임 변수명
                 .passwordParameter("password") // 패스워드 변수명
                 .failureUrl("/login/loginMain/error") //로그인 실패시 이동주소
@@ -77,7 +77,7 @@ public class SecurityConfig{
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .sessionFixation()
                 .changeSessionId()
-                .invalidSessionUrl("/login/loginMain")
+                .invalidSessionUrl("/login/loginMain/0")
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(true)
                 .expiredUrl("/login/loginMain"))

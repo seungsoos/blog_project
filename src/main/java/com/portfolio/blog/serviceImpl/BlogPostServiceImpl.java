@@ -2,7 +2,9 @@ package com.portfolio.blog.serviceImpl;
 
 import com.portfolio.blog.dto.BlogPostDTO;
 import com.portfolio.blog.dto.PostSearchDTO;
+import com.portfolio.blog.entity.BlogList;
 import com.portfolio.blog.entity.BlogPost;
+import com.portfolio.blog.entity.Member;
 import com.portfolio.blog.repository.BlogPostRepository;
 import com.portfolio.blog.service.BlogPostService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,17 @@ public class BlogPostServiceImpl implements BlogPostService {
     @Override
     public BlogPost findByBlogList_Bnum(Long bnum) {
         return blogPostRepository.findByBlogList_Bnum(bnum);
+    }
+    @Override
+    public BlogPost findByPnum(Long pnum) {
+        return blogPostRepository.findByPnum(pnum);
+    }
+
+    @Override
+    public void modifyBlogPost(BlogPostDTO blogPostDTO) {
+        Long Pnum = blogPostDTO.getPnum();
+        BlogPost blogPost = blogPostRepository.findByPnum(Pnum);
+        blogPost.modifyBlogPost(blogPostDTO);
     }
 
     @Override

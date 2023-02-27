@@ -22,8 +22,12 @@
                                th:text="${Blog.blogAuthority== T(com.portfolio.blog.constant.Authority).PERMISSION ? '공개': Blog.blogAuthority == T(com.portfolio.blog.constant.Authority).GROUP ?  '친구만' : '비공개'}"></a>
                         </header>
                         <span class="cat-links" th:if="${friendList} != null">
-				  <button name="friendAdd" th:each="friend : ${friendList}" th:if="${Blog.member.id} != friend" th:value="${Blog.member.id}"> 등록없을때 친구추가</button>
-				</span>
+				  <button name="friendAdd" th:each="friend : ${friendList}" th:if="${Blog.member.id} != friend"
+                          th:value="${Blog.member.id}">친구삭제</button>
+				            </span>
+                        <span class="cat-links" th:unless="${friendList} != null">
+                            <button name="friendAdd" th:value="${Blog.member.id}">친구추가</button>
+                            </span>
                     </article>
                 </div>
                 <!-- .grid -->
@@ -92,7 +96,7 @@
                       },
                       success : function(response) {
                           console.log('성공')
-                          $(location).attr('href', '/blog/blogMain/'+path);
+                          $(location).attr('href', '/blog/blogMain/0/'+path);
                       },//success
                       error: function() {
                       }//error
@@ -128,6 +132,7 @@
                   })//ajax
   })
 })
+
 </script>
 
 
