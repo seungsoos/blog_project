@@ -12,7 +12,7 @@
         <div id="primary" class="content-area column full">
             <main id="main" class="site-main">
                 <div class="grid portfoliogrid">
-                    <article class="hentry" th:each="Blog, BlogStat: ${memberBlog.getContent()}">
+                    <article class="hentry" th:each="Blog : ${memberBlog.getContent()}">
                         <header class="entry-header">
                             <h2 class="entry-title"><a href="#" th:classappend='${Blog.bnum}' rel="bookmark"
                                                        th:text="${Blog.blogName}"></a></h2>
@@ -21,9 +21,11 @@
                             <a th:classappend="${Blog.bnum}" href="#"
                                th:text="${Blog.blogAuthority== T(com.portfolio.blog.constant.Authority).PERMISSION ? '공개': Blog.blogAuthority == T(com.portfolio.blog.constant.Authority).GROUP ?  '친구만' : '비공개'}"></a>
                         </header>
-                        <span class="cat-links" th:if="${friendList} != null">
-				  <button name="friendAdd" th:each="friend : ${friendList}" th:if="${Blog.member.id} != friend" th:value="${Blog.member.id}"> 등록없을때 친구추가</button>
-				</span>
+                        <span th:if="${friendList != Blog.member.id}">
+                            <button name="friendAdd" th:value="${Blog.member.id}">친구추가</button>
+                        </span>
+                        <input type="text" th:value="${friendList}">
+                        <input type="text" th:value="${Blog.member.id}">
                     </article>
                 </div>
                 <!-- .grid -->

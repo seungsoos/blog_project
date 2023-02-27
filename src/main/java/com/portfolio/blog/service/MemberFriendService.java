@@ -10,8 +10,10 @@ public interface MemberFriendService {
 
     //친구추가
     void saveFriendList(MemberFriendDTO memberFriendDTO);
-    //친구삭제
-    void deleteFriendList(MemberFriendDTO memberFriendDTO);
+    //친구삭제1
+    void deleteByLoginIdAndFriendId(String loginId, String friendId);
+    //친구삭제2
+    void deleteByFnum(Long fnum);
     //친구추가 중복검사
     int countByLoginIdAndFriendId(String loginId, String friendId);
     List<MemberFriend> findByFriendIdAndType(String friendId, FriendShip friendShip);

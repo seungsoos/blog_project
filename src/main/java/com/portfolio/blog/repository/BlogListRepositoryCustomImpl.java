@@ -7,6 +7,7 @@ import com.portfolio.blog.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.hibernate.criterion.Distinct;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -97,6 +98,26 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
     @Override
     public Page<MemberFriend> getFriendBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable, String loginId) {
         List<MemberFriend> content = queryFactory
+                .selectFrom(QMemberFriend.memberFriend).distinct()
+                .join(QBlogList.blogList)
+                .on(QMemberFriend.memberFriend.loginId.eq(QBlogList.blogList.member.id)
+                                        .or(QMemberFriend.memberFriend.friendId.eq(QBlogList.blogList.member.id)))
+                .where(QMemberFriend.memberFriend.loginId.eq(loginId)
+                                .or(QMemberFriend.memberFriend.friendId.eq(loginId)),
+                        QMemberFriend.memberFriend.type.eq(FriendShip.FRIENDS),
+                        QBlogList.blogList.blogAuthority.eq(Authority.PERMISSION)
+                                .or(QBlogList.blogList.blogAuthority.eq(Authority.GROUP)),
+                        regDtsAfter(blogSearchDTO.getSearchDateType()),
+                        searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
+                        searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
+                        QMemberFriend.memberFriend.fnum.ne(blogSearchDTO.getBnum())
+                )
+                .orderBy(QMemberFriend.memberFriend.regTime.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        /*List<MemberFriend> content = queryFactory
                 .selectFrom(QMemberFriend.memberFriend)
                 .where(QMemberFriend.memberFriend.loginId.eq(loginId)
                                 .or(QMemberFriend.memberFriend.friendId.eq(loginId)),
@@ -109,7 +130,7 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
                 .orderBy(QMemberFriend.memberFriend.regTime.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .fetch();
+                .fetch();*/
 
         Long total = queryFactory
                 .select(Wildcard.count)

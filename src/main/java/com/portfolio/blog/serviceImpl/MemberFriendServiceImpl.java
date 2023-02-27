@@ -26,14 +26,19 @@ public class MemberFriendServiceImpl implements MemberFriendService {
         memberFriendRepository.save(memberFriend);
     }
 
-    //친구삭제
+    //친구삭제1
     @Override
-    public void deleteFriendList(MemberFriendDTO memberFriendDTO) {
-        MemberFriend memberFriend = memberFriendDTO.createMemberFriend();
-        String loginId = memberFriend.getLoginId();
-        String friendId = memberFriend.getFriendId();
+    public void deleteByLoginIdAndFriendId(String loginId, String friendId) {
         memberFriendRepository.deleteByLoginIdAndFriendId(loginId, friendId);
     }
+
+    //친구삭제2
+    @Override
+    public void deleteByFnum(Long fnum) {
+        memberFriendRepository.deleteByFnum(fnum);
+
+    }
+
     //친구추가 중복검사
     @Override
     public int countByLoginIdAndFriendId(String loginId, String friendId) {

@@ -8,7 +8,10 @@ import java.util.List;
 
 public interface MemberFriendRepository extends JpaRepository<MemberFriend, Long> {
 
+    //친구삭제1
     void deleteByLoginIdAndFriendId(String loginId, String friendId);
+    //친구삭제2
+    void deleteByFnum(Long fnum);
     //친구추가 중복검사
     int countByLoginIdAndFriendId(String loginId, String friendId);
 
