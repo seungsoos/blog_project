@@ -22,7 +22,7 @@
                                th:text="${Blog.blogAuthority== T(com.portfolio.blog.constant.Authority).PERMISSION ? '공개': Blog.blogAuthority == T(com.portfolio.blog.constant.Authority).GROUP ?  '친구만' : '비공개'}"></a>
                         </header>
                             <span class="cat-links"  th:if="${friendList.contains(Blog.member.id)}">
-                                <button name="friendAdd" th:value="${Blog.member.id}">친구삭제</button>
+                                <button name="friendDelete" th:value="${Blog.member.id}">친구삭제</button>
                             </span>
                             <span class="cat-links" th:unless="${friendList.contains(Blog.member.id)}">
                                 <button name="friendAdd" th:value="${Blog.member.id}">친구추가</button>
@@ -142,7 +142,7 @@
        var header = $("meta[name='_csrf_header']").attr("content");
                   $.ajax({
                       type : 'delete',
-                      url : '/blog/friendDelete',
+                      url : '/blog/friendRefuse',
                       data :  JSON.stringify(id),
                       dataType: 'text',
                       contentType : "application/json",

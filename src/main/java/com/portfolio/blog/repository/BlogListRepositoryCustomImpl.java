@@ -7,7 +7,6 @@ import com.portfolio.blog.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.hibernate.criterion.Distinct;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -63,17 +62,23 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
         return  null;
     }
 
-    //전체목록
+    private BooleanExpression searchBnum(Long bnum){
+        if(bnum != null){
+            return QBlogList.blogList.bnum.ne(bnum);
+        }
+        return null;
+    }
+
     @Override
     public Page<BlogList> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable) {
-    System.out.println(blogSearchDTO);
+
         List<BlogList> content = queryFactory
                 .selectFrom(QBlogList.blogList)
                 .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
                         searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
                         searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
-                        QBlogList.blogList.blogAuthority.eq(Authority.PERMISSION),
-                        QBlogList.blogList.bnum.ne(blogSearchDTO.getBnum())
+                        searchBnum(blogSearchDTO.getBnum()),
+                        QBlogList.blogList.blogAuthority.eq(Authority.PERMISSION)
                 )
                 .orderBy(QBlogList.blogList.regTime.desc())
                 .offset(pageable.getOffset())
@@ -86,8 +91,8 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
                 .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
                         searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
                         searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
-                        QBlogList.blogList.blogAuthority.eq(Authority.PERMISSION),
-                        QBlogList.blogList.bnum.eq(blogSearchDTO.getBnum())
+                        searchBnum(blogSearchDTO.getBnum()),
+                        QBlogList.blogList.blogAuthority.eq(Authority.PERMISSION)
                 )
                 .fetchOne();
 
@@ -101,7 +106,7 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
                 .selectFrom(QMemberFriend.memberFriend).distinct()
                 .join(QBlogList.blogList)
                 .on(QMemberFriend.memberFriend.loginId.eq(QBlogList.blogList.member.id)
-                                        .or(QMemberFriend.memberFriend.friendId.eq(QBlogList.blogList.member.id)))
+                        .or(QMemberFriend.memberFriend.friendId.eq(QBlogList.blogList.member.id)))
                 .where(QMemberFriend.memberFriend.loginId.eq(loginId)
                                 .or(QMemberFriend.memberFriend.friendId.eq(loginId)),
                         QMemberFriend.memberFriend.type.eq(FriendShip.FRIENDS),
