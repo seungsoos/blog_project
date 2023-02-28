@@ -1,6 +1,7 @@
 package com.portfolio.blog.controller;
 
 import com.portfolio.blog.constant.FriendShip;
+import com.portfolio.blog.constant.Role;
 import com.portfolio.blog.dto.*;
 import com.portfolio.blog.entity.*;
 import com.portfolio.blog.repository.*;
@@ -41,11 +42,12 @@ public class    BlogController {
     private final BlogListService blogListService;
     private final BlogListRepository blogListRepository;
     private final BlogInfoService blogInfoService;
-    private  final BlogPostService blogPostService;
-    private  final BlogBrdListRepository blogBrdListRepository;
-    private  final BlogVisitCountService blogVisitCountService;
-    private  final BlogMemberVisitCountService blogMemberVisitCountService;
-    private  final MemberFriendService memberFriendService;
+    private final BlogPostService blogPostService;
+    private final BlogBrdListRepository blogBrdListRepository;
+    private final BlogVisitCountService blogVisitCountService;
+    private final BlogMemberVisitCountService blogMemberVisitCountService;
+    private final MemberFriendService memberFriendService;
+    private final MemberService memberService;
 
     @RequestMapping({"/blogMain", "/blogMain/{page}","/blogMain/{page}/{bnum}"})
     public String main(Authentication authentication, HttpSession session, @PathVariable("page") Optional<Integer> page, @PathVariable("bnum") Optional<Integer> bnum, Model model,
@@ -157,11 +159,16 @@ public class    BlogController {
         log.info("*--------------" + id);
         blogInfoDTO.setId(id);
         blogListDTO.setId(id);
+        Member member = new Member();
 
         log.info("blogInfoDTO : " + blogInfoDTO);
         log.info("blogListDTO : " + blogListDTO);
 
         blogInfoService.saveBlogInfo(blogInfoDTO);
+        String loginId = id.getId();
+
+        memberService.updateMemberRole(loginId);
+
         Long bnum = blogListRepository.save(blogListDTO.createBlogList()).getBnum();
         return  "redirect:/blog/blogMain/"+bnum;
     }
@@ -216,6 +223,7 @@ public class    BlogController {
         return "blog/blogModifyForm";
     }
 
+    //게시글수정
     @GetMapping("/postModify{pnum}")
     public String postModifyPage(HttpSession session, Model model, @PathVariable("pnum") Optional<Integer> pnum){
 
@@ -231,6 +239,7 @@ public class    BlogController {
         return "blog/postModifyForm";
     }
 
+    //게시글수정
     @PostMapping("/postModify/{pnum}")
     public String postModify(HttpSession session, Model model, @PathVariable("pnum") Optional<Integer> pnum, @Valid BlogPostDTO blogPostDTO){
         BlogBrdList blogBrdList =  blogPostDTO.getBlogBrdList();
@@ -240,11 +249,6 @@ public class    BlogController {
         blogPostService.modifyBlogPost(blogPostDTO);
         return "redirect:/blog/blogMain";
     }
-    //친구요청 Ajax
-    @ResponseBody
-    @PostMapping("/friendRequest")
-    public ResponseEntity<String> friendRequest(HttpSession session,
-                                               @RequestBody HashMap<String, String> memberFriend){
 
     //블로그 수정
     @PostMapping("/blogModify")

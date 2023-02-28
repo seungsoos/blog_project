@@ -1,6 +1,7 @@
 package com.portfolio.blog.entity;
 
 import com.portfolio.blog.constant.Authority;
+import com.portfolio.blog.constant.Role;
 import com.portfolio.blog.dto.BlogInfoDTO;
 import lombok.Data;
 import lombok.ToString;
@@ -33,6 +34,7 @@ public class BlogInfo extends BaseTimeEntity {
         this.member = blogInfoDTO.getId();
         this.myProfile = blogInfoDTO.getMyProfile();
         this.viewChk = blogInfoDTO.getViewChk();
+
     }
 
 }
