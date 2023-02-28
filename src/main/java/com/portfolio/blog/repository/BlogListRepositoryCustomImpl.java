@@ -1,13 +1,13 @@
 package com.portfolio.blog.repository;
 
 import com.portfolio.blog.constant.Authority;
+import com.portfolio.blog.constant.FriendShip;
 import com.portfolio.blog.dto.BlogSearchDTO;
-import com.portfolio.blog.entity.BlogList;
-import com.portfolio.blog.entity.Member;
-import com.portfolio.blog.entity.QBlogList;
+import com.portfolio.blog.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.hibernate.criterion.Distinct;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -62,9 +62,11 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
         }
         return  null;
     }
+
+    //전체목록
     @Override
     public Page<BlogList> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable) {
-
+    System.out.println(blogSearchDTO);
         List<BlogList> content = queryFactory
                 .selectFrom(QBlogList.blogList)
                 .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
@@ -78,7 +80,7 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-         Long total = queryFactory
+        Long total = queryFactory
                 .select(Wildcard.count)
                 .from(QBlogList.blogList)
                 .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
@@ -86,6 +88,57 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
                         searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
                         QBlogList.blogList.blogAuthority.eq(Authority.PERMISSION),
                         QBlogList.blogList.bnum.eq(blogSearchDTO.getBnum())
+                )
+                .fetchOne();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    //친구목록
+    @Override
+    public Page<MemberFriend> getFriendBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable, String loginId) {
+        List<MemberFriend> content = queryFactory
+                .selectFrom(QMemberFriend.memberFriend).distinct()
+                .join(QBlogList.blogList)
+                .on(QMemberFriend.memberFriend.loginId.eq(QBlogList.blogList.member.id)
+                                        .or(QMemberFriend.memberFriend.friendId.eq(QBlogList.blogList.member.id)))
+                .where(QMemberFriend.memberFriend.loginId.eq(loginId)
+                                .or(QMemberFriend.memberFriend.friendId.eq(loginId)),
+                        QMemberFriend.memberFriend.type.eq(FriendShip.FRIENDS),
+                        QBlogList.blogList.blogAuthority.eq(Authority.PERMISSION)
+                                .or(QBlogList.blogList.blogAuthority.eq(Authority.GROUP)),
+                        regDtsAfter(blogSearchDTO.getSearchDateType()),
+                        searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
+                        searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
+                        QMemberFriend.memberFriend.fnum.ne(blogSearchDTO.getBnum())
+                )
+                .orderBy(QMemberFriend.memberFriend.regTime.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        /*List<MemberFriend> content = queryFactory
+                .selectFrom(QMemberFriend.memberFriend)
+                .where(QMemberFriend.memberFriend.loginId.eq(loginId)
+                                .or(QMemberFriend.memberFriend.friendId.eq(loginId)),
+                        QMemberFriend.memberFriend.type.eq(FriendShip.FRIENDS),
+                        regDtsAfter(blogSearchDTO.getSearchDateType()),
+                        searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
+                        searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
+                        QMemberFriend.memberFriend.fnum.ne(blogSearchDTO.getBnum())
+                )
+                .orderBy(QMemberFriend.memberFriend.regTime.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();*/
+
+        Long total = queryFactory
+                .select(Wildcard.count)
+                .from(QMemberFriend.memberFriend)
+                .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
+                        searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
+                        searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
+                        QMemberFriend.memberFriend.fnum.eq(blogSearchDTO.getBnum())
                 )
                 .fetchOne();
 

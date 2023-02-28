@@ -22,19 +22,19 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.time.LocalDateTime;
-import java.util.*;
 
 @Controller
 @Log4j2
 @RequestMapping("/blog")
 @RequiredArgsConstructor
-public class BlogController {
+public class    BlogController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BlogController.class);
     private final MemberRepository memberRepository;
@@ -173,6 +173,7 @@ public class BlogController {
         model.addAttribute("blogBrdListDTO", new BlogBrdListDTO());
         return "blog/createPostForm";
     }
+
     //게시글 생성
     @PostMapping("/postCreate")
     public String createPost(@Valid BlogPostDTO blogPostDTO,
@@ -245,122 +246,7 @@ public class BlogController {
     public ResponseEntity<String> friendRequest(HttpSession session,
                                                @RequestBody HashMap<String, String> memberFriend){
 
-        HttpHeaders resHeaders = new HttpHeaders();
-        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
-        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
-        String loginId = memberDTO.getId();
-        String friendId = memberFriend.get("friendId");
-
-        // 로그인 유저와 일반 유저가 이미 친구요청을 했다면, 저장 안함
-        if(memberFriendService.countByLoginIdAndFriendId(loginId, friendId) < 1 && memberFriendService.countByLoginIdAndFriendId(friendId, loginId) < 1){
-        //친구 추가 작업하기
-        MemberFriendDTO memberFriendDTO = new MemberFriendDTO();
-        memberFriendDTO.setFriendId(friendId);
-        memberFriendDTO.setLoginId(loginId);
-        log.info(memberFriendDTO);
-        memberFriendService.saveFriendList(memberFriendDTO);
-        return new ResponseEntity<String>("친구신청이 완료되었습니다.", resHeaders, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<String>("이미 신청한 유저입니다.", resHeaders, HttpStatus.BAD_REQUEST);
-        }
-    }
-    @ResponseBody
-    @PostMapping("/blogVisitRequest")
-    public void blogVisitRequest(HttpSession session, @RequestBody HashMap<String, String> map){
-            MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
-            BlogList blogList =  blogListService.findByBnum(Long.parseLong(map.get("bnum")));
-            log.info(blogList);
-            if(memberDTO != null){
-            BlogMemberVisitCountDTO blogMemberVisitCountDTO = new BlogMemberVisitCountDTO();
-            blogMemberVisitCountDTO.setId(memberDTO.createMember());
-            blogMemberVisitCountDTO.setBlogList(blogList);
-            blogMemberVisitCountService.saveBlogMemberVisitCount(blogMemberVisitCountDTO);
-            }else {
-                BlogVisitCountDTO blogVisitCountDTO = new BlogVisitCountDTO();
-                blogVisitCountDTO.setBlogList(blogList);
-                blogVisitCountService.saveBlogVisitCount(blogVisitCountDTO);
-            }
-
-    }
-    @ResponseBody
-    @PutMapping("/friendAccept")
-    public ResponseEntity<String> friendAccept(HttpSession session,
-                                                @RequestBody HashMap<String, String> map){
-        HttpHeaders resHeaders = new HttpHeaders();
-        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
-
-        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
-        String loginId = memberDTO.getId();
-        String friendId = map.get("friendId");
-        if(friendId != null){
-        memberFriendService.updateMemberFriend(loginId, friendId);
-        return new ResponseEntity<String>("친구신청이 수락 되었습니다.", resHeaders, HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<String>("오류발생", resHeaders, HttpStatus.BAD_REQUEST);
-        }
-
-    }
-    @ResponseBody
-    @DeleteMapping("/friendRefuse")
-    public ResponseEntity<String> friendRefuse(HttpSession session,
-                                                @RequestBody HashMap<String, String> map){
-        HttpHeaders resHeaders = new HttpHeaders();
-        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
-
-        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
-        String loginId = memberDTO.getId();
-        String friendId = map.get("friendId");
-        if(friendId != null){
-        memberFriendService.deleteByLoginIdAndFriendId(loginId, friendId);
-        return new ResponseEntity<String>("친구신청이 거절 되었습니다.", resHeaders, HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<String>("오류발생", resHeaders, HttpStatus.BAD_REQUEST);
-        }
-
-    }
-
-
-    @RequestMapping({"/memberBlogList", "/memberBlogList/{page}"})
-    public String memberBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
-    BlogSearchDTO blogSearchDTO){
-        log.info(blogSearchDTO);
-
-        MemberDTO memberDTO =  (MemberDTO) session.getAttribute("memberDTO");
-        BlogList blogList =  blogListService.findByMember_id(memberDTO.getId());
-
-        blogSearchDTO.setBnum(blogList.getBnum());
-        Pageable pageable = PageRequest.of(page.orElse(0), 8);
-        Page<BlogList>  memberBlogList = blogListService.getMemberBlogPage(blogSearchDTO,pageable);
-
-        // 로그인 유저가 친구신청 보낸 정보
-        List<MemberFriend> loginRelationshipList= memberFriendService.findByLoginId(memberDTO.getId());
-        // 로그인 유저가 친구신청 받은 정보
-        List<MemberFriend> memberRelationshipList= memberFriendService.findByFriendId(memberDTO.getId());
-        // 로그인유저 기준으로 이미 친구 관계인 유저 뽑아내기
-        List<String> friendList = new ArrayList<>();
-        for(MemberFriend friend :memberRelationshipList){
-            // 친구관계일때 로그인유저가 친구신청 받은 경우 친구신청 보낸 유저아이디 찾기
-            if(friend.getType() == FriendShip.FRIENDS){
-                friendList.add(friend.getLoginId());
-            }
-        }
-        for(MemberFriend friend : loginRelationshipList){
-            // 친구관계일때 로그인유저가 친구신청 보낸 경우 친구신청 받은 유저아이디 찾기
-            if(friend.getType() == FriendShip.FRIENDS){
-                friendList.add(friend.getFriendId());
-            }
-        }
-        log.info(friendList);
-        model.addAttribute("friendList", friendList);
-        model.addAttribute("memberBlog", memberBlogList);
-        model.addAttribute("blogSearchDTO", blogSearchDTO);
-        model.addAttribute("maxPage", 10);
-
-        return "blog/memberBlogForm";
-    }
-
+    //블로그 수정
     @PostMapping("/blogModify")
     public String blogModify(@Valid BlogInfoDTO blogInfoDTO,
                              @Valid BlogListDTO blogListDTO,
@@ -383,5 +269,202 @@ public class BlogController {
         blogListService.modifyBlogList(blogListDTO);
 
         return "redirect:/blog/blogMain";
+    }
+
+
+    //방문자수 count
+    @ResponseBody
+    @PostMapping("/blogVisitRequest")
+    public void blogVisitRequest(HttpSession session, @RequestBody HashMap<String, String> map){
+            MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+            BlogList blogList =  blogListService.findByBnum(Long.parseLong(map.get("bnum")));
+            log.info(blogList);
+            if(memberDTO != null){
+            BlogMemberVisitCountDTO blogMemberVisitCountDTO = new BlogMemberVisitCountDTO();
+            blogMemberVisitCountDTO.setId(memberDTO.createMember());
+            blogMemberVisitCountDTO.setBlogList(blogList);
+            blogMemberVisitCountService.saveBlogMemberVisitCount(blogMemberVisitCountDTO);
+            }else {
+                BlogVisitCountDTO blogVisitCountDTO = new BlogVisitCountDTO();
+                blogVisitCountDTO.setBlogList(blogList);
+                blogVisitCountService.saveBlogVisitCount(blogVisitCountDTO);
+            }
+
+    }
+
+    //전체블로그 목록
+    @RequestMapping({"/memberBlogList", "/memberBlogList/{page}"})
+    public String memberBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
+    BlogSearchDTO blogSearchDTO){
+        log.info(blogSearchDTO);
+
+        MemberDTO memberDTO =  (MemberDTO) session.getAttribute("memberDTO");
+        BlogList blogList =  blogListService.findByMember_id(memberDTO.getId());
+
+        blogSearchDTO.setBnum(blogList.getBnum());
+        Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 8);
+        Page<BlogList>  memberBlogList = blogListService.getMemberBlogPage(blogSearchDTO,pageable);
+
+        // 로그인 유저가 친구신청 보낸 정보
+        List<MemberFriend> loginRelationshipList= memberFriendService.findByLoginId(memberDTO.getId());
+        // 로그인 유저가 친구신청 받은 정보
+        List<MemberFriend> memberRelationshipList= memberFriendService.findByFriendId(memberDTO.getId());
+
+        // 로그인유저 기준으로 이미 친구 관계인 유저 뽑아내기
+        List<String> friendList = new ArrayList<>();
+        for(MemberFriend friend :memberRelationshipList){
+            // 친구관계일때 로그인유저가 친구신청 받은 경우 친구신청 보낸 유저아이디 찾기
+            if(friend.getType() == FriendShip.FRIENDS){
+                friendList.add(friend.getLoginId());
+            }
+        }
+        for(MemberFriend friend : loginRelationshipList){
+            // 친구관계일때 로그인유저가 친구신청 보낸 경우 친구신청 받은 유저아이디 찾기
+            if(friend.getType() == FriendShip.FRIENDS){
+                friendList.add(friend.getFriendId());
+            }
+        }
+        log.info("-----------------------------------------");
+        log.info(friendList);
+        log.info(memberBlogList.getContent());
+        log.info("-----------------------------------------");
+
+        model.addAttribute("friendList", friendList);
+        model.addAttribute("memberBlog", memberBlogList);
+        model.addAttribute("blogSearchDTO", blogSearchDTO);
+        model.addAttribute("maxPage", 10);
+
+        return "blog/memberBlogForm";
+    }
+
+    //친구블로그 목록
+    @RequestMapping({"/friendBlogList", "/friendBlogList/{page}"})
+    public String friendBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
+                                 BlogSearchDTO blogSearchDTO){
+        log.info("친구목록-------------------");
+        Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 8);
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+        String loginId =memberDTO.getId();
+
+        BlogList blogList = blogListService.findByMember_id(memberDTO.getId());
+        //로그인
+        blogSearchDTO.setBnum(blogList.getBnum());
+
+        Page<MemberFriend> friendBlogList = blogListService.getFriendBlogPage(blogSearchDTO,pageable,loginId);
+
+        List<BlogList> friendInfo = new ArrayList<>();
+        for (int i=0; i<friendBlogList.getContent().size(); i++){
+            String friendId;
+            if (friendBlogList.getContent().get(i).getFriendId().equals(loginId)){
+                friendId = friendBlogList.getContent().get(i).getLoginId();
+            }else {
+                friendId = friendBlogList.getContent().get(i).getFriendId();
+            }
+
+            log.info(friendId);
+            blogList =  blogListService.findByMember_id(friendId);
+            friendInfo.add(blogList);
+
+        }
+        log.info(friendInfo);
+        log.info(friendBlogList.getContent());
+        model.addAttribute("memberBlog", friendBlogList);
+        model.addAttribute("friendInfo", friendInfo);
+        model.addAttribute("blogSearchDTO", blogSearchDTO);
+        model.addAttribute("maxPage", 10);
+
+        return "blog/friendBlogForm";
+    }
+
+    //친구요청 Ajax
+    @ResponseBody
+    @PostMapping("/friendRequest")
+    public ResponseEntity<String> friendRequest(HttpSession session,
+                                                @RequestBody HashMap<String, String> memberFriend){
+
+        HttpHeaders resHeaders = new HttpHeaders();
+        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+        String loginId = memberDTO.getId();
+        String friendId = memberFriend.get("friendId");
+
+        // 로그인 유저와 일반 유저가 이미 친구요청을 했다면, 저장 안함
+        if(memberFriendService.countByLoginIdAndFriendId(loginId, friendId) < 1 && memberFriendService.countByLoginIdAndFriendId(friendId, loginId) < 1){
+            //친구 추가 작업하기
+            MemberFriendDTO memberFriendDTO = new MemberFriendDTO();
+            memberFriendDTO.setFriendId(friendId);
+            memberFriendDTO.setLoginId(loginId);
+            log.info(memberFriendDTO);
+            memberFriendService.saveFriendList(memberFriendDTO);
+            return new ResponseEntity<String>("친구신청이 완료되었습니다.", resHeaders, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<String>("이미 신청한 유저입니다.", resHeaders, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //친구삭제 Ajax
+    @ResponseBody
+    @PostMapping("/friendDelete")
+    public ResponseEntity<String> friendDelete(HttpSession session,
+                             @RequestBody HashMap<String, Long> friend){
+        HttpHeaders resHeaders = new HttpHeaders();
+        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
+
+
+        MemberDTO member = (MemberDTO) session.getAttribute("memberDTO");
+        Member login = member.createMember();
+        Long fnum = friend.get("fnum");
+        log.info("친구삭제-----");
+        log.info(fnum);
+        if (fnum != 0){
+            memberFriendService.deleteByFnum(fnum);
+            return new ResponseEntity<String>("친구삭제가 완료되었습니다.", resHeaders, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<String>("오류발생", resHeaders, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //친구신청 수락
+    @ResponseBody
+    @PutMapping("/friendAccept")
+    public ResponseEntity<String> friendAccept(HttpSession session,
+                                               @RequestBody HashMap<String, String> map){
+        HttpHeaders resHeaders = new HttpHeaders();
+        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
+
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+        String loginId = memberDTO.getId();
+        String friendId = map.get("friendId");
+        if(friendId != null){
+            memberFriendService.updateMemberFriend(loginId, friendId);
+            return new ResponseEntity<String>("친구신청이 수락 되었습니다.", resHeaders, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<String>("오류발생", resHeaders, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    //친구신청 거절
+    @ResponseBody
+    @DeleteMapping("/friendRefuse")
+    public ResponseEntity<String> friendRefuse(HttpSession session,
+                                               @RequestBody HashMap<String, String> map){
+        HttpHeaders resHeaders = new HttpHeaders();
+        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
+
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+        String loginId = memberDTO.getId();
+        String friendId = map.get("friendId");
+
+
+        if(friendId != null){
+            memberFriendService.deleteByLoginIdAndFriendId(loginId, friendId);
+            return new ResponseEntity<String>("친구신청이 거절 되었습니다.", resHeaders, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<String>("오류발생", resHeaders, HttpStatus.BAD_REQUEST);
+        }
+
     }
 }

@@ -19,16 +19,32 @@ public class MemberFriendServiceImpl implements MemberFriendService {
 
     private final MemberFriendRepository memberFriendRepository;
 
+    //친구추가
     @Override
     public void saveFriendList(MemberFriendDTO memberFriendDTO) {
         MemberFriend memberFriend = memberFriendDTO.createMemberFriend();
         memberFriendRepository.save(memberFriend);
     }
 
+    //친구삭제1
+    @Override
+    public void deleteByLoginIdAndFriendId(String loginId, String friendId) {
+        memberFriendRepository.deleteByLoginIdAndFriendId(loginId, friendId);
+    }
+
+    //친구삭제2
+    @Override
+    public void deleteByFnum(Long fnum) {
+        memberFriendRepository.deleteByFnum(fnum);
+
+    }
+
+    //친구추가 중복검사
     @Override
     public int countByLoginIdAndFriendId(String loginId, String friendId) {
         return memberFriendRepository.countByLoginIdAndFriendId(loginId, friendId);
     }
+
 
     @Override
     public List<MemberFriend> findByFriendIdAndType(String friendId, FriendShip friendShip){
@@ -43,11 +59,6 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     public void updateMemberFriend(String loginId, String friendId){
         MemberFriend  memberFriend = memberFriendRepository.findByLoginIdAndFriendId(friendId, loginId);
         memberFriend.setType(FriendShip.FRIENDS);
-    }
-
-    @Override
-    public void deleteByLoginIdAndFriendId(String loginId, String friendId) {
-        memberFriendRepository.deleteByLoginIdAndFriendId(friendId, loginId);
     }
 
     @Override

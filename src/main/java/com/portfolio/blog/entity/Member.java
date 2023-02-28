@@ -1,5 +1,6 @@
 package com.portfolio.blog.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.portfolio.blog.dto.MemberDTO;
 import lombok.Data;
 import lombok.ToString;
