@@ -1,6 +1,8 @@
 package com.portfolio.blog.entity;
 
 import com.portfolio.blog.constant.Authority;
+import com.portfolio.blog.dto.BlogBrdListDTO;
+import com.portfolio.blog.dto.BlogInfoDTO;
 import lombok.Data;
 import lombok.ToString;
 
@@ -29,4 +31,11 @@ public class BlogBrdList extends  BaseTimeEntity{ // 블로그안에서 게시�
     @Column(nullable = false)
     private  Authority brdWrite; // 게시글 댓글 쓰기 권한
 
+
+    public void modifyBlogBrdList(BlogBrdListDTO blogBrdListDTO) {
+        this.cnum = blogBrdListDTO.getCnum();
+        this.brdRead = blogBrdListDTO.getBrdRead();
+        this.brdWrite = blogBrdListDTO.getBrdWrite();
+        this.member = blogBrdListDTO.getId();
+    }
 }

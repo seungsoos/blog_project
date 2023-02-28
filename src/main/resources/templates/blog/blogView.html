@@ -20,9 +20,9 @@
                     </div>
                     <!-- .entry-content -->
                     <footer class="entry-footer">
-				<span class="cat-links">
+				<span class="cat-links" th:if="${loginId} == ${BlogPost.member.id}">
 				<button>게시글 삭제</button>
-				<button>게시글 수정</button>
+				<a th:href="@{/blog/blogModify/{pnum}(pnum = ${BlogPost.pnum})}">게시글 수정</a>
 				</span>
                     </footer>
                     <!-- .entry-footer -->
@@ -43,8 +43,8 @@
                 <aside id="recent-posts-2" class="widget widget_recent_entries">
                     <h4 class="widget-title">게시글 목록</h4>
                     <ul>
-                        <li th:each="Blog : ${memberBlogList.getContent()}">
-                            <a th:href="@{/blog/blogView/{bnum}(bnum = ${Blog.blogList.bnum})}" th:text="${Blog.postTitle}"></a>
+                        <li th:each="Post : ${postList.getContent()}">
+                            <a th:href="@{/blog/blogView/{bnum}/{pnum}(bnum = ${Post.blogList.bnum}, pnum = ${Post.pnum})}" th:text="${Post.postTitle}"></a>
                         </li>
                     </ul>
                 </aside>
