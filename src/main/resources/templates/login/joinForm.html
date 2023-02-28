@@ -7,6 +7,13 @@
         .fieldError {
             color: #bd2130;
         }
+        $(document).ready(function(){
+            var errorMessage = [[${errorMessage}]];
+            if(errorMessage != null){
+                alert(errorMessage);
+            }
+        });
+
 </style>
 
 
