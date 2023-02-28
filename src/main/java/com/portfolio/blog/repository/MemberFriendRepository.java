@@ -18,6 +18,5 @@ public interface MemberFriendRepository extends JpaRepository<MemberFriend, Long
     List<MemberFriend> findByFriendIdAndType(String friendId, FriendShip friendShip);
     List<MemberFriend> findByLoginId(String loginId);
     List<MemberFriend> findByFriendId(String friendId);
-
     MemberFriend findByLoginIdAndFriendId(String loginId, String friendId);
 }
