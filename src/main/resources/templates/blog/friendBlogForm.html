@@ -13,14 +13,19 @@
             <main id="main" class="site-main">
                 <div class="grid portfoliogrid">
                     <article class="hentry" th:each="Blog, BlogStat : ${memberBlog.getContent()}">
-                        <header class="entry-header">
-                            <a class='portfoliotype' th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.fnum})}" th:text="${friendInfo[BlogStat.index].member.nickName}">닉네임</a>
-                            <button class='portfoliotype delete' data-bs-toggle="modal"
-                                    data-bs-target="#staticBackdrop" th:value="${BlogStat.index}">친구삭제</button>
-                            <h2 class="entry-title"><a th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.fnum})}" rel="bookmark" th:text="${friendInfo[BlogStat.index].blogName}">블로그 이름</a></h2>
-                            <a class='portfoliotype' th:href="@{/blog/blogMain/{bnum}(bnum = ${Blog.fnum})}" th:text="${friendInfo[BlogStat.index].blogDetail}">블로그 설명</a>
+                            <header class="entry-header">
+                            <h2 class="entry-title"><a th:href="@{/blog/blogMain/0/{bnum}(bnum = ${friendInfo[BlogStat.index].bnum})}" rel="bookmark" th:text="${friendInfo[BlogStat.index].blogName}">블로그 이름</a></h2>
+                            <a  th:href="@{/blog/blogMain/0/{bnum}(bnum = ${friendInfo[BlogStat.index].bnum})}" th:text="${friendInfo[BlogStat.index].blogDetail}">블로그 설명</a>
+                            <a  th:href="@{/blog/blogMain/0/{bnum}(bnum = ${friendInfo[BlogStat.index].bnum})}" th:text="${friendInfo[BlogStat.index].member.nickName}">닉네임</a>
+                            <a href="@{/blog/blogMain/0/{bnum}(bnum = ${friendInfo[BlogStat.index].bnum})}"
+                               th:text="${friendInfo[BlogStat.index].blogAuthority== T(com.portfolio.blog.constant.Authority).PERMISSION ? '공개': friendInfo[BlogStat.index].blogAuthority == T(com.portfolio.blog.constant.Authority).GROUP ?  '친구만' : '비공개'}"></a>
                             <input type="hidden" th:value="${BlogStat.index}" name="friendId" th:attrappend="id=${BlogStat.index}">
                             <input type="hidden" th:value="${Blog.fnum}" name="fnum">
+                            </header>
+                            <span class="cat-links">
+                            <button class='portfoliotype delete' data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop" th:value="${BlogStat.index}">친구삭제</button>
+				            </span>
                             <!-- Modal -->
                             <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
                                  data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
@@ -46,7 +51,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </header>
                     </article>
                 </div>
 

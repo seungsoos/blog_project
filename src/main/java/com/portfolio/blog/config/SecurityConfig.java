@@ -79,13 +79,8 @@ public class SecurityConfig{
                 .invalidSessionUrl("/login/loginMain/0")
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(true)
-                .expiredUrl("/login/loginMain"))
-                ;
+                .expiredUrl("/login/loginMain"));
 
-        /*http.headers()
-                .and()
-                .csrf()
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());*/
 
         return  http.build();
 
