@@ -12,4 +12,5 @@ public interface BlogInfoService{
 
     //블로그 정보수정
     void modifyBlogInfo(BlogInfoDTO blogInfoDTO);
+
 }

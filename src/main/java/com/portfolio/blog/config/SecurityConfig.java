@@ -1,6 +1,7 @@
 package com.portfolio.blog.config;
 
 
+import com.portfolio.blog.constant.Role;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,6 +50,7 @@ public class SecurityConfig {
                 .failureUrl("/login/loginMain/error") //로그인 실패시 이동주소
                 .loginProcessingUrl("/login/loginMain")
                 .permitAll()
+                .successHandler(new loginHandler())
         ;
 
 
@@ -76,7 +78,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .sessionFixation()
                 .changeSessionId()
-                .invalidSessionUrl("/login/loginMain/0")
+                .invalidSessionUrl("/login/loginMain")
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(true)
                 .expiredUrl("/login/loginMain"));

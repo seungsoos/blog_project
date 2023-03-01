@@ -8,7 +8,12 @@
     <div class="container">
         <header id="masthead" class="site-header">
             <div class="site-branding">
-                <h1 class="site-title"><a href="index.html" rel="home">Blog</a></h1>
+                <h1 class="site-title">
+                    <a href="/blog/blogMain"sec:authorize="hasAuthority('BLOGGER')" rel="home">Blog</a>
+                </h1>
+                <h1 class="site-title">
+                    <a href="/blog/memberBlogList"sec:authorize="!(hasAuthority('BLOGGER'))" rel="home">Blog</a>
+                </h1>
                 <h2 class="site-description">TeamProject_Blog</h2>
             </div>
             <nav id="site-navigation" class="main-navigation">
@@ -16,10 +21,10 @@
                 <a class="skip-link screen-reader-text" href="#content">Skip to content</a>
                 <div class="menu-menu-1-container">
                     <ul id="menu-menu-1" class="menu">
-                        <li><a href="/blog/blogMain" sec:authorize="isAuthenticated()">블로그</a></li>
-                        <li><a href="/blog/blogCreate" sec:authorize="!(isAnonymous()) && !(hasAuthority('BLOGGER'))">블로그 생성</a></li>
-                        <li><a href="/blog/blogModify" sec:authorize="hasAuthority('BLOGGER')">블로그 수정</a></li>
-                        <li><a href="/blog/postCreate" sec:authorize="isAuthenticated()">게시글 작성</a></li>
+                        <li><a href="/blog/blogMain" sec:authorize="hasAuthority('BLOGGER') || hasRole('ROLE_BLOGGER')">블로그</a></li>
+                        <li><a href="/blog/blogCreate" sec:authorize="!(isAnonymous()) && !(hasAuthority('BLOGGER')) && !(hasRole('ROLE_BLOGGER'))">블로그 생성</a></li>
+                        <li><a href="/blog/blogModify" sec:authorize="hasAuthority('BLOGGER') || hasRole('ROLE_BLOGGER')">블로그 수정</a></li>
+                        <li><a href="/blog/postCreate" sec:authorize="hasAuthority('BLOGGER') || hasRole('ROLE_BLOGGER')">게시글 작성</a></li>
                         <li><a href="/blog/memberBlogList" sec:authorize="permitAll()">전체블로그 목록</a></li>
                         <li><a href="/blog/friendBlogList" sec:authorize="isAuthenticated()">친구블로그 목록</a></li>
                         <li><a href="/login/loginMain" sec:authorize="isAnonymous()">로그인</a></li>
@@ -29,7 +34,6 @@
             </nav>
         </header>
     </div>
-
 </div>
 
 </html>

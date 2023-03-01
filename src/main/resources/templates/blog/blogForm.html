@@ -10,6 +10,9 @@
     <div id="content" class="site-content">
         <div id="primary" class="content-area column two-thirds">
             <main id="main" class="site-main" role="main">
+                <h4 th:text="${blogList.member.nickName}">닉네임</h4>
+                <h5 th:text="${blogList.blogName}">블로그이름</h5>
+                <h5 th:text="${blogList.blogDetail}">블로그설명</h5>
                 <div class="grid bloggrid">
 
                     <article th:each="Blog : ${memberBlog.getContent()}">
