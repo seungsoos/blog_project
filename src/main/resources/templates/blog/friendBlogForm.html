@@ -10,6 +10,7 @@
 <div layout:fragment="content">
     <div id="content" class="site-content">
         <div id="primary" class="content-area column full">
+            <h2>친구블로그 목록</h2>
             <main id="main" class="site-main">
                 <div class="grid portfoliogrid">
                     <article class="hentry" th:each="Blog, BlogStat : ${memberBlog.getContent()}">

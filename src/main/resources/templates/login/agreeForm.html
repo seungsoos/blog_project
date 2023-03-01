@@ -5,10 +5,9 @@
 
 
 <style layout:fragment="css">
-        .container{
-            padding: 0;
-            width: 500px;
-        }
+       .div-class{
+        width: 500px;
+      }
         .chkAll, .chk1, .chk2, .chk3, .chk4{
             width: 15px;
             height: 15px;
@@ -36,22 +35,22 @@
             font-size: 8px;
         }
         .mybtn{
-	      width : 100px;
-	      height : 40px;
+	      width : 200px;
+          height : 50px;
         }
 </style>
 
 <div layout:fragment="content">
 
-    <div class="d-flex row mt-5">
-        <form action="/login/join" method="get" class="text-center">
-            <h2>약관동의 페이지</h2>
+    <div class="d-flex row mt-5 div-class m-auto">
+        <form action="/login/join" method="get">
+            <h2 class="text-center">약관동의</h2>
             <div class="col-12 mt-5">
                 <div class="d-flex">
                     <input class="form-check-input chkAll " type="checkbox" name="chkAll" value="chkAll">
                     <label class="form-check-label">
                         <p class="text-decoration-underline myfont1 fw-bolder">
-                            이용약관, 개인정보 수집 및 이용, 위치기반서비스 이용약관 (선택),<br> 프로모션 정보 수신(선택)에
+                            이용약관, 개인정보 수집 및 이용, 위치기반서비스 이용약관 (선택), 프로모션 정보 수신(선택)에
                             모두 동의합니다.
                         </p>
                     </label>
@@ -131,17 +130,16 @@
                         아리아 다솜 함초롱하다 아름드리 그루잠 포도 우리는 그루잠 예그리나 감사합니다 감또개 우리는 별빛 아슬라 포도 도르레 가온누리 사과 별하 나비잠 안녕 나비잠 늘품 컴퓨터
                         감또개 바람꽃 포도 책방.</p>
                 </div>
-                <div class="col-12 d-flex justify-content-center">
-                    <input type="submit"
-                           class="btn btn-primary mybtn yes"
-                           value="동의"
+                <div class="col-12 d-flex justify-content-center mt-5 mb-5">
+                    <button type="submit"
+                           class="btn btn-secondary mybtn yes fs-4"
+
                            disabled
-                    >
-                    <input type="button"
-                           class="btn btn-primary mybtn ms-2 no"
-                           value="미동의"
+                    >동의</button>
+                    <button type="button"
+                           class="btn btn-secondary mybtn ms-2 no fs-4"
                            onclick="notAgree(this.form)"
-                    >
+                    >미동의</button>
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                 </div>
             </div>

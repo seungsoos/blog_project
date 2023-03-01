@@ -42,11 +42,10 @@ public class MemberService implements UserDetailsService{
         }
     }
 
-    //회원가입시 Role 변경
+    //블로그 생성시 Role 변경
     public void updateMemberRole(String loginId) throws UsernameNotFoundException {
         Optional<Member> member = memberRepository.findById(loginId);
         member.orElseThrow().setRole(Role.BLOGGER);
-
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List<GrantedAuthority> updatedAuthorities = new ArrayList<>(auth.getAuthorities());
@@ -57,7 +56,7 @@ public class MemberService implements UserDetailsService{
     };
 
 
-
+    //회원가입시 Role 변경
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
         Optional<Member> member = memberRepository.findById(id);

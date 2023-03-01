@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.*;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @Controller
 @Log4j2
@@ -51,30 +53,41 @@ public class    BlogController {
     @RequestMapping({"/blogMain", "/blogMain/{page}","/blogMain/{page}/{bnum}"})
     public String main(Authentication authentication, HttpSession session, @PathVariable("page") Optional<Integer> page, @PathVariable("bnum") Optional<Integer> bnum, Model model,
                        PostSearchDTO postSearchDTO) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String id = userDetails.getUsername();
-
-        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+        String id = null;
+        MemberDTO memberDTO = null;
+        BlogList blogList = null;
         LocalDateTime date = LocalDateTime.now();
+
         LocalDateTime startDateTime = date.withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime endDateTime = date.withHour(23).withMinute(59).withSecond(59).withNano(0);
 
         int visit, memberVisit, todayTotalVisitCnt, totalVisitCnt, totalVisit, totalMemberVisit;
 
+        if(authentication != null){
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            id = userDetails.getUsername();
+             memberDTO = (MemberDTO) session.getAttribute("memberDTO");
 
-        if(blogListService.findByMember_id(memberDTO.getId()) == null){
-            return "redirect:/blog/memberBlogList";
+            if(blogListService.findByMember_id(memberDTO.getId()) == null){
+                return "redirect:/blog/memberBlogList";
+            }
+            blogList = blogListService.findByMember_id(memberDTO.getId());
         }
-        BlogList blogList = blogListService.findByMember_id(memberDTO.getId());
+
+        BlogList blogList1 = null;
+        //타인이 나의 블로그 접근
         if (bnum.isPresent()) {
             model.addAttribute("bnum", bnum.get());
+            blogList1 = blogListService.findByBnum(Long.valueOf(bnum.get()));
             postSearchDTO.setBnum(bnum.get().longValue());
             visit = blogVisitCountService.countByBlogList_BnumAndRegTimeBetween(bnum.get().longValue(), startDateTime, endDateTime);
             memberVisit = blogMemberVisitCountService.countByBlogList_BnumAndRegTimeBetween(bnum.get().longValue(), startDateTime, endDateTime);
             totalVisit = blogMemberVisitCountService.countByBlogList_Bnum(bnum.get().longValue());
             totalMemberVisit = blogVisitCountService.countByBlogList_Bnum(bnum.get().longValue());
-        } else {
+        }else{
+            //본인이 나의 블로그 접근
             model.addAttribute("bnum", blogList.getBnum());
+            blogList1 = blogListService.findByBnum(blogList.getBnum());
             postSearchDTO.setBnum(blogList.getBnum());
             visit = blogVisitCountService.countByBlogList_BnumAndRegTimeBetween(blogList.getBnum(), startDateTime, endDateTime);
             memberVisit = blogMemberVisitCountService.countByBlogList_BnumAndRegTimeBetween(blogList.getBnum(), startDateTime, endDateTime);
@@ -98,7 +111,11 @@ public class    BlogController {
         todayTotalVisitCnt = visit + memberVisit;
         model.addAttribute("todayTotalVisitCnt", todayTotalVisitCnt);
 
+        log.info("------------------------");
+        log.info(blogList1);
+        log.info("------------------------");
         totalVisitCnt = totalVisit + totalMemberVisit;
+
         model.addAttribute("totalVisitCnt", totalVisitCnt);
 
         Pageable pageable = PageRequest.of(page.orElse(0), 8);
@@ -107,6 +124,7 @@ public class    BlogController {
         model.addAttribute("memberBlog", memberBlogList);
         model.addAttribute("postSearchDTO", postSearchDTO);
         model.addAttribute("maxPage", 10);
+        model.addAttribute("blogList", blogList1);
 
         return "blog/blogForm";
     }
@@ -134,7 +152,11 @@ public class    BlogController {
     public String blogView( @PathVariable("pnum") Optional<Integer> pnum, @PathVariable("bnum") Optional<Integer> bnum,
                             Model model, PostSearchDTO postSearchDTO, HttpSession session, PostReplyDTO postReplyDTO){
         MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
-        model.addAttribute("loginId", memberDTO.getId());
+        if(memberDTO != null){
+            model.addAttribute("loginId", memberDTO.getId());
+        }else{
+            model.addAttribute("loginId", null);
+        }
         if (pnum.isPresent()) {
             List<PostReply> postReplyList = postReplyService.findByBlogPost_pnum(pnum.get().longValue());
             model.addAttribute("postReplyList", postReplyList);
@@ -342,6 +364,8 @@ public class    BlogController {
         @RequestMapping({"/memberBlogList", "/memberBlogList/{page}"})
         public String memberBlogList(HttpSession session, @PathVariable("page") Optional<Integer> page, Model model,
                                      BlogSearchDTO blogSearchDTO, Authentication authentication){
+            List<String> friendList = new ArrayList<>();
+        if(authentication != null){
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String id = userDetails.getUsername();
             MemberDTO memberDTO = new MemberDTO();
@@ -351,7 +375,7 @@ public class    BlogController {
             member.ifPresent(value -> memberDTO.setName(value.getName()));
             session.setAttribute("memberDTO", memberDTO);
             log.info("*--------------"+ memberDTO);
-            List<String> friendList = new ArrayList<>();
+
             if(memberDTO != null && blogListService.findByMember_id(memberDTO.getId()) != null){
                 BlogList blogList =  blogListService.findByMember_id(memberDTO.getId());
                 blogSearchDTO.setBnum(blogList.getBnum());
@@ -375,6 +399,8 @@ public class    BlogController {
                 }
                 log.info(friendList);
             }
+        }
+
 
             Pageable pageable = PageRequest.of(page.orElse(0), 8);
             Page<BlogList>  memberBlogList = blogListService.getMemberBlogPage(blogSearchDTO,pageable);
