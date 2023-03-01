@@ -68,9 +68,6 @@ public class    BlogController {
             id = userDetails.getUsername();
              memberDTO = (MemberDTO) session.getAttribute("memberDTO");
 
-            if(blogListService.findByMember_id(memberDTO.getId()) == null){
-                return "redirect:/blog/memberBlogList";
-            }
             blogList = blogListService.findByMember_id(memberDTO.getId());
         }
 
@@ -111,9 +108,7 @@ public class    BlogController {
         todayTotalVisitCnt = visit + memberVisit;
         model.addAttribute("todayTotalVisitCnt", todayTotalVisitCnt);
 
-        log.info("------------------------");
-        log.info(blogList1);
-        log.info("------------------------");
+
         totalVisitCnt = totalVisit + totalMemberVisit;
 
         model.addAttribute("totalVisitCnt", totalVisitCnt);
@@ -419,17 +414,18 @@ public class    BlogController {
         @RequestMapping({"/friendBlogList", "/friendBlogList/{page}"})
         public String friendBlogList (HttpSession session, @PathVariable("page") Optional < Integer > page, Model model,
                 BlogSearchDTO blogSearchDTO){
-            log.info("친구목록-------------------");
             Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 8);
             MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
             String loginId = memberDTO.getId();
 
             BlogList blogList = blogListService.findByMember_id(memberDTO.getId());
-            //로그인
-            blogSearchDTO.setBnum(blogList.getBnum());
+            if(blogList != null) {
+                blogSearchDTO.setBnum(blogList.getBnum());
+            }
 
+            BlogList blogList1;
             Page<MemberFriend> friendBlogList = blogListService.getFriendBlogPage(blogSearchDTO, pageable, loginId);
-
+            log.info(friendBlogList+"111111111111111111111111");
             List<BlogList> friendInfo = new ArrayList<>();
             for (int i = 0; i < friendBlogList.getContent().size(); i++) {
                 String friendId;
@@ -438,13 +434,21 @@ public class    BlogController {
                 } else {
                     friendId = friendBlogList.getContent().get(i).getFriendId();
                 }
+                log.info(friendId+"22222222222222222");
+                blogList1 = blogListService.findByMember_id(friendId);
 
-                blogList = blogListService.findByMember_id(friendId);
-                friendInfo.add(blogList);
-
+                friendInfo.add(blogList1);
+            }
+            log.info(friendInfo);
+            if(friendInfo.contains(null)){
+                log.info("111111111111111111111111111");
+                model.addAttribute("friendInfo","nothing");
+            }else{
+                log.info("222222222222222222222222");
+                model.addAttribute("friendInfo", friendInfo);
             }
             model.addAttribute("memberBlog", friendBlogList);
-            model.addAttribute("friendInfo", friendInfo);
+
             model.addAttribute("blogSearchDTO", blogSearchDTO);
             model.addAttribute("maxPage", 10);
 
