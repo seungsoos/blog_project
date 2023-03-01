@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name="blog_post")
 @Table(name="blog_post")
@@ -26,13 +28,12 @@ public class BlogPost extends  BaseTimeEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     private BlogList blogList;    //BlogBrdList FK
 
-    @JoinColumn(name="Member_id")
+    @JoinColumn(name="member_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;    //게시글 작성 유저
 
     @Column(nullable = false)
     private String postTitle; // 게시글 제목
-
 
     @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
     private String postText; // 게시글 본문

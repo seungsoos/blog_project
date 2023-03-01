@@ -54,21 +54,27 @@
             </main>
         </div>
         <form th:action="@{/blog/memberBlogList/{page}(page = ${memberBlog.number})}" role="form" method="post"
-              th:object="${memberBlog}">
-            <div class="form-inline justify-content-center" th:object="${blogSearchDTO}">
-                <select th:field="*{searchDateType}" class="form-control" style="width:auto;">
+              th:object="${memberBlog}" >
+            <div class="form-inline d-flex justify-content-center w-75 m-auto" th:object="${blogSearchDTO}">
+                <div class="col-md-2">
+                <select th:field="*{searchDateType}" class="form-control w-100" style="width:auto;">
                     <option value="all">전체기간</option>
                     <option value="1d">1일</option>
                     <option value="1w">1주</option>
                     <option value="1m">1개월</option>
                     <option value="6m">6개월</option>
                 </select>
-                <select th:field="*{searchBy}" class="form-control" style="width:auto;">
+                </div>
+                <div class="col-md-2">
+                <select th:field="*{searchBy}" class="form-control w-100" style="width:auto;">
                     <option value="blogName">블로그 이름</option>
                     <option value="blogDetail">블로그 설명</option>
                 </select>
+                </div>
                 <input th:field="*{searchQuery}" type="text" class="form-control" placeholder="검색어를 입력해주세요">
-                <button id="searchBtn" type="submit" class="btn btn-current current">검색</button>
+                <div class="col-md-1">
+                <button id="searchBtn" type="submit" class="btn btn-current current w-100">검색</button>
+                </div>
             </div>
         </form>
         <!-- #main -->
