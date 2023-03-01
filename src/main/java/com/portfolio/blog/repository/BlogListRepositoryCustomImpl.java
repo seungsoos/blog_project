@@ -68,6 +68,12 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
         }
         return null;
     }
+    private BooleanExpression searchFnum(Long bnum){
+        if(bnum != null){
+          return QMemberFriend.memberFriend.fnum.eq(bnum);
+        }
+        return null;
+    }
 
     @Override
     public Page<BlogList> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable) {
@@ -115,7 +121,7 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
                         regDtsAfter(blogSearchDTO.getSearchDateType()),
                         searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
                         searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
-                        QMemberFriend.memberFriend.fnum.ne(blogSearchDTO.getBnum())
+                        searchFnum(blogSearchDTO.getBnum())
                 )
                 .orderBy(QMemberFriend.memberFriend.regTime.desc())
                 .offset(pageable.getOffset())
@@ -143,7 +149,7 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
                 .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
                         searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
                         searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
-                        QMemberFriend.memberFriend.fnum.eq(blogSearchDTO.getBnum())
+                        searchFnum(blogSearchDTO.getBnum())
                 )
                 .fetchOne();
 

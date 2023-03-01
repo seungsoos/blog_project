@@ -58,13 +58,13 @@
                 <div th:with="start=${(memberBlog.number/maxPage)*maxPage + 1}, end=(${(memberBlog.totalPages == 0) ? 1 : (start + (maxPage - 1) < memberBlog.totalPages ? start + (maxPage - 1) : memberBlog.totalPages)})">
                     <ul class="pagination justify-content-center">
                         <li>
-                            <a class="Previous page-numbers" th:classappend="${memberBlog.first}?'disabled'" th:href="@{/blog/friendBlogList/{page}(page = ${memberBlog.number - 1})}">Previous</a>
+                            <a class="Previous page-numbers" th:classappend="${memberBlog.first}?'d-none'" th:href="@{/blog/friendBlogList/{page}(page = ${memberBlog.number - 1})}">Previous</a>
                         </li>
                         <li th:each="page: ${#numbers.sequence(start, end)}">
                             <a class="page-numbers" th:classappend="${memberBlog.number eq page-1}?'current':''" th:href="@{/blog/friendBlogList/{page}(page = ${page - 1})}" th:inline="text">[[${page}]]</a>
                         </li>
                         <li>
-                            <a class="next page-numbers" th:classappend="${memberBlog.last}?'disabled'" th:href="@{/blog/friendBlogList/{page}(page = ${memberBlog.number + 1})}" aria-label='Next' >Next</a>
+                            <a class="next page-numbers" th:classappend="${memberBlog.last}?'d-none'" th:href="@{/blog/friendBlogList/{page}(page = ${memberBlog.number + 1})}" aria-label='Next' >Next</a>
                         </li>
                     </ul>
                 </div>
