@@ -29,7 +29,7 @@
             </main>
             <!-- #main -->
                     <footer class="entry-footer float-right">
-				<span class="cat-links" th:if="${loginId} == ${BlogPost.member.id}">
+				<span class="cat-links justify-content-left" th:if="${loginId} == ${BlogPost.member.id}">
 				<button id="${BlogPost.pnum}">게시글 삭제</button>
 				<a class="btn" th:href="@{/blog/blogModify/{pnum}(pnum = ${BlogPost.pnum})}">게시글 수정</a>
 				</span>

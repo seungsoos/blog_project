@@ -66,7 +66,7 @@ public class    BlogController {
         if(authentication != null){
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             id = userDetails.getUsername();
-             memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+            memberDTO = (MemberDTO) session.getAttribute("memberDTO");
 
             blogList = blogListService.findByMember_id(memberDTO.getId());
         }
@@ -108,9 +108,7 @@ public class    BlogController {
         todayTotalVisitCnt = visit + memberVisit;
         model.addAttribute("todayTotalVisitCnt", todayTotalVisitCnt);
 
-
         totalVisitCnt = totalVisit + totalMemberVisit;
-
         model.addAttribute("totalVisitCnt", totalVisitCnt);
 
         Pageable pageable = PageRequest.of(page.orElse(0), 8);
@@ -375,9 +373,9 @@ public class    BlogController {
                 BlogList blogList =  blogListService.findByMember_id(memberDTO.getId());
                 blogSearchDTO.setBnum(blogList.getBnum());
                 // 로그인 유저가 친구신청 보낸 정보
-                List<MemberFriend> loginRelationshipList= memberFriendService.findByLoginId(memberDTO.getId());
+                List<MemberFriend> loginRelationshipList = memberFriendService.findByLoginId(memberDTO.getId());
                 // 로그인 유저가 친구신청 받은 정보
-                List<MemberFriend> memberRelationshipList= memberFriendService.findByFriendId(memberDTO.getId());
+                List<MemberFriend> memberRelationshipList = memberFriendService.findByFriendId(memberDTO.getId());
                 // 로그인유저 기준으로 이미 친구 관계인 유저 뽑아내기
 
                 for(MemberFriend friend :memberRelationshipList){
@@ -419,8 +417,10 @@ public class    BlogController {
             String loginId = memberDTO.getId();
 
             BlogList blogList = blogListService.findByMember_id(memberDTO.getId());
-            if(blogList != null) {
-                blogSearchDTO.setBnum(blogList.getBnum());
+            
+            //로그인
+            if(blogList != null){
+            blogSearchDTO.setBnum(blogList.getBnum());
             }
 
             BlogList blogList1;
@@ -454,30 +454,6 @@ public class    BlogController {
 
             return "blog/friendBlogForm";
         }
-
-
-        /*//친구삭제 Ajax
-        @ResponseBody
-        @DeleteMapping("/friendDelete")
-        public ResponseEntity<String> friendDelete (HttpSession session,
-                @RequestBody HashMap < String, String > friend){
-            HttpHeaders resHeaders = new HttpHeaders();
-            resHeaders.add("Content-Type", "application/json;charset=UTF-8");
-            MemberDTO memberDTO = (MemberDTO)session.getAttribute("memberDTO");
-            String loginId = memberDTO.getId();
-            String friendId = friend.get("friendId");
-            MemberFriend memberFriend = memberFriendService.findByLoginIdAndFriendId(loginId, friendId);
-            MemberFriend memberFriend1 = memberFriendService.findByLoginIdAndFriendId(friendId,loginId);
-
-            if (memberFriend != null) {
-                memberFriendService.deleteByFnum(memberFriend.getFnum());
-                return new ResponseEntity<String>("친구삭제가 완료되었습니다.", resHeaders, HttpStatus.OK);
-            } else if(memberFriend1 != null){
-                memberFriendService.deleteByFnum(memberFriend1.getFnum());
-                return new ResponseEntity<String>("친구삭제가 완료되었습니다.", resHeaders, HttpStatus.OK);
-            }
-                return new ResponseEntity<String>("오류발생", resHeaders, HttpStatus.BAD_REQUEST);
-        }*/
 
     //친구삭제 Ajax1
     @ResponseBody
