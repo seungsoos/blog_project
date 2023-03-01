@@ -68,13 +68,6 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
         }
         return null;
     }
-    private BooleanExpression searchFnum(Long bnum){
-        if(bnum != null){
-          return QMemberFriend.memberFriend.fnum.eq(bnum);
-        }
-        return null;
-    }
-
     @Override
     public Page<BlogList> getMemberBlogPage(BlogSearchDTO blogSearchDTO, Pageable pageable) {
 
@@ -120,39 +113,23 @@ public class BlogListRepositoryCustomImpl implements BlogListRepositoryCustom {
                                 .or(QBlogList.blogList.blogAuthority.eq(Authority.GROUP)),
                         regDtsAfter(blogSearchDTO.getSearchDateType()),
                         searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
-                        searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
-                        searchFnum(blogSearchDTO.getBnum())
+                        searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery())
                 )
                 .orderBy(QMemberFriend.memberFriend.regTime.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        /*List<MemberFriend> content = queryFactory
-                .selectFrom(QMemberFriend.memberFriend)
-                .where(QMemberFriend.memberFriend.loginId.eq(loginId)
-                                .or(QMemberFriend.memberFriend.friendId.eq(loginId)),
-                        QMemberFriend.memberFriend.type.eq(FriendShip.FRIENDS),
-                        regDtsAfter(blogSearchDTO.getSearchDateType()),
-                        searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
-                        searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
-                        QMemberFriend.memberFriend.fnum.ne(blogSearchDTO.getBnum())
-                )
-                .orderBy(QMemberFriend.memberFriend.regTime.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();*/
-
         Long total = queryFactory
                 .select(Wildcard.count)
                 .from(QMemberFriend.memberFriend)
                 .where(regDtsAfter(blogSearchDTO.getSearchDateType()),
                         searchAuthorityEq(blogSearchDTO.getBlogAuthority()),
-                        searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery()),
-                        searchFnum(blogSearchDTO.getBnum())
+                        searchByLike(blogSearchDTO.getSearchBy(), blogSearchDTO.getSearchQuery())
                 )
                 .fetchOne();
 
         return new PageImpl<>(content, pageable, total);
     }
+
 }

@@ -417,13 +417,15 @@ public class    BlogController {
             String loginId = memberDTO.getId();
 
             BlogList blogList = blogListService.findByMember_id(memberDTO.getId());
+            
             //로그인
             if(blogList != null){
             blogSearchDTO.setBnum(blogList.getBnum());
             }
 
+            BlogList blogList1;
             Page<MemberFriend> friendBlogList = blogListService.getFriendBlogPage(blogSearchDTO, pageable, loginId);
-
+            log.info(friendBlogList+"111111111111111111111111");
             List<BlogList> friendInfo = new ArrayList<>();
             for (int i = 0; i < friendBlogList.getContent().size(); i++) {
                 String friendId;
@@ -432,13 +434,21 @@ public class    BlogController {
                 } else {
                     friendId = friendBlogList.getContent().get(i).getFriendId();
                 }
+                log.info(friendId+"22222222222222222");
+                blogList1 = blogListService.findByMember_id(friendId);
 
-                blogList = blogListService.findByMember_id(friendId);
-                friendInfo.add(blogList);
-
+                friendInfo.add(blogList1);
+            }
+            log.info(friendInfo);
+            if(friendInfo.contains(null)){
+                log.info("111111111111111111111111111");
+                model.addAttribute("friendInfo","nothing");
+            }else{
+                log.info("222222222222222222222222");
+                model.addAttribute("friendInfo", friendInfo);
             }
             model.addAttribute("memberBlog", friendBlogList);
-            model.addAttribute("friendInfo", friendInfo);
+
             model.addAttribute("blogSearchDTO", blogSearchDTO);
             model.addAttribute("maxPage", 10);
 

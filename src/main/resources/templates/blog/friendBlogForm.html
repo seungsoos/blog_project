@@ -12,9 +12,9 @@
         <div id="primary" class="content-area column full">
             <h2>친구블로그 목록</h2>
             <main id="main" class="site-main">
-                <div class="grid portfoliogrid">
+                <div class="grid portfoliogrid"  th:if="${friendInfo != 'nothing'}">
                     <article class="hentry" th:each="Blog, BlogStat : ${memberBlog.getContent()}">
-                            <header class="entry-header">
+                            <header class="entry-header" >
                             <h2 class="entry-title"><a th:href="@{/blog/blogMain/0/{bnum}(bnum = ${friendInfo[BlogStat.index].bnum})}" rel="bookmark" th:text="${friendInfo[BlogStat.index].blogName}">블로그 이름</a></h2>
                             <a  th:href="@{/blog/blogMain/0/{bnum}(bnum = ${friendInfo[BlogStat.index].bnum})}" th:text="${friendInfo[BlogStat.index].blogDetail}">블로그 설명</a>
                             <a  th:href="@{/blog/blogMain/0/{bnum}(bnum = ${friendInfo[BlogStat.index].bnum})}" th:text="${friendInfo[BlogStat.index].member.nickName}">닉네임</a>
