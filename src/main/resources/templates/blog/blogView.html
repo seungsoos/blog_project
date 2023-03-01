@@ -2,11 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout01}">
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
 
 <div layout:fragment="content">
     <div id="content" class="site-content">
         <div id="primary" class="content-area column two-thirds">
-            <main id="main" class="site-main" role="main">
+            <main id="main" class="site-main text-center" role="main">
                 <article>
                     <header class="entry-header">
                         <h1 class="entry-title" th:text="${BlogPost.postTitle}"></h1>
@@ -19,18 +23,40 @@
                         <p th:utext="${BlogPost.postText}"></p>
                     </div>
                     <!-- .entry-content -->
-                    <footer class="entry-footer">
-				<span class="cat-links" th:if="${loginId} == ${BlogPost.member.id}">
-				<button>게시글 삭제</button>
-				<a th:href="@{/blog/blogModify/{pnum}(pnum = ${BlogPost.pnum})}">게시글 수정</a>
-				</span>
-                    </footer>
-                    <!-- .entry-footer -->
                 </article>
                 <!-- #post-## -->
                 <!-- .navigation -->
             </main>
             <!-- #main -->
+                    <footer class="entry-footer float-right">
+				<span class="cat-links" th:if="${loginId} == ${BlogPost.member.id}">
+				<button id="${BlogPost.pnum}">게시글 삭제</button>
+				<a class="btn" th:href="@{/blog/blogModify/{pnum}(pnum = ${BlogPost.pnum})}">게시글 수정</a>
+				</span>
+                    </footer>
+            <!-- .entry-footer -->
+            <form  method="post" th:object="${postReply}">
+                <div class="mb-3">
+                    <label for="replyTitle" class="form-label">제목</label>
+                    <input type="text" class="form-control" id="replyTitle" th:field="*{replyTitle}" placeholder="Title">
+                </div>
+                <div class="mb-3">
+                    <label for="replyText" class="form-label">내용</label>
+                    <textarea class="form-control" th:field="*{replyText}" id="replyText" rows="3" placeholder="Text"></textarea>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" th:field="*{replyAuthority}" id="replyAuthority" type="checkbox" value="2" checked>
+                    <label class="form-check-label" for="replyAuthority">비공개
+                    </label>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" id="replyAcceptBtn" class="btn btn-primary mb-3">댓글쓰기</button>
+                </div>
+            </form>
+            <div id="replyAppend" th:if="${postReplyList} != null" th:each="reply : ${postReplyList}">
+                <p th:text="${reply.replyTitle}"></p>
+                <p th:text="${reply.replyText}"></p>
+            </div>
         </div>
         <div id="secondary" class="column third">
             <div id="sidebar-1" class="widget-area" role="complementary">
@@ -65,4 +91,34 @@
     </div>
 
 </div>
+
+<script layout:fragment="script">
+     $(document).ready(function(){
+       $('#replyAcceptBtn').click(function(e){
+             e.preventDefault();
+             let data = {pnum : [[${BlogPost.pnum}]], replyAuthority : ($('#replyAuthority').is(":checked") ? $('#replyAuthority').val() : "1"), replyText : $('#replyText').val(), replyTitle : $('#replyTitle').val()}
+             console.log(data)
+             var token = $("meta[name='_csrf']").attr("content");
+             var header = $("meta[name='_csrf_header']").attr("content");
+       $.ajax({
+                      type : 'post',
+                      url : '/blog/replyAccept',
+                      data :  JSON.stringify(data),
+                      contentType : "application/json",
+                      dataType: 'text',
+                      beforeSend : function(xhr){
+                        xhr.setRequestHeader(header, token)
+                      },
+                      success : function(response, status) {
+                          console.log(response)
+                          location.reload()
+                      },//success
+                      error: function() {
+                      }//error
+
+                  })//ajax
+       })
+    });
+</script>
+
 </html>

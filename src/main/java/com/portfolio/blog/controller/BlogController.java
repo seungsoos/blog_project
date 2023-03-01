@@ -1,5 +1,6 @@
 package com.portfolio.blog.controller;
 
+import com.portfolio.blog.constant.Authority;
 import com.portfolio.blog.constant.FriendShip;
 import com.portfolio.blog.constant.Role;
 import com.portfolio.blog.dto.*;
@@ -25,10 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.time.LocalDateTime;
 
 @Controller
@@ -47,6 +45,7 @@ public class    BlogController {
     private final BlogVisitCountService blogVisitCountService;
     private final BlogMemberVisitCountService blogMemberVisitCountService;
     private final MemberFriendService memberFriendService;
+    private final PostReplyService postReplyService;
     private final MemberService memberService;
 
     @RequestMapping({"/blogMain", "/blogMain/{page}","/blogMain/{page}/{bnum}"})
@@ -64,7 +63,7 @@ public class    BlogController {
 
 
         if(blogListService.findByMember_id(memberDTO.getId()) == null){
-            return "redirect:/blog/memberBlogForm";
+            return "redirect:/blog/memberBlogList";
         }
         BlogList blogList = blogListService.findByMember_id(memberDTO.getId());
         if (bnum.isPresent()) {
@@ -111,24 +110,48 @@ public class    BlogController {
 
         return "blog/blogForm";
     }
-
+    @ResponseBody
+    @PostMapping("/replyAccept")
+    public ResponseEntity<String> replyAccept(HttpSession session,
+                                              @RequestBody HashMap<String, String> map, PostReplyDTO postReplyDTO) {
+        HttpHeaders resHeaders = new HttpHeaders();
+        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+        postReplyDTO.setId(memberDTO.createMember());
+        String pnum = map.get("pnum");
+        postReplyDTO.setBlogPost(blogPostService.findByPnum(Long.parseLong(pnum)));
+        postReplyDTO.setReplyTitle(map.get("replyTitle"));
+        postReplyDTO.setReplyText(map.get("replyText"));
+        if(map.get("replyAuthority").equals(2)){
+        postReplyDTO.setReplyAuthority(Authority.UNLICENSED);
+        }else {
+        postReplyDTO.setReplyAuthority(Authority.PERMISSION);
+        }
+        postReplyService.savePostReply(postReplyDTO);
+        return new ResponseEntity<String> ("댓글쓰기 성공", resHeaders, HttpStatus.OK);
+    }
     @RequestMapping("/blogView/{bnum}/{pnum}")
-    public String blogView( @PathVariable("pnum") Optional<Integer> pnum, @PathVariable("bnum") Optional<Integer> bnum, Model model, PostSearchDTO postSearchDTO, HttpSession session){
+    public String blogView( @PathVariable("pnum") Optional<Integer> pnum, @PathVariable("bnum") Optional<Integer> bnum,
+                            Model model, PostSearchDTO postSearchDTO, HttpSession session, PostReplyDTO postReplyDTO){
         MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
         model.addAttribute("loginId", memberDTO.getId());
         if (pnum.isPresent()) {
+            List<PostReply> postReplyList = postReplyService.findByBlogPost_pnum(pnum.get().longValue());
+            model.addAttribute("postReplyList", postReplyList);
             BlogPost blogPost = blogPostService.findByPnum(pnum.get().longValue());
             model.addAttribute("BlogPost", blogPost);
-
             // 최근 게시글 8개만 표시
             Pageable pageable = PageRequest.of(0, 8);
             postSearchDTO.setBnum(blogPost.getBlogList().getBnum());
             Page<BlogPost>  postList = blogPostService.getMemberBlogPage(postSearchDTO,pageable);
             model.addAttribute("postList", postList);
+            model.addAttribute("postReply", new PostReplyDTO());
+
+            return  "blog/blogView";
+
         }else {
             return "redirect:/blog/blogForm";
         }
-        return  "blog/blogView";
     }
 
 
@@ -166,7 +189,7 @@ public class    BlogController {
         memberService.updateMemberRole(loginId);
 
         Long bnum = blogListRepository.save(blogListDTO.createBlogList()).getBnum();
-        return  "redirect:/blog/blogMain/"+bnum;
+        return  "redirect:/blog/blogMain/0/"+bnum;
     }
 
     //게시글 생성
