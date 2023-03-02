@@ -127,6 +127,9 @@ public class    BlogController {
                                               @RequestBody HashMap<String, String> map, PostReplyDTO postReplyDTO) {
         HttpHeaders resHeaders = new HttpHeaders();
         resHeaders.add("Content-Type", "application/json;charset=UTF-8");
+        if(session.getAttribute("memberDTO") == null){
+           return new ResponseEntity<String>("로그인후 이용해주세요.", resHeaders, HttpStatus.BAD_REQUEST);
+       }
         MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
         postReplyDTO.setId(memberDTO.createMember());
         String pnum = map.get("pnum");
@@ -290,6 +293,9 @@ public class    BlogController {
                                                 @RequestBody HashMap<String, String> memberFriend) {
             HttpHeaders resHeaders = new HttpHeaders();
             resHeaders.add("Content-Type", "application/json;charset=UTF-8");
+            if(session.getAttribute("memberDTO") == null){
+                return new ResponseEntity<String>("로그인후 이용해주세요.", resHeaders, HttpStatus.BAD_REQUEST);
+             }
             MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
             String loginId = memberDTO.getId();
             String friendId = memberFriend.get("friendId");
