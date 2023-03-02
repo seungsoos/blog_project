@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout01}">
 
 <script layout:fragment="script">
@@ -52,27 +52,16 @@
 });
 </script>
 
-<style layout:fragment="css">
-       .myBtn{
-        width : 80px;
-        height : 25px;
-        margin : auto;
-        display:block;
-      }
-
-</style>
-
-
 <div layout:fragment="content">
     <section class="page-section mt-5" id="contact">
         <div class="container">
-            <h2>게시글 생성</h2>
-            <form th:action="@{/blog/postCreate}" method="post" enctype="multipart/form-data"
+            <h2>게시글 수정</h2>
+            <form th:action="@{/blog/postModify/{pnum}(pnum = ${blogPostDTO.pnum})}" method="post" enctype="multipart/form-data"
                   th:object="${blogPostDTO}">
                 <input type="hidden" th:value="${session.memberDTO.id}" name="member">
                 <div class="form-group mb-3">
                     <label th:for="category">게시글 분류</label>
-                    <select th:field="*{category}" class="form-select form-select-lg" id="category">
+                    <select th:field="*{category}" class="form-select" id="category">
                         <option value="POLITICS">정치</option>
                         <option value="ECONOMY">경제</option>
                         <option value="SOCIET">사회</option>
@@ -85,7 +74,7 @@
 
                 <div class="form-group mb-3">
                     <label th:for="brdRead">읽기 권한</label>
-                    <select th:field="${blogBrdListDTO.brdRead}" class="form-select form-select-lg">
+                    <select th:field="*{blogBrdList.brdRead}" class="form-select">
                         <option value="PERMISSION">공개</option>
                         <option value="GROUP">친구만</option>
                         <option value="UNLICENSED">비공개</option>
@@ -94,7 +83,7 @@
 
                 <div class="form-group mb-3">
                     <label th:for="brdWrite">쓰기 권한</label>
-                    <select th:field="${blogBrdListDTO.brdWrite}" class="form-select form-select-lg">
+                    <select th:field="*{blogBrdList.brdWrite}" class="form-select">
                         <option value="PERMISSION">공개</option>
                         <option value="GROUP">친구만</option>
                         <option value="UNLICENSED">비공개</option>
@@ -111,12 +100,11 @@
                     <textarea th:field="*{postText}" class="form-control" id="postText"
                               style="height: 100px"></textarea>
                 </div>
-                <button type="submit" class="btn btn-secondary mb-3 myBtn"/>게시글저장</button>
+                <input type="submit" class="btn btn-primary" value="게시글 수정"/>
                 <input type="hidden" th:value="${session.memberDTO.id}" name="member">
-                <input type="hidden" th:field="${blogBrdListDTO.cnum}" name="blogBrdList">
+                <input type="hidden" th:field="*{blogBrdList.cnum}" name="blogBrdList">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             </form>
-
         </div>
     </section>
 </div>

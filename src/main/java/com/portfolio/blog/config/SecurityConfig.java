@@ -1,6 +1,7 @@
 package com.portfolio.blog.config;
 
 
+import com.portfolio.blog.constant.Role;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,9 +14,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig{
+public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -42,13 +44,13 @@ public class SecurityConfig{
 
         http.formLogin()
                 .loginPage("/login/loginMain") //로그인페이지 주소
-                .defaultSuccessUrl("/blog/blogMain") // 로그인 성공시 이동주소
+                .defaultSuccessUrl("/blog/memberBlogList") // 로그인 성공시 이동주소
                 .usernameParameter("id") //유저네임 변수명
                 .passwordParameter("password") // 패스워드 변수명
                 .failureUrl("/login/loginMain/error") //로그인 실패시 이동주소
                 .loginProcessingUrl("/login/loginMain")
                 .permitAll()
-
+                .successHandler(new loginHandler())
         ;
 
 
@@ -79,13 +81,9 @@ public class SecurityConfig{
                 .invalidSessionUrl("/login/loginMain")
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(true)
-                .expiredUrl("/login/loginMain"))
-                ;
+                .expiredUrl("/login/loginMain"));
 
-        /*http.headers()
-                .and()
-                .csrf()
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());*/
+
 
         return  http.build();
 

@@ -1,6 +1,7 @@
 package com.portfolio.blog.dto;
 
 import com.portfolio.blog.constant.Authority;
+import com.portfolio.blog.constant.Role;
 import com.portfolio.blog.entity.BlogInfo;
 import com.portfolio.blog.entity.Member;
 import lombok.AllArgsConstructor;

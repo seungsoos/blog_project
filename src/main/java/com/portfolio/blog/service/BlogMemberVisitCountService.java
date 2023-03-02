@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public interface BlogMemberVisitCountService {
     int  countByBlogList_BnumAndRegTimeBetween(Long bnum, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
-    int countBy();
+    int countByBlogList_Bnum(Long bnum);
 
     void saveBlogMemberVisitCount(BlogMemberVisitCountDTO blogMemberVisitCountDTO);
 }

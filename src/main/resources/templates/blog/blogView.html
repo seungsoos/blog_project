@@ -2,11 +2,25 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout01}">
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+
+<style layout:fragment="css">
+       .myBtn{
+        width : 80px;
+        height : 25px;
+        margin : auto;
+        display:block;
+      }
+
+</style>
 
 <div layout:fragment="content">
     <div id="content" class="site-content">
         <div id="primary" class="content-area column two-thirds">
-            <main id="main" class="site-main" role="main">
+            <main id="main" class="site-main text-center" role="main">
                 <article>
                     <header class="entry-header">
                         <h1 class="entry-title" th:text="${BlogPost.postTitle}"></h1>
@@ -19,18 +33,48 @@
                         <p th:utext="${BlogPost.postText}"></p>
                     </div>
                     <!-- .entry-content -->
-                    <footer class="entry-footer">
-				<span class="cat-links">
-				<button>게시글 삭제</button>
-				<button>게시글 수정</button>
-				</span>
-                    </footer>
-                    <!-- .entry-footer -->
                 </article>
                 <!-- #post-## -->
                 <!-- .navigation -->
             </main>
             <!-- #main -->
+                    <footer class="entry-footer float-right">
+				<span class="cat-links justify-content-left" th:if="${loginId} == ${BlogPost.member.id}">
+				<button>게시글 삭제</button>
+				<button>게시글 수정</button>
+				</span>
+                    </footer>
+            <!-- .entry-footer -->
+            <form  method="post" th:object="${postReply}">
+                <div class="mb-3">
+                    <label for="replyTitle" class="form-label">제목</label>
+                    <input type="text" class="form-control" id="replyTitle" th:field="*{replyTitle}" placeholder="Title">
+                </div>
+                <div class="mb-3">
+                    <label for="replyText" class="form-label">내용</label>
+                    <textarea class="form-control" th:field="*{replyText}" id="replyText" rows="3" placeholder="Text"></textarea>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" th:field="*{replyAuthority}" id="replyAuthority" type="checkbox" value="2" checked>
+                    <label class="form-check-label" for="replyAuthority">비공개
+                    </label>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" id="replyAcceptBtn" class="btn btn-secondary myBtn mb-3">댓글쓰기</button>
+                </div>
+            </form>
+                <table class="table">
+                    <tbody class="table-group-divider" >
+                        <tr  th:if="${postReplyList} != null" th:each="reply, int : ${postReplyList}">
+                            <th scope="row" th:text="${int.count}"></th>
+                            <td th:text="|제목 : ${reply.replyTitle}|">Mark</td>
+                            <td th:text="|내용 : ${reply.replyText}|">Otto</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--<p th:text="|제목 : ${reply.replyTitle}|"></p>
+                <p th:text="|내용 : ${reply.replyText}|"></p>-->
+                <!--<br>-->
         </div>
         <div id="secondary" class="column third">
             <div id="sidebar-1" class="widget-area" role="complementary">
@@ -43,19 +87,9 @@
                 <aside id="recent-posts-2" class="widget widget_recent_entries">
                     <h4 class="widget-title">게시글 목록</h4>
                     <ul>
-                        <li th:each="Blog : ${memberBlogList.getContent()}">
-                            <a th:href="@{/blog/blogView/{bnum}(bnum = ${Blog.blogList.bnum})}" th:text="${Blog.postTitle}"></a>
+                        <li th:each="Post : ${postList.getContent()}">
+                            <a th:href="@{/blog/blogView/{bnum}/{pnum}(bnum = ${Post.blogList.bnum}, pnum = ${Post.pnum})}" th:text="${Post.postTitle}"></a>
                         </li>
-                    </ul>
-                </aside>
-                <aside id="recent-comments-2" class="widget widget_recent_comments">
-                    <h4 class="widget-title">Recent Comments</h4>
-                    <ul id="recentcomments">
-                        <li class="recentcomments"><span>ThemePush</span> on <a href="blog-single.html">Male T-Shirt</a></li>
-                        <li class="recentcomments"><span>ThemePush</span> on <a href="blog-single.html">Male T-Shirt</a></li>
-                        <li class="recentcomments"><span><a href="#" rel="external nofollow" class="url">Mr WordPress</a></span> on <a href="blog-single.html">Thanks for watching!</a></li>
-                        <li class="recentcomments"><span>Maria</span> on <a href="blog-single.html">Gray Blouse</a></li>
-                        <li class="recentcomments"><span>Maria</span> on <a href="blog-single.html">Retro Dress</a></li>
                     </ul>
                 </aside>
             </div>
@@ -65,4 +99,34 @@
     </div>
 
 </div>
+
+<script layout:fragment="script">
+     $(document).ready(function(){
+       $('#replyAcceptBtn').click(function(e){
+             e.preventDefault();
+             let data = {pnum : [[${BlogPost.pnum}]], replyAuthority : ($('#replyAuthority').is(":checked") ? $('#replyAuthority').val() : "1"), replyText : $('#replyText').val(), replyTitle : $('#replyTitle').val()}
+             console.log(data)
+             var token = $("meta[name='_csrf']").attr("content");
+             var header = $("meta[name='_csrf_header']").attr("content");
+       $.ajax({
+                      type : 'post',
+                      url : '/blog/replyAccept',
+                      data :  JSON.stringify(data),
+                      contentType : "application/json",
+                      dataType: 'text',
+                      beforeSend : function(xhr){
+                        xhr.setRequestHeader(header, token)
+                      },
+                      success : function(response, status) {
+                          console.log(response)
+                          location.reload()
+                      },//success
+                      error: function() {
+                      }//error
+
+                  })//ajax
+       })
+    });
+</script>
+
 </html>

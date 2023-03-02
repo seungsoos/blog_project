@@ -57,7 +57,7 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     }
     @Override
     public void updateMemberFriend(String loginId, String friendId){
-        MemberFriend  memberFriend = memberFriendRepository.findByLoginIdAndFriendId(friendId, loginId);
+        MemberFriend memberFriend = memberFriendRepository.findByLoginIdAndFriendId(friendId, loginId);
         memberFriend.setType(FriendShip.FRIENDS);
     }
 

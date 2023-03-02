@@ -55,14 +55,6 @@ public class BlogPostRepositoryCustomImpl implements BlogPostRepositoryCustom{
         return  QBlogPost.blogPost.regTime.after(dateTime);
     }
 
-    private BooleanExpression bnumSearch(Member id){
-//        BlogListDTO blogListDTO = new BlogListDTO();
-//        blogListDTO.setBnum(bnum);
-//        blogListDTO.of(BlogList blogList);
-//        BlogList blogList = blogList.setBnum(bnum);
-        return  id == null ? null : QBlogPost.blogPost.member.eq(id);
-    }
-
     private  BooleanExpression searchByLike(String searchBy, String searchQuery){
         if(StringUtils.equals("postTitle", searchBy)){
             return QBlogPost.blogPost.postTitle.like("%"+searchQuery+"%");
@@ -103,7 +95,9 @@ public class BlogPostRepositoryCustomImpl implements BlogPostRepositoryCustom{
                         regDtsAfter(postSearchDTO.getSearchDateType()),
                         searchAuthorityEq1(postSearchDTO.getBrdWrite()),
                         searchAuthorityEq2(postSearchDTO.getBrdRead()),
+                        searchCategoryEq(postSearchDTO.getCategory()),
                         searchByLike(postSearchDTO.getSearchBy(), postSearchDTO.getSearchQuery()),
+                        searchByBnum(postSearchDTO.getBnum()),
                         QBlogPost.blogPost.blogBrdList.brdRead.eq(Authority.PERMISSION)
                 )
                 .fetchOne();

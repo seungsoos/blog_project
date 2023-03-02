@@ -9,4 +9,8 @@ public interface BlogBrdListService {
     List<BlogBrdList> findByMember_Id(String id);
     List<BlogBrdList> findAll();
     void saveBlogBrdList(BlogBrdListDTO blogBrdListDTO);
+
+    BlogBrdList findByCnum(Long cnum);
+
+    void modifyBlogBrdList(BlogBrdListDTO blogBrdListDTO);
 }

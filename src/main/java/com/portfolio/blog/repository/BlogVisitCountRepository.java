@@ -11,5 +11,5 @@ public interface BlogVisitCountRepository extends JpaRepository<BlogVisitCount, 
 
     int countByBlogList_BnumAndRegTimeBetween(Long bnum, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
-    int countBy();
+    int countByBlogList_Bnum(Long bnum);
 }

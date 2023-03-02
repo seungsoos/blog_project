@@ -10,11 +10,14 @@
     <div id="content" class="site-content">
         <div id="primary" class="content-area column two-thirds">
             <main id="main" class="site-main" role="main">
+                <h4 th:text="${blogList.member.nickName}">닉네임</h4>
+                <h5 th:text="${blogList.blogName}">블로그이름</h5>
+                <h5 th:text="${blogList.blogDetail}">블로그설명</h5>
                 <div class="grid bloggrid">
 
                     <article th:each="Blog : ${memberBlog.getContent()}">
                         <header class="entry-header">
-                            <h1 class="entry-title"><a th:href="@{/blog/blogView/{bnum}(bnum = ${Blog.blogList.bnum})}"
+                            <h1 class="entry-title"><a th:href="@{/blog/blogView/{bnum}/{pnum}(bnum = ${Blog.blogList.bnum}, pnum = ${Blog.pnum})}"
                                                        rel="bookmark" th:text="${Blog.postTitle}"></a></h1>
                             <div class="entry-meta">
                                 <span class="posted-on"><time class="entry-date published"
@@ -43,9 +46,9 @@
                 <aside id="text-5" class="widget widget_text">
                     <h4 class="widget-title">총 방문자 수</h4>
                     <div class="textwidget">
-                        <p th:text="${totalVisit}"></p>
+                        <p th:text="${totalVisitCnt}"></p>
                         <h4 class="widget-title">오늘 방문자 수</h4>
-                        <p th:text="${todayTotalVisit}"></p>
+                        <p th:text="${todayTotalVisitCnt}"></p>
                         <h4 class="widget-title">친구신청 목록</h4>
                         <div th:if="${requestMember != null}" th:each="member : ${requestMember}">
                             <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
@@ -85,7 +88,7 @@
                     <h4 class="widget-title">게시글 목록</h4>
                     <ul>
                         <li th:each="Blog : ${memberBlog.getContent()}">
-                            <a th:href="@{/blog/blogView/{bnum}(bnum = ${Blog.blogList.bnum})}"
+                            <a th:href="@{/blog/blogView/{bnum}/{pnum}(bnum = ${Blog.blogList.bnum}, pnum = ${Blog.pnum})}"
                                th:text="${Blog.postTitle}"></a>
                         </li>
                     </ul>
@@ -96,16 +99,16 @@
 
     <div th:with="start=${(memberBlog.number/maxPage)*maxPage + 1}, end=(${(memberBlog.totalPages == 0) ? 1 : (start + (maxPage - 1) < memberBlog.totalPages ? start + (maxPage - 1) : memberBlog.totalPages)})">
         <ul class="pagination justify-content-center">
-            <li th:classappend="${memberBlog.first}?' disabled'">
-                <a class="Previous page-numbers" th:href="@{/blog/blogMain/{page}(page = ${memberBlog.number - 1})}">Previous</a>
+            <li >
+                <a class="Previous page-numbers" th:classappend="${memberBlog.first}?' d-none'" th:href="@{/blog/blogMain/{page}/{bnum}/(page = ${memberBlog.number - 1}, bnum = ${bnum})}">Previous</a>
             </li>
             <li th:each="page: ${#numbers.sequence(start, end)}">
                 <a class="page-numbers" th:classappend="${memberBlog.number eq page-1}?'current':''"
-                   th:href="@{/blog/blogMain/{page}(page = ${page - 1})}" th:inline="text">[[${page}]]</a>
+                   th:href="@{/blog/blogMain/{page}/{bnum}(page = ${page - 1}, bnum = ${bnum})}" th:inline="text">[[${page}]]</a>
             </li>
-            <li th:classappend="${memberBlog.last}?' disabled'">
-                <a class="next page-numbers" th:classappend="${memberBlog.last}?' disabled'"
-                   th:href="@{/blog/blogMain/{page}(page = ${memberBlog.number + 1})}" aria-label='Next'>Next</a>
+            <li>
+                <a class="next page-numbers" th:classappend="${memberBlog.last}?' d-none'"
+                   th:href="@{/blog/blogMain/{page}/{bnum}(page = ${memberBlog.number + 1}, bnum = ${bnum})}" aria-label='Next'>Next</a>
             </li>
         </ul>
     </div>
