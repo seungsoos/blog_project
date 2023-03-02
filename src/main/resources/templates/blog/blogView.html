@@ -7,6 +7,16 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
 </head>
 
+<style layout:fragment="css">
+       .myBtn{
+        width : 80px;
+        height : 25px;
+        margin : auto;
+        display:block;
+      }
+
+</style>
+
 <div layout:fragment="content">
     <div id="content" class="site-content">
         <div id="primary" class="content-area column two-thirds">
@@ -30,8 +40,8 @@
             <!-- #main -->
                     <footer class="entry-footer float-right">
 				<span class="cat-links justify-content-left" th:if="${loginId} == ${BlogPost.member.id}">
-				<button id="${BlogPost.pnum}">게시글 삭제</button>
-				<a class="btn" th:href="@{/blog/blogModify/{pnum}(pnum = ${BlogPost.pnum})}">게시글 수정</a>
+				<button>게시글 삭제</button>
+				<button>게시글 수정</button>
 				</span>
                     </footer>
             <!-- .entry-footer -->
@@ -50,13 +60,21 @@
                     </label>
                 </div>
                 <div class="col-auto">
-                    <button type="submit" id="replyAcceptBtn" class="btn btn-primary mb-3">댓글쓰기</button>
+                    <button type="submit" id="replyAcceptBtn" class="btn btn-secondary myBtn mb-3">댓글쓰기</button>
                 </div>
             </form>
-            <div id="replyAppend" th:if="${postReplyList} != null" th:each="reply : ${postReplyList}">
-                <p th:text="${reply.replyTitle}"></p>
-                <p th:text="${reply.replyText}"></p>
-            </div>
+                <table class="table">
+                    <tbody class="table-group-divider" >
+                        <tr  th:if="${postReplyList} != null" th:each="reply, int : ${postReplyList}">
+                            <th scope="row" th:text="${int.count}"></th>
+                            <td th:text="|제목 : ${reply.replyTitle}|">Mark</td>
+                            <td th:text="|내용 : ${reply.replyText}|">Otto</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--<p th:text="|제목 : ${reply.replyTitle}|"></p>
+                <p th:text="|내용 : ${reply.replyText}|"></p>-->
+                <!--<br>-->
         </div>
         <div id="secondary" class="column third">
             <div id="sidebar-1" class="widget-area" role="complementary">
@@ -72,16 +90,6 @@
                         <li th:each="Post : ${postList.getContent()}">
                             <a th:href="@{/blog/blogView/{bnum}/{pnum}(bnum = ${Post.blogList.bnum}, pnum = ${Post.pnum})}" th:text="${Post.postTitle}"></a>
                         </li>
-                    </ul>
-                </aside>
-                <aside id="recent-comments-2" class="widget widget_recent_comments">
-                    <h4 class="widget-title">Recent Comments</h4>
-                    <ul id="recentcomments">
-                        <li class="recentcomments"><span>ThemePush</span> on <a href="blog-single.html">Male T-Shirt</a></li>
-                        <li class="recentcomments"><span>ThemePush</span> on <a href="blog-single.html">Male T-Shirt</a></li>
-                        <li class="recentcomments"><span><a href="#" rel="external nofollow" class="url">Mr WordPress</a></span> on <a href="blog-single.html">Thanks for watching!</a></li>
-                        <li class="recentcomments"><span>Maria</span> on <a href="blog-single.html">Gray Blouse</a></li>
-                        <li class="recentcomments"><span>Maria</span> on <a href="blog-single.html">Retro Dress</a></li>
                     </ul>
                 </aside>
             </div>

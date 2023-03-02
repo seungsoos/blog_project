@@ -57,7 +57,7 @@
               th:object="${memberBlog}" >
             <div class="form-inline d-flex justify-content-center w-75 m-auto" th:object="${blogSearchDTO}">
                 <div class="col-md-2">
-                <select th:field="*{searchDateType}" class="form-control w-100" style="width:auto;">
+                <select th:field="*{searchDateType}" class="form-control w-100 form-select-lg" style="width:auto;">
                     <option value="all">전체기간</option>
                     <option value="1d">1일</option>
                     <option value="1w">1주</option>
@@ -66,14 +66,14 @@
                 </select>
                 </div>
                 <div class="col-md-2">
-                <select th:field="*{searchBy}" class="form-control w-100" style="width:auto;">
+                <select th:field="*{searchBy}" class="form-control w-100 form-select-lg" style="width:auto;">
                     <option value="blogName">블로그 이름</option>
                     <option value="blogDetail">블로그 설명</option>
                 </select>
                 </div>
                 <input th:field="*{searchQuery}" type="text" class="form-control" placeholder="검색어를 입력해주세요">
                 <div class="col-md-1">
-                <button id="searchBtn" type="submit" class="btn btn-current current w-100">검색</button>
+                <button id="searchBtn" type="submit" class="btn btn-secondary current w-100">검색</button>
                 </div>
             </div>
         </form>
