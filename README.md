@@ -12,5 +12,5 @@
 
  ### 🙋‍♂️세부설명
  
- [클릭](https://seungsoos.github.io/WorkManager/)
+ [클릭](https://seungsoos.github.io/Blog/)
  
