@@ -54,11 +54,6 @@
                     <label for="replyText" class="form-label">내용</label>
                     <textarea class="form-control" th:field="*{replyText}" id="replyText" rows="3" placeholder="Text"></textarea>
                 </div>
-                <div class="form-check">
-                    <input class="form-check-input" th:field="*{replyAuthority}" id="replyAuthority" type="checkbox" value="2" checked>
-                    <label class="form-check-label" for="replyAuthority">비공개
-                    </label>
-                </div>
                 <div class="col-auto">
                     <button type="submit" id="replyAcceptBtn" class="btn btn-secondary myBtn mb-3">댓글쓰기</button>
                 </div>
@@ -67,8 +62,8 @@
                     <tbody class="table-group-divider" >
                         <tr  th:if="${postReplyList} != null" th:each="reply, int : ${postReplyList}">
                             <th scope="row" th:text="${int.count}"></th>
-                            <td th:text="|제목 : ${reply.replyTitle}|">Mark</td>
-                            <td th:text="|내용 : ${reply.replyText}|">Otto</td>
+                            <td th:text="|제목 : ${reply.replyTitle}|"></td>
+                            <td th:text="|내용 : ${reply.replyText}|"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -119,9 +114,12 @@
                       },
                       success : function(response, status) {
                           console.log(response)
+                          console.log("성공")
                           location.reload()
                       },//success
-                      error: function() {
+                      error: function(response, status) {
+                             alert(response.responseText);
+                             location.reload();
                       }//error
 
                   })//ajax

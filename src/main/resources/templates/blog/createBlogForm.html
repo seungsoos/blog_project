@@ -50,7 +50,7 @@
                     <label th:for="blogAuthority">블로그 공개범위</label>
                     <select th:field="${blogListDTO.blogAuthority}" class="form-select form-select-lg">
                         <option value="PERMISSION">전체공개</option>
-                        <option value="GROUP">그룹공개</option>
+                        <option value="GROUP">친구공개</option>
                         <option value="UNLICENSED">비공개</option>
                     </select>
                 </div>
@@ -58,7 +58,7 @@
                 <label th:for="viewChk">프로필 공개유무</label>
                     <select th:field="*{viewChk}" class="form-select form-select-lg">
                         <option value="PERMISSION">전체공개</option>
-                        <option value="GROUP">그룹공개</option>
+                        <option value="GROUP">친구공개</option>
                         <option value="UNLICENSED">비공개</option>
                     </select>
                 </div>
