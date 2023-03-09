@@ -14,17 +14,20 @@ import javax.validation.constraints.Pattern;
 @ToString
 public class MemberDTO {
 
-    @Length(min = 6,max = 10,message = "아이디는 영문 6자이상 10자이하로 입력해주세요.")
-    @Pattern(regexp = "^([A-Za-z])(\\s?[A-Za-z])*$",message = "영문으로 입력해주세요.")
-    @NotBlank(message = "아이디를 입력해주세요.")
+    @Length(min = 6,max = 10)
+    @Pattern(regexp = "^([A-Za-z])(\\s?[A-Za-z])*$",message = "아이디는 영문 6자이상 10자이하로 입력해주세요.")
+    @NotBlank
     private String id;
+
     @Length(min = 3,max = 6,message = "닉네임은 3자이상 6자이하로 입력해주세요.")
-    @NotBlank(message = "닉네임을 입력해주세요.")
+    @NotBlank
     private String nickName;
-    @NotBlank(message = "이름을 입력해주세요.")
+
     @Pattern(regexp = "^[ㄱ-ㅎ|가-힣]*$",message = "이름은 한글로 입력해주세요.")
+    @NotBlank
     private  String name;
-    @NotBlank(message = "비밀번호를 입력해주세요.")
+
+    @NotBlank
     @Length(min = 6,max = 10,message = "비밀번호는 6자이상 10자이하로 입력해주세요.")
     private String password;
 

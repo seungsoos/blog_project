@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout01}">
 
 <script layout:fragment="script">
@@ -52,6 +52,7 @@
 });
 </script>
 
+
 <style layout:fragment="css">
        .myBtn{
         width : 80px;
@@ -75,11 +76,11 @@
                     <select th:field="*{category}" class="form-select form-select-lg" id="category">
                         <option value="POLITICS">정치</option>
                         <option value="ECONOMY">경제</option>
-                        <option value="SOCIET">사회</option>
+                        <option value="SOCIETY">사회</option>
                         <option value="LIFE">생활</option>
                         <option value="CULTURE">문화</option>
                         <option value="SCIENCE">과학</option>
-                        <option value="WORLD">세계</option>
+                        <option value="WOLD">세계</option>
                     </select>
                 </div>
 
