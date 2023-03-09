@@ -17,17 +17,7 @@
         display:block;
       }
 
-        $(document).ready(function(){
-            var errorMessage = [[${errorMessage}]];
-            if(errorMessage != null){
-                alert(errorMessage);
-            }else{
-                alert('회원가입이 완료되었습니다.');
-            }
-        });
-
 </style>
-
 
 <div layout:fragment="content">
     <div class="div-class m-auto">
@@ -35,7 +25,7 @@
             <h2 class="text-center">회원가입</h2>
             <div class="form-group mt-5">
                 <label th:for="id" class="fs-4">아이디</label>
-                <input type="text" th:field="*{id}" class="form-control" placeholder="아이디는 영문 6자이상 10자이하로 입력해주세요.">
+                <input type="text" th:field="*{id}" class="form-control jsId" placeholder="아이디는 영문 6자이상 10자이하로 입력해주세요.">
                 <p th:if="${#fields.hasErrors('id')}" th:errors="*{id}" class="fieldError">Incorrect data</p>
             </div>
             <div class="form-group">
@@ -62,5 +52,23 @@
         </form>
     </div>
 </div>
+
+<script layout:fragment="script">
+
+           $(document).ready(function(){
+           console.log('[[${errorMessage}]]')
+                if('[[${errorMessage}]]' != null && '[[${errorMessage}]]' != ''){
+                   var errorMessage = '[[${errorMessage}]]';
+                   if(errorMessage != null){
+                        alert(errorMessage);
+                    }else{
+                        alert('회원가입이 완료되었습니다.');
+                    }
+                }
+            });
+
+
+
+</script>
 
 </html>
