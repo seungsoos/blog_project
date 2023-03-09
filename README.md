@@ -12,5 +12,5 @@
 
  ### 🙋‍♂️세부설명
  
- [클릭](https://seungsoos.github.io/Blog/)
+ [클릭](https://seung-soos.tistory.com/4)
  
